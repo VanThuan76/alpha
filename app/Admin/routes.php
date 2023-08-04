@@ -18,4 +18,5 @@ Route::group([
     $router->resource('branches', BranchController::class);
     $router->resource('zones', ZoneController::class);
     $router->resource('rooms', RoomController::class);
+    $router->resource('sources', SourceController::class);
 });
