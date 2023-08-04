@@ -19,4 +19,6 @@ Route::group([
     $router->resource('zones', ZoneController::class);
     $router->resource('rooms', RoomController::class);
     $router->resource('sources', SourceController::class);
+    $router->resource('users', UserController::class);
+    $router->resource('customer-types', CustomerTypeController::class);
 });
