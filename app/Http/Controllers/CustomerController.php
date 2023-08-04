@@ -22,7 +22,7 @@ class CustomerController extends Controller
 
     public function update(Request $request)
     {
-        $topups = PointTopup::select(["user_id",DB::raw("SUM(amount) as amount")])
+        $topups = PointTopup::select(["user_id",DB::raw("SUM(added_amount) as amount")])
         ->groupBy(["user_id"])->where('created_at', '>=', Carbon::now()->subDays(30)->toDateTimeString())->pluck('amount', 'user_id');
         $customerTypes = CustomerType::orderBy('order')->pluck('accumulated_money', 'id');
         $users = User::all();

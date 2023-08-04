@@ -50,7 +50,9 @@ class PointTopupController extends AdminController
         $grid->column('updated_at', __('Updated at'));
         $grid->actions(function ($actions) {
             $actions->disableDelete();
+            $actions->disableEdit();
         });
+        $grid->model()->orderByDesc('id');
         $grid->enableHotKeys();
         return $grid;
     }
@@ -117,6 +119,13 @@ class PointTopupController extends AdminController
         $form->tools(function (Form\Tools $tools) {
             $tools->disableDelete();
         });
+        // callback after save
+        $form->saved(function (Form $form) {
+            $pointTopup = PointTopup::find($form->model()->id);
+            $user = User::find($pointTopup->user_id);
+            $user->point += $pointTopup->added_amount;
+            $user->save();
+        });
 
         $url = env('APP_URL') . '/api/customer';
         $script = <<<EOT
@@ -124,7 +133,6 @@ class PointTopupController extends AdminController
         $(document).on('change', ".user_id", function () {
             $.get("$url",{q : this.value}, function (data) {
                 userInfo = [data[0].point, data[1].discount];
-                console.log(userInfo);
                 $(".discount").val(data[1].discount);
                 $(".customer_type").val(data[1].name);
                 $(".customer_accumulated_amount").val(data[0].accumulated_amount);
@@ -133,8 +141,9 @@ class PointTopupController extends AdminController
         });
         $(".amount").on("input", function() {
             var amount = parseInt($(this).val().replaceAll(",", ""));
-            $(".added_amount").val(amount);
-            $(".next_amount").val(userInfo[1] + amount);
+            var added_amount = amount * 100 / (100 - userInfo[1]);
+            $(".added_amount").val(added_amount);
+            $(".next_amount").val(userInfo[0] + added_amount);
          });
         EOT;
 
