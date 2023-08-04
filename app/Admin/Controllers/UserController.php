@@ -40,6 +40,7 @@ class UserController extends AdminController
         $grid->column('unit.name', __('Unit id'));
         $grid->column('customerType.name', __('Customer type'));
         $grid->column('point', __('Point'));
+        $grid->column('accumulated_amount', __('Accumulated amount'));
         $grid->column('status', __('Status'))->using(Constant::STATUS);
         $grid->column('created_at', __('Created at'));
         $grid->column('updated_at', __('Updated at'));

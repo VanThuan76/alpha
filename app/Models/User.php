@@ -23,6 +23,11 @@ class User extends Model
         return $this->belongsTo(CustomerType::class, 'customer_type');
     }
 
+    public function getFullNameAttribute()
+    {
+        return $this->name . ' ' . $this->phone_number;
+    }
+
 	protected $hidden = [
     ];
 
