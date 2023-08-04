@@ -28,7 +28,7 @@ class CustomerTypeController extends AdminController
 
         $grid->column('id', __('Id'));
         $grid->column('name', __('Name'));
-        $grid->column('accumlated_money', __('Accumlated money'));
+        $grid->column('accumulated_money', __('Accumulated money'));
         $grid->column('discount', __('Discount'));
         $grid->column('order', __('Order'));
 
@@ -50,7 +50,7 @@ class CustomerTypeController extends AdminController
 
         $show->field('id', __('Id'));
         $show->field('name', __('Name'));
-        $show->field('accumlated_money', __('Accumlated money'));
+        $show->field('accumulated_money', __('Accumulated money'));
         $show->field('created_at', __('Created at'));
         $show->field('updated_at', __('Updated at'));
         $show->field('discount', __('Discount'));
@@ -69,7 +69,7 @@ class CustomerTypeController extends AdminController
         $form = new Form(new CustomerType());
 
         $form->text('name', __('Name'));
-        $form->number('accumlated_money', __('Accumlated money'));
+        $form->number('accumulated_money', __('Accumulated money'));
         $form->number('discount', __('Discount'));
         $form->number('order', __('Order'));
 

@@ -19,3 +19,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::get('customer', 'CustomerController@find');
+Route::get('customer/update', 'CustomerController@update');
