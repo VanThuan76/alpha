@@ -2,21 +2,21 @@
 
 namespace App\Admin\Controllers;
 
+use App\Models\Zone;
 use App\Models\Branch;
-use App\Models\Unit;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
 
-class BranchController extends AdminController
+class ZoneController extends AdminController
 {
     /**
      * Title for current resource.
      *
      * @var string
      */
-    protected $title = 'Chi nhánh';
+    protected $title = 'Khu vực';
 
     /**
      * Make a grid builder.
@@ -25,12 +25,11 @@ class BranchController extends AdminController
      */
     protected function grid()
     {
-        $grid = new Grid(new Branch());
+        $grid = new Grid(new Zone());
 
         $grid->column('id', __('Id'));
         $grid->column('name', __('Name'));
-        $grid->column('address', __('Address'));
-        $grid->column('unit.name', __('Unit id'));
+        $grid->column('branch.name', __('Branch id'));
         $grid->column('status', __('Status'))->using(Constant::STATUS);
         $grid->column('created_at', __('Created at'));
         $grid->column('updated_at', __('Updated at'));
@@ -48,15 +47,14 @@ class BranchController extends AdminController
      */
     protected function detail($id)
     {
-        $show = new Show(Branch::findOrFail($id));
+        $show = new Show(Zone::findOrFail($id));
 
         $show->field('id', __('Id'));
         $show->field('name', __('Name'));
-        $show->field('address', __('Address'));
-        $show->field('unit.name', __('Unit id'));
+        $show->field('branch_id', __('Branch id'));
+        $show->field('status', __('Status'));
         $show->field('created_at', __('Created at'));
         $show->field('updated_at', __('Updated at'));
-        $show->field('status', __('Status'));
         $show->panel()->tools(function ($tools) {
             $tools->disableEdit();
             $tools->disableDelete();
@@ -71,11 +69,10 @@ class BranchController extends AdminController
      */
     protected function form()
     {
-        $form = new Form(new Branch());
+        $form = new Form(new Zone());
 
         $form->text('name', __('Name'))->required();
-        $form->text('address', __('Address'))->required();
-        $form->select('unit_id', __('Unit id'))->options(Unit::pluck('name', 'id'))->required();
+        $form->select('branch_id', __('Branch id'))->options(Branch::pluck('name', 'id'))->required();
         $form->select('status', __('Status'))->options(Constant::STATUS)->default(1)->setWidth(2, 2);
         $form->tools(function (Form\Tools $tools) {
             $tools->disableDelete();

@@ -14,4 +14,5 @@ Route::group([
     $router->get('/', 'HomeController@index')->name('home');
     $router->resource('units', UnitController::class);
     $router->resource('branches', BranchController::class);
+    $router->resource('zones', ZoneController::class);
 });
