@@ -21,7 +21,9 @@ class WorkSchedule extends Model
 
     public function setShift1Attribute($value)
     {
-        $this->attributes['shift1'] = implode(',', $value);
+        if (!is_null($value)) {
+            $this->attributes['shift1'] = implode(',', $value);
+        }
     }
 
     public function getShift2Attribute($value)
@@ -32,7 +34,9 @@ class WorkSchedule extends Model
 
     public function setShift2Attribute($value)
     {
-        $this->attributes['shift2'] = implode(',', $value);
+        if (!is_null($value)) {
+            $this->attributes['shift2'] = implode(',', $value);
+        }
     }
 
     public function getShift3Attribute($value)
@@ -43,7 +47,9 @@ class WorkSchedule extends Model
 
     public function setShift3Attribute($value)
     {
-        $this->attributes['shift3'] = implode(',', $value);
+        if (!is_null($value)) {
+            $this->attributes['shift3'] = implode(',', $value);
+        }
     }
 
     public function getShift4Attribute($value)
@@ -54,7 +60,9 @@ class WorkSchedule extends Model
 
     public function setShift4Attribute($value)
     {
-        $this->attributes['shift4'] = implode(',', $value);
+        if (!is_null($value)) {
+            $this->attributes['shift4'] = implode(',', $value);
+        }
     }
     
 	protected $hidden = [

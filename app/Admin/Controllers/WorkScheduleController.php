@@ -44,6 +44,10 @@ class WorkScheduleController extends AdminController
             $actions->disableEdit();
             $actions->disableView();
         });
+        $grid->disableRowSelector();
+        $grid->disableActions();
+        $grid->disableCreateButton();
+        $grid->disableColumnSelector();
         $grid->model()->whereIn('branch_id', Branch::select("id")->where('unit_id', Admin::user()->active_unit_id)->get())->orderBy('id', 'DESC');
         $grid->paginate(21);
         return $grid;
