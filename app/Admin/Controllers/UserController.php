@@ -53,8 +53,8 @@ class UserController extends AdminController
             return new Table(['ID', 'Số tiền nạp', 'Số tiền được cộng', 'Số điểm ban đầu', 'Số điểm sau khi thêm', 'release time'], $topups->toArray());
          });
         $grid->column('status', __('Status'))->using(Constant::STATUS);
-        $grid->column('created_at', __('Created at'));
-        $grid->column('updated_at', __('Updated at'));
+        $grid->column('created_at', __('Created at'))->vndate();
+        $grid->column('updated_at', __('Updated at'))->vndate();
         $grid->model()->where('unit_id', '=', Admin::user()->active_unit_id)->orderBy('id', 'desc');
         return $grid;
     }

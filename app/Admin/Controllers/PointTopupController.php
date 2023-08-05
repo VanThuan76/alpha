@@ -33,21 +33,21 @@ class PointTopupController extends AdminController
 
         $grid->column('id', __('Id'));
         $grid->column('user.name', __('User id'));
-        $grid->column('amount', __('Amount'));
-        $grid->column('discount', __('Discount'));
-        $grid->column('added_amount', __('Added amount'));
-        $grid->column('original_amount', __('Original amount'));
-        $grid->column('next_amount', __('Next amount'));
+        $grid->column('amount', __('Amount'))->number();
+        $grid->column('discount', __('Discount'))->percentage();
+        $grid->column('added_amount', __('Added amount'))->number();
+        $grid->column('original_amount', __('Original amount'))->number();
+        $grid->column('next_amount', __('Next amount'))->number();
         $grid->column('customerType.name', __('Customer type'));
-        $grid->column('customer_accumulated_amount', __('Customer accumulated amount'));
+        $grid->column('customer_accumulated_amount', __('Customer accumulated amount'))->number();
         $grid->column('unit.name', __('Unit id'));
         $grid->column('staff.name', __('Staff id'));
         $grid->column('sale.name', __('Sale id'));
         $grid->column('status', __('Status'))->using(Constant::STATUS);
         $grid->column('payment_method', __('Payment method'))->using(Constant::PAYMENT_METHOD);
         $grid->column('bill', __('Bill'))->image();
-        $grid->column('created_at', __('Created at'));
-        $grid->column('updated_at', __('Updated at'));
+        $grid->column('created_at', __('Created at'))->vndate();
+        $grid->column('updated_at', __('Updated at'))->vndate();
         $grid->actions(function ($actions) {
             $actions->disableDelete();
             $actions->disableEdit();

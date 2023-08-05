@@ -42,8 +42,8 @@ class CustomUserController extends UserController
             return "<span style='color:blue'>$unitNames</span>";
         });
         $grid->column('activeUnit.name', 'Cở sở hoạt động');
-        $grid->column('created_at', trans('admin.created_at'));
-        $grid->column('updated_at', trans('admin.updated_at'));
+        $grid->column('created_at', trans('admin.created_at'))->vndate();
+        $grid->column('updated_at', trans('admin.updated_at'))->vndate();
         $grid->model()->orderBy('id', 'desc');
         $grid->actions(function (Grid\Displayers\Actions $actions) {
             if ($actions->getKey() == 1) {

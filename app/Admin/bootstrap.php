@@ -17,5 +17,20 @@
  * Admin::js('/packages/prettydocs/js/main.js');
  *
  */
+use Carbon\Carbon;
+use Encore\Admin\Grid\Column;
 
+Column::extend('number', function ($value) {
+    return number_format($value);
+});
+
+Column::extend('percentage', function ($value) {
+    return $value . ' %';
+});
+
+Column::extend('vndate', function ($value) {
+    $carbonDate = Carbon::parse($value)->timezone(Config::get('app.timezone'));
+    return $carbonDate->format('d/m/Y - H:i:s');
+});
+    
 Encore\Admin\Form::forget(['map', 'editor']);

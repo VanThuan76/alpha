@@ -22,6 +22,6 @@ Route::group([
     $router->resource('users', UserController::class);
     $router->resource('customer-types', CustomerTypeController::class);
     $router->resource('point-topups', PointTopupController::class);
-    $router->resource('services', ServiceTopupController::class); 
+    $router->resource('services', ServiceController::class); 
     $router->resource('work-schedules', WorkScheduleController::class);
 });

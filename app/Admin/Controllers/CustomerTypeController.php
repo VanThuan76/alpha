@@ -32,8 +32,8 @@ class CustomerTypeController extends AdminController
         $grid->column('discount', __('Discount'));
         $grid->column('order', __('Order'));
 
-        $grid->column('created_at', __('Created at'));
-        $grid->column('updated_at', __('Updated at'));
+        $grid->column('created_at', __('Created at'))->vndate();
+        $grid->column('updated_at', __('Updated at'))->vndate();
 
         return $grid;
     }

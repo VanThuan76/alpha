@@ -31,8 +31,8 @@ class ZoneController extends AdminController
         $grid->column('name', __('Name'));
         $grid->column('branch.name', __('Branch id'));
         $grid->column('status', __('Status'))->using(Constant::STATUS);
-        $grid->column('created_at', __('Created at'));
-        $grid->column('updated_at', __('Updated at'));
+        $grid->column('created_at', __('Created at'))->vndate();
+        $grid->column('updated_at', __('Updated at'))->vndate();
         $grid->actions(function ($actions) {
             $actions->disableDelete();
         });

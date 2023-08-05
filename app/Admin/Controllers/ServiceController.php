@@ -9,7 +9,7 @@ use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
 
-class ServiceTopupController extends AdminController
+class ServiceController extends AdminController
 {
     /**
      * Title for current resource.
@@ -31,11 +31,11 @@ class ServiceTopupController extends AdminController
         $grid->column('name', __('Name'));
         $grid->column('code', __('Code'));
         $grid->column('duration', __('Duration'));
-        $grid->column('price', __('Price'));
+        $grid->column('price', __('Price'))->number();
         $grid->column('unit.name', __('Unit id'));
         $grid->column('status', __('Status'))->using(Constant::STATUS);
-        $grid->column('created_at', __('Created at'));
-        $grid->column('updated_at', __('Updated at'));
+        $grid->column('created_at', __('Created at'))->vndate();
+        $grid->column('updated_at', __('Updated at'))->vndate();
 
         return $grid;
     }
