@@ -23,6 +23,11 @@ class User extends Model
         return $this->belongsTo(CustomerType::class, 'customer_type');
     }
 
+    public function pointTopups()
+    {
+        return $this->hasMany(PointTopup::class);
+    }
+
     public function getFullNameAttribute()
     {
         return $this->name . ' ' . $this->phone_number;

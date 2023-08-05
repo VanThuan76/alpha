@@ -4,6 +4,7 @@ namespace App\Admin\Controllers;
 
 use App\Models\User;
 use App\Models\Source;
+use Encore\Admin\Widgets\Table;
 use Encore\Admin\Facades\Admin;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
@@ -39,8 +40,18 @@ class UserController extends AdminController
         $grid->column('photo', __('Photo'))->image();
         $grid->column('unit.name', __('Unit id'));
         $grid->column('customerType.name', __('Customer type'));
-        $grid->column('point', __('Point'));
-        $grid->column('accumulated_amount', __('Accumulated amount'));
+        $grid->column('point', __('Point'))->modal('Lịch sử nạp điểm', function ($model) {
+            $topups = $model->pointTopups()->take(10)->orderBy('id', 'DESC')->get()->map(function ($topup) {
+                return $topup->only(['id', 'amount', 'added_amount', 'original_amount', 'next_amount', 'created_at']);
+            });
+            return new Table(['ID', 'Số tiền nạp', 'Số tiền được cộng', 'Số điểm ban đầu', 'Số điểm sau khi thêm', 'release time'], $topups->toArray());
+        });
+        $grid->column('accumulated_amount', __('Accumulated amount'))->expand(function ($model) {
+            $topups = $model->pointTopups()->take(10)->orderBy('id', 'DESC')->get()->map(function ($topup) {
+                return $topup->only(['id', 'amount', 'added_amount', 'original_amount', 'next_amount', 'created_at']);
+            });
+            return new Table(['ID', 'Số tiền nạp', 'Số tiền được cộng', 'Số điểm ban đầu', 'Số điểm sau khi thêm', 'release time'], $topups->toArray());
+         });
         $grid->column('status', __('Status'))->using(Constant::STATUS);
         $grid->column('created_at', __('Created at'));
         $grid->column('updated_at', __('Updated at'));

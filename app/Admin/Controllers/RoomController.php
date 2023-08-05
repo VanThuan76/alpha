@@ -16,7 +16,7 @@ class RoomController extends AdminController
      *
      * @var string
      */
-    protected $title = 'Room';
+    protected $title = 'Phòng';
 
     /**
      * Make a grid builder.

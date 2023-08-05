@@ -20,7 +20,7 @@ class PointTopupController extends AdminController
      *
      * @var string
      */
-    protected $title = 'PointTopup';
+    protected $title = 'Nạp điểm';
 
     /**
      * Make a grid builder.
@@ -38,7 +38,7 @@ class PointTopupController extends AdminController
         $grid->column('added_amount', __('Added amount'));
         $grid->column('original_amount', __('Original amount'));
         $grid->column('next_amount', __('Next amount'));
-        $grid->column('customer_type', __('Customer type'));
+        $grid->column('customerType.name', __('Customer type'));
         $grid->column('customer_accumulated_amount', __('Customer accumulated amount'));
         $grid->column('unit.name', __('Unit id'));
         $grid->column('staff.name', __('Staff id'));
@@ -134,7 +134,7 @@ class PointTopupController extends AdminController
             $.get("$url",{q : this.value}, function (data) {
                 userInfo = [data[0].point, data[1].discount];
                 $(".discount").val(data[1].discount);
-                $(".customer_type").val(data[1].name);
+                $(".customer_type").val(data[1].id);
                 $(".customer_accumulated_amount").val(data[0].accumulated_amount);
                 $(".original_amount").val(data[0].point);
             });

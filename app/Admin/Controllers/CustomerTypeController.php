@@ -15,7 +15,7 @@ class CustomerTypeController extends AdminController
      *
      * @var string
      */
-    protected $title = 'CustomerType';
+    protected $title = 'Loại thành viên';
 
     /**
      * Make a grid builder.

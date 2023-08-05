@@ -18,6 +18,11 @@ class PointTopup extends Model
         return $this->belongsTo(Unit::class, 'unit_id');
     }
 
+    public function customerType()
+    {
+        return $this->belongsTo(CustomerType::class, 'customer_type');
+    }
+
     public function staff()
     {
         return $this->belongsTo(AdminUser::class, 'staff_id');
