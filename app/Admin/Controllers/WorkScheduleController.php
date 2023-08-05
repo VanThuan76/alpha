@@ -28,7 +28,7 @@ class WorkScheduleController extends AdminController
 
         $grid->column('id', __('Id'));
         $grid->column('branch.name', __('Branch id'));
-        $grid->column('date', __('Date'));
+        $grid->column('date', __('Date'))->vndate();
         $grid->column('shift1', __('Ca 1'));
         $grid->column('shift2', __('Ca 2'));
         $grid->column('shift3', __('Ca 3'));
