@@ -42,16 +42,20 @@ class UserController extends AdminController
         $grid->column('customerType.name', __('Customer type'));
         $grid->column('point', __('Point'))->modal('Lịch sử nạp điểm', function ($model) {
             $topups = $model->pointTopups()->take(10)->orderBy('id', 'DESC')->get()->map(function ($topup) {
-                return $topup->only(['id', 'amount', 'added_amount', 'original_amount', 'next_amount', 'created_at']);
+                return [$topup['id'], number_format($topup['amount']), number_format($topup['added_amount']), number_format($topup['original_amount']), number_format($topup['next_amount']), $topup['created_at']];
             });
             return new Table(['ID', 'Số tiền nạp', 'Số tiền được cộng', 'Số điểm ban đầu', 'Số điểm sau khi thêm', 'release time'], $topups->toArray());
+        })->display(function ($title) {
+            return str_replace($this->point, number_format($this->point), str_replace('<i class="fa fa-clone"></i>', '', $title));
         });
         $grid->column('accumulated_amount', __('Accumulated amount'))->expand(function ($model) {
             $topups = $model->pointTopups()->take(10)->orderBy('id', 'DESC')->get()->map(function ($topup) {
-                return $topup->only(['id', 'amount', 'added_amount', 'original_amount', 'next_amount', 'created_at']);
+                return [$topup['id'], number_format($topup['amount']), number_format($topup['added_amount']), number_format($topup['original_amount']), number_format($topup['next_amount']), $topup['created_at']];
             });
             return new Table(['ID', 'Số tiền nạp', 'Số tiền được cộng', 'Số điểm ban đầu', 'Số điểm sau khi thêm', 'release time'], $topups->toArray());
-         });
+         })->display(function ($title) {
+            return str_replace($this->accumulated_amount, number_format($this->accumulated_amount), str_replace('<i class="fa fa-clone"></i>', '', $title));
+        });
         $grid->column('status', __('Status'))->using(Constant::STATUS);
         $grid->column('created_at', __('Created at'))->vndate();
         $grid->column('updated_at', __('Updated at'))->vndate();
