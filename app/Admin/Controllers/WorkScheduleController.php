@@ -2,11 +2,17 @@
 
 namespace App\Admin\Controllers;
 
+use App\Models\Branch;
 use App\Models\WorkSchedule;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
+use Encore\Admin\Facades\Admin;
+use App\Admin\Actions\UpdateFirstSchedule;
+use App\Admin\Actions\UpdateSecondSchedule;
+use App\Admin\Actions\UpdateThirdSchedule;
+use App\Admin\Actions\UpdateFourthSchedule;
 
 class WorkScheduleController extends AdminController
 {
@@ -29,16 +35,16 @@ class WorkScheduleController extends AdminController
         $grid->column('id', __('Id'));
         $grid->column('branch.name', __('Branch id'));
         $grid->column('date', __('Date'))->vndate();
-        $grid->column('shift1', __('Ca 1'));
-        $grid->column('shift2', __('Ca 2'));
-        $grid->column('shift3', __('Ca 3'));
-        $grid->column('shift4', __('Ca 4'));
+        $grid->column('shift1', __('Ca 1'))->action(UpdateFirstSchedule::class);
+        $grid->column('shift2', __('Ca 2'))->action(UpdateSecondSchedule::class);
+        $grid->column('shift3', __('Ca 3'))->action(UpdateThirdSchedule::class);
+        $grid->column('shift4', __('Ca 4'))->action(UpdateFourthSchedule::class);
         $grid->actions(function ($actions) {
             $actions->disableDelete();
             $actions->disableEdit();
             $actions->disableView();
         });
-        $grid->model()->orderByDesc('id', 'DESC');
+        $grid->model()->whereIn('branch_id', Branch::select("id")->where('unit_id', Admin::user()->active_unit_id)->get())->orderBy('id', 'DESC');
         $grid->paginate(21);
         return $grid;
     }
