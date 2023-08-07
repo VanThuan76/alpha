@@ -24,4 +24,5 @@ Route::group([
     $router->resource('point-topups', PointTopupController::class);
     $router->resource('services', ServiceController::class); 
     $router->resource('work-schedules', WorkScheduleController::class);
+    $router->resource('bills', BillController::class);
 });
