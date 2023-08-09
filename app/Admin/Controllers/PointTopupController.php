@@ -52,7 +52,7 @@ class PointTopupController extends AdminController
             $actions->disableDelete();
             $actions->disableEdit();
         });
-        $grid->model()->whereIn('unit_id', Admin::user()->active_unit_id)->orderBy('id', 'DESC');
+        $grid->model()->where('unit_id', Admin::user()->active_unit_id)->orderBy('id', 'DESC');
         $grid->enableHotKeys();
         return $grid;
     }
