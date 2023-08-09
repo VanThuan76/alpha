@@ -30,7 +30,7 @@ class ZoneController extends AdminController
         $grid->column('id', __('Id'));
         $grid->column('name', __('Name'));
         $grid->column('branch.name', __('Branch id'));
-        $grid->column('status', __('Status'))->using(Constant::STATUS);
+        $grid->column('status', __('Status'))->using(Constant::STATUS)->label(Constant::STATUS_LABEL);
         $grid->column('created_at', __('Created at'))->vndate();
         $grid->column('updated_at', __('Updated at'))->vndate();
         $grid->actions(function ($actions) {

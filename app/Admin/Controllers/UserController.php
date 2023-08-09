@@ -56,7 +56,7 @@ class UserController extends AdminController
          })->display(function ($title) {
             return str_replace($this->accumulated_amount, number_format($this->accumulated_amount), str_replace('<i class="fa fa-clone"></i>', '', $title));
         });
-        $grid->column('status', __('Status'))->using(Constant::STATUS);
+        $grid->column('status', __('Status'))->using(Constant::STATUS)->label(Constant::STATUS_LABEL);
         $grid->column('created_at', __('Created at'))->vndate();
         $grid->column('updated_at', __('Updated at'))->vndate();
         $grid->model()->where('unit_id', '=', Admin::user()->active_unit_id)->orderBy('id', 'desc');

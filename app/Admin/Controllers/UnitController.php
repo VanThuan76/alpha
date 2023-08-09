@@ -30,7 +30,7 @@ class UnitController extends AdminController
         $grid->column('name', __('Name'));
         $grid->column('address', __('Address'));
         $grid->column('logo', __('Logo'));
-        $grid->column('status', __('Status'))->using(Constant::STATUS);
+        $grid->column('status', __('Status'))->using(Constant::STATUS)->label(Constant::STATUS_LABEL);
         $grid->column('created_at', __('Created at'))->vndate();
         $grid->column('updated_at', __('Updated at'))->vndate();
         $grid->actions(function ($actions) {

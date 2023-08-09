@@ -49,7 +49,7 @@ class BillController extends AdminController
         $grid->column('total_amount', __('Total amount'))->number();
         $grid->column('unit.name', __('Unit id'));
         $grid->column('creator.name', __('Người tạo'));
-        $grid->column('status', __('Status'))->using(Constant::STATUS);
+        $grid->column('status', __('Status'))->using(Constant::STATUS)->label(Constant::STATUS_LABEL);
         $grid->column('id', __('In hoá đơn'))->display(function ($id) {
             return "<a class=\"fa fa-print\" href='pdf?id=".$id."' target='_blank'></a>";
         });

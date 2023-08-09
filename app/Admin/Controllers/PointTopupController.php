@@ -43,7 +43,7 @@ class PointTopupController extends AdminController
         $grid->column('unit.name', __('Unit id'));
         $grid->column('staff.name', __('Staff id'));
         $grid->column('sale.name', __('Sale id'));
-        $grid->column('status', __('Status'))->using(Constant::STATUS);
+        $grid->column('status', __('Status'))->using(Constant::STATUS)->label(Constant::STATUS_LABEL);
         $grid->column('payment_method', __('Payment method'))->using(Constant::PAYMENT_METHOD);
         $grid->column('bill', __('Bill'))->image();
         $grid->column('created_at', __('Created at'))->vndate();
