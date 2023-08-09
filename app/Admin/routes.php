@@ -14,6 +14,7 @@ Route::group([
 ], function (Router $router) {
 
     $router->get('/', 'HomeController@index')->name('home');
+    Route::get('/pdf', 'PDFController@createPDF');
     $router->resource('units', UnitController::class);
     $router->resource('branches', BranchController::class);
     $router->resource('zones', ZoneController::class);

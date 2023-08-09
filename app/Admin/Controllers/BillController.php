@@ -50,7 +50,9 @@ class BillController extends AdminController
         $grid->column('unit.name', __('Unit id'));
         $grid->column('creator.name', __('Người tạo'));
         $grid->column('status', __('Status'))->using(Constant::STATUS);
-
+        $grid->column('id', __('In hoá đơn'))->display(function ($id) {
+            return "<a class=\"fa fa-print\" href='pdf?id=".$id."' target='_blank'></a>";
+        });
         $grid->column('created_at', __('Created at'))->vndate();
         $grid->column('updated_at', __('Updated at'))->vndate();
 
