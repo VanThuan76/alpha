@@ -13,6 +13,11 @@ class Room extends Model
         return $this->belongsTo(Zone::class, 'zone_id');
     }
 
+    public function orders()
+    {
+        return $this->hasMany(RoomOrder::class);
+    }
+
 	protected $hidden = [
     ];
 

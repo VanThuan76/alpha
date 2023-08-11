@@ -26,4 +26,5 @@ Route::group([
     $router->resource('services', ServiceController::class); 
     $router->resource('work-schedules', WorkScheduleController::class);
     $router->resource('bills', BillController::class);
+    $router->resource('room-orders', RoomOrderController::class);
 });

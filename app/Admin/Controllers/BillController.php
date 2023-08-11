@@ -6,6 +6,7 @@ use App\Models\Bill;
 use App\Models\User;
 use App\Models\AdminUser;
 use App\Models\Service;
+use App\Models\RoomOrder;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
@@ -142,6 +143,22 @@ class BillController extends AdminController
         EOT;
 
         Admin::script($script);
+
+        // callback after save
+        $form->saved(function (Form $form) {
+            $serviceIds = $form->service_id;
+            foreach($serviceIds as $id => $count){
+                for($i = 0; $i < $count; $i ++){
+                    $roomOrder = new RoomOrder();
+                    $roomOrder->bill_id = $form->model()->id;
+                    $roomOrder->user_id = $form->model()->user_id;
+                    $roomOrder->service_id = $id;
+                    $roomOrder->unit_id = Admin::user()->active_unit_id;
+                    $roomOrder->duration = Service::find($id)->duration;
+                    $roomOrder->save();
+                }
+            }
+        });
         return $form;
     }
 }

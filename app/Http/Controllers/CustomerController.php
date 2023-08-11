@@ -7,7 +7,9 @@ use DB;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\PointTopup;
+use App\Models\RoomOrder;
 use App\Models\CustomerType;
+use App\Models\Service;
 
 class CustomerController extends Controller
 {
@@ -18,6 +20,12 @@ class CustomerController extends Controller
         $user = User::find($id);
         $customerType = $user->customerType;
         return [$user, $customerType];
+    }
+
+    public function services(Request $request)
+    {
+        $userId = $request->get('q');
+        return Service::whereIn('id', RoomOrder::where('user_id', $userId)->where('status', 0)->get('service_id'))->get(['id', DB::raw('name as text')]);
     }
 
     public function update(Request $request)
