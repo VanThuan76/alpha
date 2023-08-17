@@ -33,7 +33,7 @@ class UpdateThirdSchedule extends RowAction
         if (!is_null($this->column)) {
             $this->select('shift', 'Ca')->options(Constant::SHIFT)->default($this->column->getName())->readOnly();
             $date = Carbon::parse($this->row->date);
-            if($date > Carbon::now()){
+            if($date >= Carbon::now()->startOfDay()){
                 $this->multipleSelect('technician', 'Kỹ thuật viên')->options(AdminUser::where('status', 1)->where('active_unit_id', $branch->unit_id)->pluck('name', 'id'))
                 ->default($this->row[$this->column->getName()]);
             } else {

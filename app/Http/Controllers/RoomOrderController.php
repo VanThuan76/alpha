@@ -31,5 +31,11 @@ class RoomOrderController extends Controller
         }
         return json_encode($updatedRoomOrders);
     }
+
+    public function getService(Request $request)
+    {
+        $roomOrder = RoomOrder::find($request->get('q'));
+        return json_encode(Service::find($roomOrder->service_id));
+    }
     
 }

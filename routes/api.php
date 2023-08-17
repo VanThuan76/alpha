@@ -23,3 +23,4 @@ Route::get('customer/update', 'CustomerController@update');
 Route::get('customer/services', 'CustomerController@services');
 Route::get('workSchedule/generate', 'WorkScheduleController@generate');
 Route::get('roomOrder/checkRooms', 'RoomOrderController@checkRooms');
+Route::get('roomOrder/getService', 'RoomOrderController@getService');

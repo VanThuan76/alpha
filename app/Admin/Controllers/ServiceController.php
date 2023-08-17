@@ -31,6 +31,7 @@ class ServiceController extends AdminController
         $grid->column('name', __('Name'));
         $grid->column('code', __('Code'));
         $grid->column('duration', __('Duration'));
+        $grid->column('staff_number', __('Số nhân viên'));
         $grid->column('price', __('Price'))->number();
         $grid->column('unit.name', __('Unit id'));
         $grid->column('status', __('Status'))->using(Constant::STATUS)->label(Constant::STATUS_LABEL);
@@ -54,6 +55,7 @@ class ServiceController extends AdminController
         $show->field('name', __('Name'));
         $show->field('code', __('Code'));
         $show->field('duration', __('Duration'));
+        $show->field('staff_number', __('Số nhân viên'));
         $show->field('price', __('Price'));
         $show->field('status', __('Status'));
         $show->field('created_at', __('Created at'));
@@ -75,6 +77,7 @@ class ServiceController extends AdminController
         $form->text('name', __('Name'));
         $form->text('code', __('Code'));
         $form->number('duration', __('Duration'));
+        $form->number('staff_number', __('Số nhân viên'));
         $form->currency('price', __('Price'));
         $form->select('status', __('Status'))->options(Constant::STATUS)->default(1);
         $form->select('unit_id', __('Unit id'))->options(Unit::pluck('name', 'id'))->required();
