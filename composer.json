@@ -9,6 +9,8 @@
     "license": "MIT",
     "require": {
         "php": "^7.2.5|^8.0",
+        "botman/botman": "^2.8",
+        "botman/driver-facebook": "^1.11",
         "doctrine/dbal": "^2.0",
         "encore/laravel-admin": "^1.8",
         "fideloper/proxy": "^4.4",
