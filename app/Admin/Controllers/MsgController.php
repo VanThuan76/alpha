@@ -30,7 +30,14 @@ class MsgController extends AdminController
         $grid->column('first_name', __('First name'));
         $grid->column('last_name', __('Last name'));
         $grid->column('phone_number', __('Phone number'));
-        $grid->column('txt', __('Txt'));
+        $grid->column('txt', __('Txt'))->display(function($txt){
+            $messages = json_decode($txt, true);
+            $messagesTxt = "";
+            foreach($messages as $time => $message){
+                $messagesTxt .= "$time : $message<br/>";
+            }
+            return $messagesTxt;
+        });
         $grid->column('created_at', trans('admin.created_at'))->vndate();
         $grid->column('updated_at', trans('admin.updated_at'))->vndate();
         $grid->model()->orderBy('id', 'desc');
@@ -54,7 +61,14 @@ class MsgController extends AdminController
         $show = new Show(Msg::findOrFail($id));
 
         $show->field('id', __('Id'));
-        $show->field('txt', __('Txt'));
+        $show->field('txt', __('Txt'))->display(function($txt){
+            $messages = json_encode($txt, true);
+            $messagesTxt = "";
+            foreach($messages as $time => $message){
+                $messagesTxt .= "$time : $message\n";
+            }
+            //return $messagesTxt;
+        });
         $show->field('created_at', __('Created at'));
         $show->field('updated_at', __('Updated at'));
         $show->field('user_id', __('User id'));

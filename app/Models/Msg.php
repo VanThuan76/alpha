@@ -8,7 +8,7 @@ class Msg extends Model
 {
     protected $table = 'msgs';
 
-    public function getTxtAttribute($value)
+    /*public function getTxtAttribute($value)
     {
         return json_decode($value, true) ?: [];
     }
@@ -17,7 +17,7 @@ class Msg extends Model
     {
         $this->attributes['txt'] = json_encode($value);
     }
-
+*/
 	protected $hidden = [
     ];
 
