@@ -47,7 +47,7 @@ class BotmanController extends Controller
                 $msg->last_name = $user->getLastName();
                 $msg->info = implode(',', $user->getInfo());
             }
-            $jsonMessages = json_decode($msg->txt, true);
+            //$jsonMessages = json_decode($msg->txt, true);
             $jsonMessages[Carbon::now()->format('Y-m-d h:i:s')] = $message;
             $msg->txt = json_encode($jsonMessages);
             $msg->save();
