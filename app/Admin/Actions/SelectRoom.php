@@ -130,14 +130,18 @@ class SelectRoom extends RowAction
         $room = Room::find($id);
         $order = $this->checkOrder($room);
         if ($order){
+            $service = Service::find($order->service_id);
             if (!is_null($order->technician_id)){
                 $html .= "Khách hàng: ". User::find($order->user_id)->name . "<br/>Kỹ thuật viên: " . AdminUser::find($order->technician_id)->name . "<br/>";
                 if (!is_null($order->technician_id1) ){
                     $html .= "Kỹ thuật viên 2: " . AdminUser::find($order->technician_id1)->name . "<br/>";
                 }
                 if ($order->status == 1){
-                    $html .= "Bắt đầu: .$order->start_time </br>";
-                    $html .= "Đang thực hiện. </br>";
+                    $html .= "Bắt đầu: .$order->start_time <br/>";
+                    $html .= "Trạng thái: Đang thực hiện. <br/>";
+                    $html .= "Thời gian: $service->duration phút. <br/>";
+                    $html .= "<div id='room-$id' class='room-countdown'> <input type='hidden' class='start-time' value='$order->start_time'>".
+                    "<input type='hidden' class='duration' value='$service->duration'><span class='countdown'><span></div>";
                 }
             }
         }
@@ -146,7 +150,6 @@ class SelectRoom extends RowAction
         $(document).on('change', ".form-group select", function () {
             $.getJSON("$url",{q : this.value}, function (data) {
                 $(".form-group #duration").val(data.duration);
-                console.log($(".form-group .technician_id1"));
                 if(data.staff_number == 1){
                     $(".form-group .technician_id1").attr('readonly','readonly');
                 } else {
@@ -154,6 +157,14 @@ class SelectRoom extends RowAction
                 }
             });
         });
+        setInterval(function () {
+            $('.room-countdown').each(function(){
+                var start_time = $(this).find('.start-time').val();
+                var duration = parseInt($(this).find('.duration').val());
+                var used_time = Math.abs(new Date() - new Date(start_time.replace(/-/g,'/'))) / 60000;
+                $(this).find('.countdown').html('Thời gian còn lại: ' + Math.floor(duration - used_time) + ' phút');
+            });
+        }, 10000);
         EOT;
         Admin::script($script);
         return $html == '' ? '<span class="label label-success">Phòng trống</span>' : $html;
