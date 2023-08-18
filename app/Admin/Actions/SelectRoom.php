@@ -137,11 +137,13 @@ class SelectRoom extends RowAction
                     $html .= "Kỹ thuật viên 2: " . AdminUser::find($order->technician_id1)->name . "<br/>";
                 }
                 if ($order->status == 1){
+                    $startTime = new Carbon($order->start_time);
+                    $usedTime = Carbon::now()->diffInMinutes($startTime);
                     $html .= "Bắt đầu: .$order->start_time <br/>";
                     $html .= "Trạng thái: Đang thực hiện. <br/>";
                     $html .= "Thời gian: $service->duration phút. <br/>";
                     $html .= "<div id='room-$id' class='room-countdown'> <input type='hidden' class='start-time' value='$order->start_time'>".
-                    "<input type='hidden' class='duration' value='$service->duration'><span class='countdown'><span></div>";
+                    "<input type='hidden' class='duration' value='$service->duration'><span class='countdown'>Thời gian còn lại: ". ($service->duration - $usedTime) ." phút<span></div>";
                 }
             }
         }
@@ -162,7 +164,7 @@ class SelectRoom extends RowAction
                 var start_time = $(this).find('.start-time').val();
                 var duration = parseInt($(this).find('.duration').val());
                 var used_time = Math.abs(new Date() - new Date(start_time.replace(/-/g,'/'))) / 60000;
-                $(this).find('.countdown').html('Thời gian còn lại: ' + Math.floor(duration - used_time) + ' phút');
+                $(this).find('.countdown').html('Thời gian còn lại: ' + Math.floor(duration - used_time > 0 ? duration - used_time : 0) + ' phút');
             });
         }, 10000);
         EOT;
