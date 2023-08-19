@@ -10,6 +10,7 @@ use Encore\Admin\Widgets\Table;
 use Encore\Admin\Facades\Admin;
 use Encore\Admin\Controllers\AdminController;
 use App\Admin\Actions\SelectRoom;
+use App\Admin\Actions\SelectUsingRoom;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
@@ -35,6 +36,7 @@ class RoomOrderController extends AdminController
         $grid->column('zone.name', __('Zone id'));
         $grid->column('name', __('Name'));
         $grid->column('id', __('Chọn phòng'))->action(SelectRoom::class);
+        $grid->column('bill_id', 'Bán gối')->action(SelectUsingRoom::class);
         $grid->column('status', 'Lịch sử dùng phòng')->expand(function ($id) {
             $orders = $this->orders()->take(10)->get()->map(function ($order) {
                 return $order->only(['id', 'service', 'start_time', 'end_time']);

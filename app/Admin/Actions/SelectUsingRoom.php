@@ -17,14 +17,14 @@ use Illuminate\Http\Request;
 use Encore\Admin\Actions\RowAction;
 use App\Admin\Controllers\Constant;
 
-class SelectRoom extends RowAction
+class SelectUsingRoom extends RowAction
 {
-    public $name = 'Chọn phòng';
+    public $name = 'Bán gối';
 
     public function handle(Room $room, Request $request)
     {
-        $roomOrder = $this->checkOrder($room);
-        if (is_null($roomOrder)){
+        $orders = $this->checkOrder($room);
+        if (count($orders) == 1){
             $roomOrder = RoomOrder::find($request->get('id'));
             $roomOrder->room_id = $room->id;
             $roomOrder->status = 1;
@@ -34,13 +34,11 @@ class SelectRoom extends RowAction
             }
             $roomOrder->start_time = Carbon::now();
             $roomOrder->save();
+            // return a new html to the front end after saving
+            return $this->response()->success('Cập nhật thành công!')->refresh();
         } else {
-            $roomOrder->status = 2;
-            $roomOrder->end_time = Carbon::now();
-            $roomOrder->save();
+            return $this->response();
         }
-        // return a new html to the front end after saving
-        return $this->response()->success('Cập nhật thành công!')->refresh();
     }
 
     private function getTechnicians($branchId){
@@ -71,9 +69,10 @@ class SelectRoom extends RowAction
     {
         $room = Room::find($this->row->id);
         $zone = Zone::find($room->zone_id);
-        $order = $this->checkOrder($room);
+        $orders = $this->checkOrder($room);
         
-        if (is_null($order)){
+        if (count($orders) == 1){
+            $order = end($orders);
             $url = env('APP_URL') . '/api/customer/services';    
             $this->name = "Chọn phòng";
             $services = array();
@@ -89,16 +88,12 @@ class SelectRoom extends RowAction
             $this->select('technician_id1', 'Kỹ thuật viên 2')->options($this->getTechnicians($zone->branch_id))->readOnly();
             $this->text('start_time', 'Bắt đầu')->default(Carbon::now())->readOnly();
             $this->text('duration', 'Thời gian')->readOnly();
-        } else { 
+        } else if (count($orders) == 2) { 
             $url = env('APP_URL') . '/api/customer/services';
             $this->name = "Kết thúc";
             $services = array();
-            $roomOrders = RoomOrder::where('unit_id', Admin::user()->active_unit_id)->where('status', 0)->get();
-            foreach( $roomOrders as $i => $roomOrder) {
-                $services[$roomOrder->id] = $roomOrder->user->name . " : " . $roomOrder->service->name;
-            }
-            $room = Room::find($this->row->id);
-            $roomOrder = $this->checkOrder($room);
+            $roomOrder =  end($orders);
+            $room = Room::find($roomOrder->room_id);
             $zone = Zone::find($room->zone_id);
             $user = User::find($roomOrder->user_id);
             $service = Service::find($roomOrder->service_id);
@@ -110,43 +105,54 @@ class SelectRoom extends RowAction
                 $this->text('tech_id1', 'Kỹ thuật viên 2')->default(AdminUser::find($roomOrder->technician_id1)->name)->readOnly();
             }
             $this->text('start_time', 'Bắt đầu')->default($roomOrder->start_time)->readOnly();
+        } else {
+
         }
 
     }
     
     private function checkOrder($room){
+        $orders = array();
         foreach($room->orders as $i => $order){
             if ($order->status == 1) {
-                return $order;
+                array_push($orders, $order); 
             }
         }
+        return $orders;
     }
 
     // This method displays different icons in this column based on the value of the `star` field.
-    public function display($id)
+    public function display($field)
     {
         $html = '';
+        $id = $this->row->id;
         $room = Room::find($id);
-        $order = $this->checkOrder($room);
-        if ($order){
+        $orders = $this->checkOrder($room);
+        if (count($orders) == 2){
+            $order = end($orders);
             $service = Service::find($order->service_id);
             if (!is_null($order->technician_id)){
                 $html .= "Khách hàng: ". User::find($order->user_id)->name . "<br/>Kỹ thuật viên: " . AdminUser::find($order->technician_id)->name . "<br/>";
                 if (!is_null($order->technician_id1) ){
                     $html .= "Kỹ thuật viên 2: " . AdminUser::find($order->technician_id1)->name . "<br/>";
                 }
-                if ($order->status == 1){
-                    $startTime = new Carbon($order->start_time);
-                    $usedTime = Carbon::now()->diffInMinutes($startTime);
-                    $html .= "Bắt đầu: .$order->start_time <br/>";
-                    $html .= "Trạng thái: Đang thực hiện. <br/>";
-                    $html .= "Dịch vụ: $service->name. <br/>";
-                    $html .= "Thời gian: $service->duration phút. <br/>";
-                    $html .= "<div id='room-$id' class='room-countdown'> <input type='hidden' class='start-time' value='$order->start_time'>".
-                    "<input type='hidden' class='duration' value='$service->duration'><span class='countdown'>Thời gian còn lại: ". ($service->duration - $usedTime) ." phút</span>".
-                    "<br/><span class='label label-danger finish-room'>Kết thúc</span></div>";
-                }
+                $startTime = new Carbon($order->start_time);
+                $usedTime = Carbon::now()->diffInMinutes($startTime);
+                $html .= "Bắt đầu: .$order->start_time <br/>";
+                $html .= "Trạng thái: Đang thực hiện. <br/>";
+                $html .= "Dịch vụ: $service->name. <br/>";
+                $html .= "Thời gian: $service->duration phút. <br/>";
             }
+        } else if (count($orders) == 1){
+            $order = end($orders);
+            $service = Service::find($order->service_id);
+            $startTime = new Carbon($order->start_time);
+            $usedTime = Carbon::now()->diffInMinutes($startTime);
+            $html .= "<div id='room-$id' class='room-countdown'> <input type='hidden' class='start-time' value='$order->start_time'>".
+            "<input type='hidden' class='duration' value='$service->duration'><span class='countdown'>Thời gian còn lại: ". ($service->duration - $usedTime) ." phút</span>".
+            "<br/><span class='label label-warning assign-room' style='". ($service->duration - $usedTime > 30 ? "display:none" : ""). "'>Bán gối</span></div>";
+        } else {
+
         }
         $url = env('APP_URL') . '/api/roomOrder/getService';
         $script = <<<EOT
@@ -165,11 +171,15 @@ class SelectRoom extends RowAction
                 var start_time = $(this).find('.start-time').val();
                 var duration = parseInt($(this).find('.duration').val());
                 var used_time = Math.abs(new Date() - new Date(start_time.replace(/-/g,'/'))) / 60000;
-                $(this).find('.countdown').html('Thời gian còn lại: ' + parseFloat(duration - used_time > 0 ? duration - used_time : 0).toFixed(2) + ' phút');
+                var left_time = duration - used_time > 0 ? duration - used_time : 0;
+                $(this).find('.countdown').html('Thời gian còn lại: ' + parseFloat(left_time).toFixed(2) + ' phút');
+                if (left_time < 30) {
+                    $(this).find('.assign-room').show();
+                }
             });
         }, 10000);
         EOT;
         Admin::script($script);
-        return $html == '' ? '<span class="label label-success">Chọn phòng</span>' : $html;
+        return $html;
     }
 }
