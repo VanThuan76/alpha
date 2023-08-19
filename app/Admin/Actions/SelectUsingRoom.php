@@ -149,7 +149,7 @@ class SelectUsingRoom extends RowAction
             $startTime = new Carbon($order->start_time);
             $usedTime = Carbon::now()->diffInMinutes($startTime);
             $html .= "<div id='room-$id' class='room-countdown'> <input type='hidden' class='start-time' value='$order->start_time'>".
-            "<input type='hidden' class='duration' value='$service->duration'><span class='countdown'>Thời gian còn lại: ". ($service->duration - $usedTime) ." phút</span>".
+            "<input type='hidden' class='duration' value='$service->duration'><span class='countdown' style='display:none'>Thời gian còn lại: ". ($service->duration - $usedTime) ." phút</span>".
             "<br/><span class='label label-warning assign-room' style='". ($service->duration - $usedTime > 30 ? "display:none" : ""). "'>Bán gối</span></div>";
         } else {
 
