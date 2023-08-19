@@ -86,7 +86,7 @@ class SelectRoom extends RowAction
             $this->text('room_id', 'Phòng')->default($room->name)->readOnly();
             $this->select('id', 'Khách hàng - Dịch vụ')->options($services)->required();
             $this->select('technician_id', 'Kỹ thuật viên')->options($this->getTechnicians($zone->branch_id))->required();
-            $this->select('technician_id1', 'Kỹ thuật viên 2')->options($this->getTechnicians($zone->branch_id))->readOnly();
+            $this->select('technician_id1', 'Kỹ thuật viên 2')->options($this->getTechnicians($zone->branch_id))->disable();
             $this->text('start_time', 'Bắt đầu')->default(Carbon::now())->readOnly();
             $this->text('duration', 'Thời gian')->readOnly();
         } else { 
@@ -154,9 +154,11 @@ class SelectRoom extends RowAction
             $.getJSON("$url",{q : this.value}, function (data) {
                 $(".form-group #duration").val(data.duration);
                 if(data.staff_number == 1){
-                    $(".form-group .technician_id1").attr('readonly','readonly');
+                    $(".form-group .technician_id1").prop( "disabled", true );
+                    $(".form-group .technician_id1").removeAttr('required');
                 } else {
-                    $(".form-group .technician_id1").removeAttr('readonly');
+                    $(".form-group .technician_id1").prop( "disabled", false );
+                    $(".form-group .technician_id1").attr('required', 'required');
                 }
             });
         });
