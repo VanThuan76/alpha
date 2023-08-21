@@ -6,6 +6,9 @@ use App\Models\Customer;
 use App\Models\AdminUser;
 use App\Models\Source;
 use App\Models\Msg;
+use App\Models\Bill;
+use App\Models\User;
+use App\Models\Service;
 use Encore\Admin\Facades\Admin;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
@@ -38,6 +41,19 @@ class CustomerController extends AdminController
         $grid->column('source.name', __('Source'))->filter('like');
         $grid->column('call', __('Call'))->filter('like');
         $grid->column('sale_note', __('Sale note'))->filter('like')->editable('textarea');
+        $grid->column('service_id', __('Dịch vụ'))->display(function($service_id){
+            $user = User::where('phone_number', $this->phone_number)->first();
+            if ($user){
+                $bill = Bill::where("user_id", $user->id)->first();
+                if ($bill){
+                    $services = "Ngày mua: $bill->created_at <br/>";
+                    foreach ($bill->service_id as $service=>$count){
+                        $services .= Service::find($service)->name . "<br/>";
+                    }
+                    return $services;
+                }
+            }
+        });
         $grid->column('id', __('Facebook msg'))->display(function($id){
             $msg = Msg::where('phone_number', $this->phone_number)->first();
             if ($msg){

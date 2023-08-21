@@ -4,6 +4,7 @@ namespace App\Admin\Controllers;
 
 use App\Models\User;
 use App\Models\Source;
+use App\Models\Customer;
 use Encore\Admin\Widgets\Table;
 use Encore\Admin\Facades\Admin;
 use Encore\Admin\Controllers\AdminController;
@@ -116,7 +117,20 @@ class UserController extends AdminController
         $form->select('source_id', __('Source id'))->options(Source::pluck('name', 'id'))->required();
         $form->hidden('unit_id', __('Unit id'))->default(Admin::user()->active_unit_id);
         $form->hidden('customer_type', __('Customer type'))->default(0);
-
+        // callback after save
+        $form->saved(function (Form $form) {
+            if ($form->model()->phone_number){
+                $customer = Customer::where('phone_number', $form->model()->phone_number)->first();
+                if (is_null($customer)){
+                    $customer = new Customer();
+                    $customer->name = $form->model()->name;
+                    $customer->phone_number = $form->model()->phone_number;
+                    $customer->sale_id = Admin::user()->id;
+                    $customer->source_id = $form->model()->source_id;
+                    $customer->save();
+                }
+            }
+        });
         return $form;
     }
 }
