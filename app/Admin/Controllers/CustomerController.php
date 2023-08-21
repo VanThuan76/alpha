@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Models\Service;
 use Encore\Admin\Facades\Admin;
 use Encore\Admin\Controllers\AdminController;
+use App\Admin\Actions\Customer\SaleAssign;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
@@ -69,7 +70,9 @@ class CustomerController extends AdminController
         $grid->column('status', __('Status'))->using(Constant::STATUS)->filter(Constant::STATUS);
         $grid->column('created_at', __('Created at'))->vndate();
         $grid->column('updated_at', __('Updated at'))->vndate();
-
+        $grid->tools(function (Grid\Tools $tools) {
+            $tools->append(new SaleAssign());
+        });
         return $grid;
     }
 
