@@ -5,6 +5,7 @@ namespace App\Admin\Controllers;
 use App\Models\Customer;
 use App\Models\AdminUser;
 use App\Models\Source;
+use App\Models\Msg;
 use Encore\Admin\Facades\Admin;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
@@ -29,7 +30,6 @@ class CustomerController extends AdminController
     {
         $grid = new Grid(new Customer());
 
-        $grid->column('id', __('Id'));
         $grid->column('name', __('Name'))->filter('like');
         $grid->column('address', __('Address'))->filter('like');
         $grid->column('sale.name', __('Sale'))->filter('like');
@@ -38,6 +38,17 @@ class CustomerController extends AdminController
         $grid->column('source.name', __('Source'))->filter('like');
         $grid->column('call', __('Call'))->filter('like');
         $grid->column('sale_note', __('Sale note'))->filter('like')->editable('textarea');
+        $grid->column('id', __('Facebook msg'))->display(function($id){
+            $msg = Msg::where('phone_number', $this->phone_number)->first();
+            if ($msg){
+                $messages = json_decode($msg->txt, true);
+                $messagesTxt = "";
+                foreach($messages as $time => $message){
+                    $messagesTxt .= "$time : $message<br/>";
+                }
+                return $messagesTxt;
+            }
+        });
         $grid->column('next_appointment', __('Next appointment'))->filter('date')->editable('date');
         $grid->column('status', __('Status'))->using(Constant::STATUS)->filter(Constant::STATUS);
         $grid->column('created_at', __('Created at'))->vndate();
@@ -56,7 +67,6 @@ class CustomerController extends AdminController
     {
         $show = new Show(Customer::findOrFail($id));
 
-        $show->field('id', __('Id'));
         $show->field('name', __('Name'));
         $show->field('address', __('Address'));
         $show->field('sale', __('Sale'));
