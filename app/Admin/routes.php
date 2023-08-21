@@ -29,4 +29,5 @@ Route::group([
     $router->resource('room-orders', RoomOrderController::class);
     $router->resource('msgs', MsgController::class);
     $router->resource('roles', RoleController::class);
+    $router->resource('customers', CustomerController::class);
 });
