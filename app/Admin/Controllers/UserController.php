@@ -131,6 +131,9 @@ class UserController extends AdminController
                 }
             }
         });
+        $form->saving(function (Form $form) {
+            $form->name = ucfirst($form->name);
+        });
         return $form;
     }
 }

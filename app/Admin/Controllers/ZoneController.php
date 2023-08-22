@@ -77,6 +77,9 @@ class ZoneController extends AdminController
         $form->tools(function (Form\Tools $tools) {
             $tools->disableDelete();
         });
+        $form->saving(function (Form $form) {
+            $form->name = ucfirst($form->name);
+        });
         return $form;
     }
 }

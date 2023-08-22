@@ -121,7 +121,10 @@ class CustomerController extends AdminController
         $form->textarea('sale_note', __('Sale note'));
         $form->date('next_appointment', __('Next appointment'));
         $form->number('status', __('Status'))->default(1);
-
+        $form->saving(function (Form $form) {
+            $form->name = ucfirst($form->name);
+            $form->address = ucfirst($form->address);
+        });
         return $form;
     }
 }
