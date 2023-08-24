@@ -147,6 +147,7 @@ class BillController extends AdminController
         // callback after save
         $form->saved(function (Form $form) {
             $serviceIds = $form->service_id;
+            $order = 0;
             foreach($serviceIds as $id => $count){
                 for($i = 0; $i < $count; $i ++){
                     $roomOrder = new RoomOrder();
@@ -155,6 +156,8 @@ class BillController extends AdminController
                     $roomOrder->service_id = $id;
                     $roomOrder->unit_id = Admin::user()->active_unit_id;
                     $roomOrder->duration = Service::find($id)->duration;
+                    $order ++;
+                    $roomOrder->order = $order;
                     $roomOrder->save();
                 }
             }

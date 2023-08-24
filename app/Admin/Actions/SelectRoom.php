@@ -79,7 +79,7 @@ class SelectRoom extends RowAction
             $services = array();
             $roomOrders = RoomOrder::where('unit_id', Admin::user()->active_unit_id)->where('status', 0)->get();
             foreach( $roomOrders as $i => $roomOrder) {
-                $services[$roomOrder->id] = $roomOrder->user->name . " : " . $roomOrder->service->name;
+                $services[$roomOrder->id] = $roomOrder->user->name . " : " . $roomOrder->service->name . " Vé thứ: " . $roomOrder->order;
             }
             $room = Room::find($this->row->id);
             $zone = Zone::find($room->zone_id);
@@ -95,7 +95,7 @@ class SelectRoom extends RowAction
             $services = array();
             $roomOrders = RoomOrder::where('unit_id', Admin::user()->active_unit_id)->where('status', 0)->get();
             foreach( $roomOrders as $i => $roomOrder) {
-                $services[$roomOrder->id] = $roomOrder->user->name . " : " . $roomOrder->service->name;
+                $services[$roomOrder->id] = $roomOrder->user->name . " : " . $roomOrder->service->name . " Vé thứ: " . $roomOrder->order;
             }
             $room = Room::find($this->row->id);
             $roomOrder = $this->checkOrder($room);
