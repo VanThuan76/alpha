@@ -141,6 +141,7 @@ class SelectRoom extends RowAction
                     $html .= "Bắt đầu: .$order->start_time <br/>";
                     $html .= "Trạng thái: Đang thực hiện. <br/>";
                     $html .= "Dịch vụ: $service->name. <br/>";
+                    $html .= $order->order == 1 ? "<input type='hidden' class='room-order' value='$order->order'/>" : "";
                     $html .= "Thời gian: $service->duration phút. <br/>";
                     $html .= "<div id='room-$id' class='room-countdown'> <input type='hidden' class='start-time' value='$order->start_time'>".
                     "<input type='hidden' class='duration' value='$service->duration'><span class='countdown'>Thời gian còn lại: ". ($service->duration - $usedTime) ." phút</span>".
@@ -169,6 +170,7 @@ class SelectRoom extends RowAction
                 var used_time = Math.abs(new Date() - new Date(start_time.replace(/-/g,'/'))) / 60000;
                 $(this).find('.countdown').html('Thời gian còn lại: ' + parseFloat(duration - used_time > 0 ? duration - used_time : 0).toFixed(2) + ' phút');
             });
+            $('.room-order').parents("td").css('background-color', '#BDECB6');
         }, 10000);
         EOT;
         Admin::script($script);

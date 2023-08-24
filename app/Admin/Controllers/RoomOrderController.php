@@ -34,7 +34,7 @@ class RoomOrderController extends AdminController
         $grid = new Grid(new Room());
 
         $grid->column('zone.name', __('Zone id'));
-        $grid->column('name', __('Name'));
+        $grid->column('name', __('Tên phòng'));
         $grid->column('id', __('Chọn phòng'))->action(SelectRoom::class);
         $grid->column('bill_id', 'Bán gối')->action(SelectUsingRoom::class);
         $grid->column('status', 'Lịch sử dùng phòng')->expand(function ($id) {
