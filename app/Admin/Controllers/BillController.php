@@ -46,7 +46,9 @@ class BillController extends AdminController
         })->width(200);
         $grid->column('seller.name', __('Người bán'));
         $grid->column('payment_method', __('Payment method'))->using(Constant::PAYMENT_METHOD);
-        $grid->column('bill', __('Bill'))->image();
+        $grid->column('bill', __('Bill'))->display(function(){
+            return Utils::generateQr($this->total_amount, "senbachdiep:$this->id");
+        });
         $grid->column('total_amount', __('Total amount'))->number();
         $grid->column('unit.name', __('Unit id'));
         $grid->column('creator.name', __('Người tạo'));

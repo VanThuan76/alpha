@@ -30,4 +30,6 @@ Route::group([
     $router->resource('msgs', MsgController::class);
     $router->resource('roles', RoleController::class);
     $router->resource('customers', CustomerController::class);
+    $router->resource('receiver-accounts', ReceiverAccountController::class);
+    $router->resource('bank-bins', BankBinController::class);
 });
