@@ -11,7 +11,7 @@ return [
     | login page.
     |
     */
-    'name' => 'Alphasius',
+    'name' => 'Sen bách diệp',
 
     /*
     |--------------------------------------------------------------------------
@@ -22,7 +22,7 @@ return [
     | `img` tag, eg '<img src="http://logo-url" alt="Admin logo">'.
     |
     */
-    'logo' => '<b>Alphasius</b> admin',
+    'logo' => '<b>Sen bách diệp</b> admin',
 
     /*
     |--------------------------------------------------------------------------
@@ -85,7 +85,7 @@ return [
     | Html title for all pages.
     |
     */
-    'title' => 'Admin',
+    'title' => 'Sen bách diệp',
 
     /*
     |--------------------------------------------------------------------------
