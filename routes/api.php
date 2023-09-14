@@ -30,4 +30,5 @@ Route::post('login', 'RegisterController@login');
 Route::middleware('auth:api')->group( function () {
     Route::resource('units', 'UnitController');
     Route::resource('news', 'NewsController');
+    Route::resource('services', 'ServiceController');
 });
