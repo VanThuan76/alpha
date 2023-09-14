@@ -24,3 +24,9 @@ Route::get('customer/services', 'CustomerController@services');
 Route::get('workSchedule/generate', 'WorkScheduleController@generate');
 Route::get('roomOrder/checkRooms', 'RoomOrderController@checkRooms');
 Route::get('roomOrder/getService', 'RoomOrderController@getService');
+
+Route::post('register', 'RegisterController@register');
+Route::post('login', 'RegisterController@login');
+Route::middleware('auth:api')->group( function () {
+    Route::resource('units', 'UnitController');
+});

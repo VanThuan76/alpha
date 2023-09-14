@@ -7,6 +7,7 @@ use App\Models\Source;
 use App\Models\Customer;
 use Encore\Admin\Widgets\Table;
 use Encore\Admin\Facades\Admin;
+use Illuminate\Support\Facades\Hash;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
@@ -106,12 +107,15 @@ class UserController extends AdminController
         $form = new Form(new User());
 
         $form->text('name', __('Name'));
-        $form->email('email', __('Email'));
+        $form->email('email', __('Email'))
+        ->creationRules(['required', "unique:users"])
+        ->updateRules(['required', "unique:users,email,{{id}}"]);
         $form->text('id_number', __('Id number'));
         $form->file('photo', __('Photo'));
         $form->date('dob', __('Dob'))->default(date('d-m-Y'));
         $form->select('sex', __('Sex'))->options(Constant::SEX)->default(2)->setWidth(2, 2);
         $form->text('phone_number', __('Phone number'));
+        $form->password('password', __('Password'));
         $form->hidden('status', __('Status'))->default(1);
         $form->hidden('point', __('Point'))->default(0);
         $form->select('source_id', __('Source id'))->options(Source::pluck('name', 'id'))->required();
@@ -133,6 +137,9 @@ class UserController extends AdminController
         });
         $form->saving(function (Form $form) {
             $form->name = ucfirst($form->name);
+            if ($form->password && $form->model()->password != $form->password) {
+                $form->password = Hash::make($form->password);
+            }
         });
         return $form;
     }
