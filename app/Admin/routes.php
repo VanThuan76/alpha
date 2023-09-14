@@ -32,4 +32,5 @@ Route::group([
     $router->resource('customers', CustomerController::class);
     $router->resource('receiver-accounts', ReceiverAccountController::class);
     $router->resource('bank-bins', BankBinController::class);
+    $router->resource('news', NewsController::class);
 });
