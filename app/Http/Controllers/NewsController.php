@@ -15,9 +15,14 @@ class NewsController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $news = News::all();
+        $unitId = $request->get("unit_id");
+        if (is_null($unitId)){
+            $news = News::all();
+        } else {
+            $news = News::where("unit_id", $unitId)->get();
+        }
 
         return $this->sendResponse(NewsResource::collection($news), 'News retrieved successfully.');
     }
