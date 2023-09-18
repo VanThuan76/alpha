@@ -15,6 +15,7 @@ Route::group([
 
     $router->get('/', 'HomeController@index')->name('home');
     Route::get('/pdf', 'PDFController@createPDF');
+    Route::get('/select-bed', 'BedController@selectBed');
     $router->resource('units', UnitController::class);
     $router->resource('branches', BranchController::class);
     $router->resource('zones', ZoneController::class);
@@ -33,4 +34,5 @@ Route::group([
     $router->resource('receiver-accounts', ReceiverAccountController::class);
     $router->resource('bank-bins', BankBinController::class);
     $router->resource('news', NewsController::class);
+    $router->resource('beds', BedController::class);
 });

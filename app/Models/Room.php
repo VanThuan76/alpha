@@ -18,6 +18,11 @@ class Room extends Model
         return $this->hasMany(RoomOrder::class);
     }
 
+    public function beds()
+    {
+        return $this->hasMany(Bed::class);
+    }
+
 	protected $hidden = [
     ];
 
