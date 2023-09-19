@@ -8,27 +8,28 @@ use Carbon\Carbon;
 use App\Models\User;
 use App\Models\WorkSchedule;
 use App\Models\Branch;
+use App\Models\Bed;
 
 class WorkScheduleController extends Controller
 {
 
     public function generate(Request $request)
     {
-        $branches = Branch::where('status', 1)->pluck('name', 'id');
-        foreach($branches as $id=>$name){
+        $beds = Bed::where('status', 1)->pluck('name', 'id');
+        foreach($beds as $id=>$name){
             $today = Carbon::today()->toDateString();
-            for ($i = 0; $i < 7; $i++) {
+            for ($i = 0; $i < 1; $i++) {
                 $today = Carbon::parse($today)->addDay()->toDateString();
-                $workSchedule = WorkSchedule::where("branch_id", $id)->where("date", $today)->first();
+                $workSchedule = WorkSchedule::where("bed_id", $id)->where("date", $today)->first();
                 if (is_null($workSchedule)){
                     $workSchedule = new WorkSchedule();
-                    $workSchedule->branch_id = $id;
+                    $workSchedule->bed_id = $id;
                     $workSchedule->date = $today;
                     $workSchedule->save();
                 }
             }
         }
-        return json_encode($branches);
+        return json_encode($beds);
         $customerTypes = CustomerType::orderBy('order')->pluck('accumulated_money', 'id');
         $users = User::all();
         foreach ($users as $i => $user){

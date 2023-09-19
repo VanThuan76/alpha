@@ -2,17 +2,19 @@
 
 namespace App\Admin\Controllers;
 
-use App\Models\Branch;
 use App\Models\WorkSchedule;
+use App\Models\Room;
+use App\Models\Branch;
+use App\Models\Zone;
+use App\Models\AdminUser;
+use Encore\Admin\Layout\Content;
+use Encore\Admin\Facades\Admin;
 use Encore\Admin\Controllers\AdminController;
+use Illuminate\Support\Facades\View;
+use Encore\Admin\Widgets\Tab;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
-use Encore\Admin\Facades\Admin;
-use App\Admin\Actions\UpdateFirstSchedule;
-use App\Admin\Actions\UpdateSecondSchedule;
-use App\Admin\Actions\UpdateThirdSchedule;
-use App\Admin\Actions\UpdateFourthSchedule;
 
 class WorkScheduleController extends AdminController
 {
@@ -21,36 +23,26 @@ class WorkScheduleController extends AdminController
      *
      * @var string
      */
-    protected $title = 'Lịch làm việc';
+    protected $title = 'Xếp lịch';
 
     /**
      * Make a grid builder.
      *
      * @return Grid
      */
-    protected function grid()
+    public function index(Content $content)
     {
-        $grid = new Grid(new WorkSchedule());
-
-        $grid->column('id', __('Id'));
-        $grid->column('branch.name', __('Branch id'));
-        $grid->column('date', __('Date'))->vndate();
-        $grid->column('shift1', __('Ca 1'))->action(UpdateFirstSchedule::class);
-        $grid->column('shift2', __('Ca 2'))->action(UpdateSecondSchedule::class);
-        $grid->column('shift3', __('Ca 3'))->action(UpdateThirdSchedule::class);
-        $grid->column('shift4', __('Ca 4'))->action(UpdateFourthSchedule::class);
-        $grid->actions(function ($actions) {
-            $actions->disableDelete();
-            $actions->disableEdit();
-            $actions->disableView();
-        });
-        $grid->disableRowSelector();
-        $grid->disableActions();
-        $grid->disableCreateButton();
-        $grid->disableColumnSelector();
-        $grid->model()->whereIn('branch_id', Branch::select("id")->where('unit_id', Admin::user()->active_unit_id)->get())->orderBy('id', 'DESC');
-        $grid->paginate(21);
-        return $grid;
+        $branches = Branch::where('unit_id', Admin::user()->active_unit_id)->pluck("id");
+        $zones = Zone::whereIn('branch_id',Branch::where('unit_id', Admin::user()->active_unit_id)->pluck("id"))->where('status', 1)->orderBy('id', 'DESC')->get();
+        $tab = new Tab();
+        foreach($zones as $zone){
+            $rooms = Room::where('zone_id', $zone->id)->get();
+            $tab->add($zone->name, View::make('admin.turn_select', compact('rooms')));
+        }
+        return $content
+        ->title($this->title())
+        ->description("Chọn giường")
+        ->body($tab->render());
     }
 
     /**
@@ -64,14 +56,19 @@ class WorkScheduleController extends AdminController
         $show = new Show(WorkSchedule::findOrFail($id));
 
         $show->field('id', __('Id'));
-        $show->field('branch_id', __('Branch id'));
+        $show->field('bed_id', __('Bed id'));
         $show->field('shift1', __('Shift1'));
         $show->field('shift2', __('Shift2'));
         $show->field('date', __('Date'));
         $show->field('created_at', __('Created at'));
         $show->field('updated_at', __('Updated at'));
         $show->field('shift3', __('Shift3'));
-        $show->field('shift4', __('Shift4'));
+        $show->field('start_1', __('Start 1'));
+        $show->field('start_2', __('Start 2'));
+        $show->field('start_3', __('Start 3'));
+        $show->field('end_1', __('End 1'));
+        $show->field('end_2', __('End 2'));
+        $show->field('end_3', __('End 3'));
 
         return $show;
     }
@@ -85,13 +82,17 @@ class WorkScheduleController extends AdminController
     {
         $form = new Form(new WorkSchedule());
 
-        $form->number('branch_id', __('Branch id'));
-        $form->text('shift1', __('Shift1'));
-        $form->text('shift2', __('Shift2'));
-        $form->date('date', __('Date'))->default(date('Y-m-d'));
-        $form->text('shift3', __('Shift3'));
-        $form->text('shift4', __('Shift4'));
-
+        $form->number('bed_id', __('Giường'))->readonly();
+        $form->date('date', __('Ngày'))->default(date('Y-m-d'))->readonly();
+        $form->select('shift1', __('Nhân viên ca 1'))->options(AdminUser::where('status', 1)->where('active_unit_id', Admin::user()->active_unit_id)->pluck('name', 'id'));
+        $form->time('start_1', 'Đầu ca')->format('HH:mm:ss')->default('08:00:00');
+        $form->time('end_1', 'Cuối ca')->format('HH:mm:ss')->default('12:00:00');
+        $form->select('shift2', __('Nhân viên ca 2'))->options(AdminUser::where('status', 1)->where('active_unit_id', Admin::user()->active_unit_id)->pluck('name', 'id'));
+        $form->time('start_2', 'Đầu ca')->format('HH:mm:ss')->default('12:00:00');
+        $form->time('end_2', 'Cuối ca')->format('HH:mm:ss')->default('16:00:00');
+        $form->select('shift3', __('Nhân viên ca 3'))->options(AdminUser::where('status', 1)->where('active_unit_id', Admin::user()->active_unit_id)->pluck('name', 'id'));
+        $form->time('start_3', 'Đầu ca')->format('HH:mm:ss')->default('16:00:00');
+        $form->time('end_3', 'Cuối ca')->format('HH:mm:ss')->default('20:00:00');
         return $form;
     }
 }
