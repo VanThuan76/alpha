@@ -13,6 +13,11 @@ class Bed extends Model
         return $this->belongsTo(Room::class, 'room_id');
     }
 
+    public function orders()
+    {
+        return $this->hasMany(RoomOrder::class);
+    }
+
 	protected $hidden = [
     ];
 

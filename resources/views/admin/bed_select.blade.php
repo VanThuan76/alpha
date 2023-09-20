@@ -11,8 +11,11 @@
         </div>
         <div class="box-body">
         @foreach($room->beds as $bed)
+            <?php 
+                
+            ?>
             <div class="row">
-            <div class="col-md-2 col-sm-4 col-xs-12">
+            <div class="col-md-3 col-sm-4 col-xs-12">
             <div class="info-box bg-aqua">
             <span class="info-box-icon"><i class="fa fa-calendar-o"></i></span>
             <div class="info-box-content">
@@ -27,7 +30,7 @@
             </div>
             </div>
             </div>
-            <div class="col-md-2 col-sm-4 col-xs-12">
+            <div class="col-md-3 col-sm-4 col-xs-12">
             <div class="info-box bg-green">
             <span class="info-box-icon"><i class="fa fa-calendar-check-o"></i></span>
             <div class="info-box-content">
@@ -42,7 +45,7 @@
             </div>
             </div>
             </div>
-            <div class="col-md-2 col-sm-4 col-xs-12">
+            <div class="col-md-3 col-sm-4 col-xs-12">
             <div class="info-box bg-yellow">
             <span class="info-box-icon"><i class="fa fa-calendar-minus-o"></i></span>
             <div class="info-box-content">
@@ -57,7 +60,7 @@
             </div>
             </div>
             </div>
-            <div class="col-md-2 col-sm-4 col-xs-12">
+            <div class="col-md-3 col-sm-4 col-xs-12">
             <div class="info-box bg-red">
             <span class="info-box-icon"><i class="fa fa-comments-o"></i></span>
             <div class="info-box-content">

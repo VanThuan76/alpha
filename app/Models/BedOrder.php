@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class RoomOrder extends Model
 {
-    protected $table = 'room_orders';
+    protected $table = 'bed_orders';
 
     public function user()
     {
