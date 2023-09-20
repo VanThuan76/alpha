@@ -19,7 +19,7 @@ use App\Models\AdminUser;
         <div class="box-body timeline">
         @foreach($room->beds as $bed)
             <?php 
-                $schedule = WorkSchedule::where('bed_id', $bed->id)->first();
+                $schedule = WorkSchedule::where('bed_id', $bed->id)->orderBy('date', 'DESC')->first();
             ?>
             @if(!is_null($schedule))
             {{$bed->name}} : {{$schedule->date}}
@@ -32,9 +32,8 @@ use App\Models\AdminUser;
                                 <div class="hori-timeline" dir="ltr">
                                     <ul class="list-inline events">
                                         <?php
-                                        if (!is_null($schedule->shift1)){
-                                            $staff1 = AdminUser::find($schedule->shift1)->name;
-                                        } ?>
+                                            $staff1 = is_null($schedule->shift1) ? null : AdminUser::find($schedule->shift1)->name;
+                                        ?>
                                         <li class="list-inline-item event-list {{isset($staff1) ? '' : 'no-border-color'}}">
                                             <div class="px-4">
                                                 <div class="event-date {{isset($staff1) ? 'bg-soft-success' : 'bg-soft-danger'}} text-primary">{{$schedule->start_1}}</div>
@@ -48,34 +47,32 @@ use App\Models\AdminUser;
                                             </div>
                                         </li>          
                                         <?php
-                                        if (!is_null($schedule->shift2)){
-                                            $staff2 = AdminUser::find($schedule->shift2)->name;
-                                        } ?>
-                                        <li class="list-inline-item event-list">
+                                            $staff2 = is_null($schedule->shift2) ? null : AdminUser::find($schedule->shift2)->name;
+                                        ?>
+                                        <li class="list-inline-item event-list {{isset($staff2) ? 't' : 'no-border-color'}}">
                                             <div class="px-4">
-                                                <div class="event-date {{isset($staff1) ? 'bg-soft-success' : 'bg-soft-danger'}} text-primary">{{$schedule->start_2}}</div>
+                                                <div class="event-date {{isset($staff2) ? 'bg-soft-success' : 'bg-soft-danger'}} text-primary">{{$schedule->start_2}}</div>
                                                 <h5 class="font-size-16">{{isset($staff2) ? $staff2 : ""}}</h5>
                                             </div>
                                         </li>
-                                        <li class="list-inline-item event-list">
+                                        <li class="list-inline-item event-list {{isset($staff2) ? 't' : 'no-border-color'}}">
                                             <div class="px-4">
-                                                <div class="event-date {{isset($staff1) ? 'bg-soft-success' : 'bg-soft-danger'}} text-primary">{{$schedule->end_2}}</div>
+                                                <div class="event-date {{isset($staff2) ? 'bg-soft-success' : 'bg-soft-danger'}} text-primary">{{$schedule->end_2}}</div>
                                                 <h5 class="font-size-16">{{isset($staff2) ? $staff2 : ""}}</h5>
                                             </div>
                                         </li>    
                                         <?php
-                                        if (!is_null($schedule->shift3)){
-                                            $staff3 = AdminUser::find($schedule->shift3)->name;
-                                        } ?>
-                                        <li class="list-inline-item event-list">
+                                            $staff3 = is_null($schedule->shift3) ? null : AdminUser::find($schedule->shift3)->name;
+                                        ?>
+                                        <li class="list-inline-item event-list {{isset($staff3) ? 't' : 'no-border-color'}}">
                                             <div class="px-4">
-                                                <div class="event-date {{isset($staff1) ? 'bg-soft-success' : 'bg-soft-danger'}} text-primary">{{$schedule->start_3}}</div>
+                                                <div class="event-date {{isset($staff3) ? 'bg-soft-success' : 'bg-soft-danger'}} text-primary">{{$schedule->start_3}}</div>
                                                 <h5 class="font-size-16">{{isset($staff3) ? $staff3 : ""}}</h5>
                                             </div>
                                         </li>
-                                        <li class="list-inline-item event-list">
+                                        <li class="list-inline-item event-list {{isset($staff3) ? 't' : 'no-border-color'}}">
                                             <div class="px-4">
-                                                <div class="event-date {{isset($staff1) ? 'bg-soft-success' : 'bg-soft-danger'}} text-primary">{{$schedule->end_3}}</div>
+                                                <div class="event-date {{isset($staff3) ? 'bg-soft-success' : 'bg-soft-danger'}} text-primary">{{$schedule->end_3}}</div>
                                                 <h5 class="font-size-16">{{isset($staff3) ? $staff3 : ""}}</h5>
                                             </div>
                                         </li>                           
