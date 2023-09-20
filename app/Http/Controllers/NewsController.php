@@ -21,7 +21,7 @@ class NewsController extends BaseController
         if (is_null($unitId)){
             $news = News::all();
         } else {
-            $news = News::where("unit_id", $unitId)->get();
+            $news = News::where("unit_id", $unitId)->orderBy('view', 'DESC')->get();
         }
 
         return $this->sendResponse(NewsResource::collection($news), 'News retrieved successfully.');
@@ -61,6 +61,8 @@ class NewsController extends BaseController
     public function show($id)
     {
         $news = News::find($id);
+        $news->view ++;
+        $news->save();
         if (is_null($news)) {
             return $this->sendError('News not found.');
         }
