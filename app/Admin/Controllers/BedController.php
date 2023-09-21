@@ -52,6 +52,36 @@ class BedController extends AdminController
             $rooms = Room::where('zone_id', $zone->id)->get();
             $tab->add($zone->name, View::make('admin.bed_select', compact('rooms')));
         }
+        $url = env('APP_URL') . '/api/bed/status';
+        $script = <<<EOT
+        $('#unlockModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget) // Button that triggered the modal
+            var bedId = button.data('bedid') // Extract info from data-* attributes
+            $('#bed-id').val(bedId);
+        });
+        $('#lockModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget) // Button that triggered the modal
+            var bedId = button.data('bedid'); // Extract info from data-* attributes
+            $('#bed-id').val(bedId);
+        });
+        $('.tag-form-submit').on('click', function(e) {
+            e.preventDefault();
+            $.ajax({
+                type: "POST",
+                url: "$url",
+                data: {'bed_id': $('#bed-id').val()},
+                success: function(response) {
+                    $('#unlockModal').hide();
+                    location.reload();
+                },
+                error: function() {
+                    alert('Error');
+                }
+            });
+            return false;
+        });
+        EOT;
+        Admin::script($script);
         return $content
         ->title("Chọn giường")
         ->description("Chọn giường")
