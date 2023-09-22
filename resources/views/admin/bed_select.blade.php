@@ -26,8 +26,8 @@ use App\Models\AdminUser;
                     <div class="info-box bg-red">
                         <span class="info-box-icon"><i class="fa fa-calendar-minus-o"></i></span>
                         <div class="info-box-content">
-                        <span class="info-box-text">Phòng: {{$room->name}}</span>
-                        <span class="info-box-number">Giường: {{$bed->name}}</span>
+                          <span class="info-box-text">Phòng: {{$room->name}}</span>
+                          <span class="info-box-number">Giường: {{$bed->name}}</span>
                             <div class="progress">
                                 <div class="progress-bar" style="width: 0%">
                                 </div>
@@ -35,11 +35,12 @@ use App\Models\AdminUser;
                             <span class="progress-description">
                             Trạng thái: Khoá
                             </span>
-                            <button type="button" class="btn btn-success" 
+                        </div>
+
+                        <button type="button" class="btn btn-success" 
                             data-bedid="{{$bed->id}}" data-toggle="modal" data-target="#unlockModal" style="margin-top: 15px;">
                             <i class="fa fa-unlock"></i> Mở khoá
-                            </button>
-                        </div>
+                        </button>
                     </div>
                 </div>
             @else
@@ -60,11 +61,15 @@ use App\Models\AdminUser;
                             <span class="progress-description">
                             Trạng thái: Trống
                             </span>
-                            <button type="button" class="btn btn-danger" 
+                        </div>
+                        <button type="button" class="btn btn-danger" 
                             data-bedid="{{$bed->id}}" data-toggle="modal" data-target="#lockModal" style="margin-top: 15px;">
                             <i class="fa fa-unlock"></i> Khoá
-                            </button>
-                        </div>
+                        </button>
+                        <button type="button" class="btn btn-success" 
+                            data-bedid="{{$bed->id}}" data-toggle="modal" data-target="#lockModal" style="margin-top: 15px;">
+                            <i class="fa fa-unlock"></i> Chọn phòng
+                        </button>
                     </div>
                 </div>
                 @else
