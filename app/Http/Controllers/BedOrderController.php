@@ -7,12 +7,16 @@ use DB;
 use Config;
 use Carbon\Carbon;
 use App\Models\Bed;
-use App\Models\WorkSchedule;
-use App\Models\RoomOrder;
-use App\Models\Service;
+use Illuminate\Support\Facades\View;
 
 class BedOrderController extends Controller
 {
+
+    public function selectBed(Request $request)
+    {
+        $bed = Bed::find($request->post('bed_id'));
+        return View::make('admin.bed_select_modal', compact('bed'));
+    }
 
     public function updateStatus(Request $request)
     {

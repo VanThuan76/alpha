@@ -52,24 +52,44 @@ class BedController extends AdminController
             $rooms = Room::where('zone_id', $zone->id)->get();
             $tab->add($zone->name, View::make('admin.bed_select', compact('rooms')));
         }
-        $url = env('APP_URL') . '/api/bed/status';
+        $url = env('APP_URL') . '/api';
         $script = <<<EOT
         $('#unlockModal').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget) // Button that triggered the modal
             var bedId = button.data('bedid') // Extract info from data-* attributes
-            $('#bed-id').val(bedId);
+            $('.bed-id').val(bedId);
         });
         $('#lockModal').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget) // Button that triggered the modal
             var bedId = button.data('bedid'); // Extract info from data-* attributes
-            $('#bed-id').val(bedId);
+            $('.bed-id').val(bedId);
         });
+        $('.btn-select-bed').on('click', function(e) {
+            var bedId = $(this).data('bedid'); // Extract info from data-* attributes
+            $.ajax({
+                type: "POST",
+                url: "$url/bed/select",
+                data: {'bed_id': bedId},
+                success: function(response) {
+                    $('#bedSelect').find('.modal-body').html(response);
+                    $('#bedSelect').modal('show');
+                },
+                error: function() {
+                    alert('Error');
+                }
+            });
+        });
+        //$('#bedSelect').on('show.bs.modal', function (event) {
+        //    var button = $(event.relatedTarget) // Button that triggered the modal
+        //    var bedId = button.data('bedid'); // Extract info from data-* attributes
+        //    $('#bed-id').val(bedId);
+        //});
         $('.tag-form-submit').on('click', function(e) {
             e.preventDefault();
             $.ajax({
                 type: "POST",
-                url: "$url",
-                data: {'bed_id': $('#bed-id').val()},
+                url: "$url/bed/status",
+                data: {'bed_id': $('.bed-id').val()},
                 success: function(response) {
                     $('#unlockModal').hide();
                     location.reload();

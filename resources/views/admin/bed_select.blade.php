@@ -66,9 +66,9 @@ use App\Models\AdminUser;
                             data-bedid="{{$bed->id}}" data-toggle="modal" data-target="#lockModal" style="margin-top: 15px;">
                             <i class="fa fa-unlock"></i> Khoá
                         </button>
-                        <button type="button" class="btn btn-success" 
-                            data-bedid="{{$bed->id}}" data-toggle="modal" data-target="#lockModal" style="margin-top: 15px;">
-                            <i class="fa fa-unlock"></i> Chọn phòng
+                        <button type="button" class="btn btn-success btn-select-bed"
+                            data-bedid="{{$bed->id}}" style="margin-top: 15px;">
+                            <i class="fa fa-unlock"></i> Chọn giường
                         </button>
                     </div>
                 </div>
@@ -145,7 +145,7 @@ use App\Models\AdminUser;
         <form class="tagForm" id="tag-form"  >
           <div class="form-group">
             <label for="bed-name" class="control-label">Mở khoá giường</label>
-            <input type="hidden" class="form-control" id="bed-id"/>
+            <input type="hidden" class="form-control bed-id" id="bed-id"/>
           </div>
         </form>
       </div>
@@ -167,9 +167,25 @@ use App\Models\AdminUser;
         <form class="tagForm" id="tag-form"  >
           <div class="form-group">
             <label for="bed-name" class="control-label">Khoá giường</label>
-            <input type="hidden" class="form-control" id="bed-id"/>
+            <input type="hidden" class="form-control bed-id" id="bed-id"/>
           </div>
         </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" id="tag-form-submit" class="tag-form-submit btn btn-primary">Đồng ý</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="bedSelect" tabindex="-1" role="dialog" >
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" >Chọn giường</h4>
+      </div>
+      <div class="modal-body">
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
