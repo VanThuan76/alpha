@@ -13,51 +13,41 @@ use App\Models\AdminUser;
     <div class="form-group">
       <label>Chọn khách hàng</label>
       <select class="form-control">
-      <option>option 1</option>
-      <option>option 2</option>
-      <option>option 3</option>
-      <option>option 4</option>
-      <option>option 5</option>
+        @foreach ($customers as $id=>$customer)
+          <option value={{$customer->id}}>{{$customer->name}}</option>
+        @endforeach
       </select>
     </div>
     <div class="form-group">
       <label>Chọn dịch vụ</label>
       <select class="form-control">
-      <option>option 1</option>
-      <option>option 2</option>
-      <option>option 3</option>
-      <option>option 4</option>
-      <option>option 5</option>
+        @foreach ($services as $id=>$name)
+          <option value={{$id}}>{{$name}}</option>
+        @endforeach
       </select>
     </div>
     <div class="form-group">
       <label>Chọn kỹ thuật viên 1:</label>
       <select class="form-control">
-      <option>option 1</option>
-      <option>option 2</option>
-      <option>option 3</option>
-      <option>option 4</option>
-      <option>option 5</option>
+        @foreach ($staffs as $id=>$name)
+          <option value={{$id}}>{{$name}}</option>
+        @endforeach
       </select>
     </div>
     <div class="form-group">
       <label>Chọn kỹ thuật viên 2:</label>
       <select class="form-control">
-      <option>option 1</option>
-      <option>option 2</option>
-      <option>option 3</option>
-      <option>option 4</option>
-      <option>option 5</option>
+        @foreach ($staffs as $id=>$name)
+          <option value={{$id}}>{{$name}}</option>
+        @endforeach
       </select>
     </div>
     <div class="form-group">
-      <label>Chọn người xông xục:</label>
+      <label>Chọn người xông sục:</label>
       <select class="form-control">
-      <option>option 1</option>
-      <option>option 2</option>
-      <option>option 3</option>
-      <option>option 4</option>
-      <option>option 5</option>
+        @foreach ($staffs as $id=>$name)
+          <option value={{$id}}>{{$name}}</option>
+        @endforeach
       </select>
     </div>
   </div>

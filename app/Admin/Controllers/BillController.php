@@ -6,7 +6,7 @@ use App\Models\Bill;
 use App\Models\User;
 use App\Models\AdminUser;
 use App\Models\Service;
-use App\Models\RoomOrder;
+use App\Models\BedOrder;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
@@ -152,15 +152,15 @@ class BillController extends AdminController
             $order = 0;
             foreach($serviceIds as $id => $count){
                 for($i = 0; $i < $count; $i ++){
-                    $roomOrder = new RoomOrder();
-                    $roomOrder->bill_id = $form->model()->id;
-                    $roomOrder->user_id = $form->model()->user_id;
-                    $roomOrder->service_id = $id;
-                    $roomOrder->unit_id = Admin::user()->active_unit_id;
-                    $roomOrder->duration = Service::find($id)->duration;
+                    $bedOrder = new BedOrder();
+                    $bedOrder->bill_id = $form->model()->id;
+                    $bedOrder->user_id = $form->model()->user_id;
+                    $bedOrder->service_id = $id;
+                    $bedOrder->unit_id = Admin::user()->active_unit_id;
+                    $bedOrder->duration = Service::find($id)->duration;
                     $order ++;
-                    $roomOrder->order = $order;
-                    $roomOrder->save();
+                    $bedOrder->order = $order;
+                    $bedOrder->save();
                 }
             }
         });

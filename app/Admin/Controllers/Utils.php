@@ -6,12 +6,20 @@ use Crc16\Crc16;
 use App\Models\Room;
 use App\Models\ReceiverAccount;
 use App\Models\Branch;
+use App\Models\Zone;
+use App\Models\Bed;
 use Encore\Admin\Facades\Admin;
 use Illuminate\Support\Facades\DB;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 abstract class Utils
 {
+    public static function getUnitIdFromBed($bedId){
+        $room = Room::find(Bed::find($bedId)->room_id);
+        $branch = Branch::find(Zone::find($room->zone_id)->branch_id);
+        return $branch->unit_id;
+    }
+
     public static function getBranchs(){
         return Branch::where('unit_id', Admin::user()->active_unit_id);
     }

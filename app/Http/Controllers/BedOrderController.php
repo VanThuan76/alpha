@@ -6,7 +6,12 @@ use Illuminate\Http\Request;
 use DB;
 use Config;
 use Carbon\Carbon;
+use App\Models\User;
+use App\Models\Service;
 use App\Models\Bed;
+use App\Models\AdminUser;
+use App\Models\BedOrder;
+use App\Admin\Controllers\Utils;
 use Illuminate\Support\Facades\View;
 
 class BedOrderController extends Controller
@@ -15,7 +20,15 @@ class BedOrderController extends Controller
     public function selectBed(Request $request)
     {
         $bed = Bed::find($request->post('bed_id'));
-        return View::make('admin.bed_select_modal', compact('bed'));
+        $unitId = Utils::getUnitIdFromBed($request->post('bed_id'));
+        
+        $customers = User::whereIn('id', BedOrder::where('status', 0)->where('unit_id', $unitId)->pluck('user_id'))->get();
+        $services = array();
+        if (count($customers) > 0){
+            $services = Service::whereIn('id', BedOrder::where('status', 0)->where('user_id', $customers->first()->id)->pluck('service_id'))->pluck('name', 'id');
+        }
+        $staffs = AdminUser::where('active_unit_id', $unitId)->pluck('name', 'id');
+        return View::make('admin.bed_select_modal', compact('bed', 'customers', 'services', 'staffs'));
     }
 
     public function updateStatus(Request $request)
