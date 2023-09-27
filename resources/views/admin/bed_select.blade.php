@@ -189,7 +189,7 @@ use App\Models\AdminUser;
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" id="tag-form-submit" class="tag-form-submit btn btn-primary">Đồng ý</button>
+        <button type="button" id="select-form-submit" class="select-form-submit btn btn-primary">Đồng ý</button>
       </div>
     </div>
   </div>

@@ -68,7 +68,7 @@ class BedController extends AdminController
             var bedId = $(this).data('bedid'); // Extract info from data-* attributes
             $.ajax({
                 type: "POST",
-                url: "$url/bed/select",
+                url: "$url/bed/show",
                 data: {'bed_id': bedId},
                 success: function(response) {
                     $('#bedSelect').find('.modal-body').html(response);
@@ -79,11 +79,6 @@ class BedController extends AdminController
                 }
             });
         });
-        //$('#bedSelect').on('show.bs.modal', function (event) {
-        //    var button = $(event.relatedTarget) // Button that triggered the modal
-        //    var bedId = button.data('bedid'); // Extract info from data-* attributes
-        //    $('#bed-id').val(bedId);
-        //});
         $('.tag-form-submit').on('click', function(e) {
             e.preventDefault();
             $.ajax({
@@ -91,8 +86,33 @@ class BedController extends AdminController
                 url: "$url/bed/status",
                 data: {'bed_id': $('.bed-id').val()},
                 success: function(response) {
-                    $('#unlockModal').hide();
+                    $('#unlockModal').modal('hide');
                     location.reload();
+                },
+                error: function() {
+                    alert('Error');
+                }
+            });
+            return false;
+        });
+        $('.select-form-submit').on('click', function(e) {
+            e.preventDefault();
+            var formData = $('#select-form').serializeArray();
+            var data = {};
+            $.each(formData, function(i, v) {
+                data[v.name] = v.value;
+            });
+            if (data['staff_1'] == data['staff_2'] || data['staff_1'] == data['staff_2'] || data['staff_1'] == data['staff_2']) {
+                $.admin.toastr.error('Nhân viên chọn trùng tên!', '', {positionClass:"toast-top-center"}); 
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "$url/bed/select",
+                data: $('#select-form').serialize(),
+                success: function(response) {
+                    $('#bedSelect').modal('hide');
+                    //location.reload();
                 },
                 error: function() {
                     alert('Error');

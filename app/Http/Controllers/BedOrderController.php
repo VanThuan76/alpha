@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\View;
 class BedOrderController extends Controller
 {
 
-    public function selectBed(Request $request)
+    public function showBed(Request $request)
     {
         $bed = Bed::find($request->post('bed_id'));
         $unitId = Utils::getUnitIdFromBed($request->post('bed_id'));
@@ -29,6 +29,11 @@ class BedOrderController extends Controller
         }
         $staffs = AdminUser::where('active_unit_id', $unitId)->pluck('name', 'id');
         return View::make('admin.bed_select_modal', compact('bed', 'customers', 'services', 'staffs'));
+    }
+
+    public function selectBed(Request $request)
+    {
+        
     }
 
     public function updateStatus(Request $request)
