@@ -20,9 +20,9 @@ use App\Models\AdminUser;
     </div>
     <div class="form-group">
       <label>Chọn dịch vụ</label>
-      <select class="form-control" name="service-id" id="service-id">
-        @foreach ($services as $id=>$name)
-          <option value={{$id}}>{{$name}}</option>
+      <select class="form-control" name="order-id" id="order-id">
+        @foreach ($orders as $id=>$order)
+          <option value={{$order->id}}>{{$order->service->name}}</option>
         @endforeach
       </select>
     </div>

@@ -103,7 +103,6 @@ class BedController extends AdminController
                 data: {'userId': userId},
                 success: function(response) {
                     $('#service-id').html(response);
-                    //$('#bedSelect').modal('show');
                 },
                 error: function() {
                     alert('Error');
@@ -117,6 +116,10 @@ class BedController extends AdminController
             $.each(formData, function(i, v) {
                 data[v.name] = v.value;
             });
+            if (!data['order-id']) {
+                $.admin.toastr.error('Không có khách hàng!', '', {positionClass:"toast-top-center"}); 
+                return;
+            };
             if (data['staff_1'] == data['staff_2'] || data['staff_1'] == data['staff_2'] || data['staff_1'] == data['staff_2']) {
                 $.admin.toastr.error('Nhân viên chọn trùng tên!', '', {positionClass:"toast-top-center"}); 
                 return;
@@ -127,7 +130,7 @@ class BedController extends AdminController
                 data: $('#select-form').serialize(),
                 success: function(response) {
                     $('#bedSelect').modal('hide');
-                    //location.reload();
+                    location.reload();
                 },
                 error: function() {
                     alert('Error');

@@ -45,7 +45,7 @@ use App\Models\AdminUser;
                 </div>
             @else
                 <?php
-                    $order = BedOrder::where('bed_id', $bed->id)->where('status', '<>', 2)->first();
+                    $order = BedOrder::where('bed_id', $bed->id)->orderBy('id', 'DESC')->first();
                 ?>
                 @if(is_null($order))
                 <div class="col-md-3 col-sm-4 col-xs-12">
@@ -75,7 +75,7 @@ use App\Models\AdminUser;
                 @else
                     @if($order->status == 1)
                     <div class="col-md-3 col-sm-4 col-xs-12">
-                        <div class="info-box bg-red">
+                        <div class="info-box bg-yellow">
                             <span class="info-box-icon"><i class="fa fa-calendar-minus-o"></i></span>
                             <div class="info-box-content">
                             <span class="info-box-text">Phòng: {{$room->name}}</span>
@@ -85,7 +85,7 @@ use App\Models\AdminUser;
                                     </div>
                                 </div>
                                 <span class="progress-description">
-                                Trạng thái: Khoá
+                                Trạng thái: Đang sử dụng
                                 </span>
                                 <button type="button" class="btn btn-danger" 
                                 data-bedid="{{$bed->id}}" data-toggle="modal" data-target="#lockModal" style="margin-top: 15px;">

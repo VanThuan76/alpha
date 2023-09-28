@@ -24,11 +24,12 @@ class BedOrderController extends Controller
         
         $customers = User::whereIn('id', BedOrder::where('status', 0)->where('unit_id', $unitId)->pluck('user_id'))->get();
         $services = array();
+        $orders = array();
         if (count($customers) > 0){
-            $services = Service::whereIn('id', BedOrder::where('status', 0)->where('user_id', $customers->first()->id)->pluck('service_id'))->pluck('name', 'id');
+            $orders = BedOrder::where('status', 0)->where('user_id', $customers->first()->id)->get();
         }
         $staffs = AdminUser::where('active_unit_id', $unitId)->pluck('name', 'id');
-        return View::make('admin.bed_select_modal', compact('bed', 'customers', 'services', 'staffs'));
+        return View::make('admin.bed_select_modal', compact('bed', 'customers', 'orders', 'staffs'));
     }
 
     public function getServices(Request $request)
@@ -39,7 +40,15 @@ class BedOrderController extends Controller
 
     public function selectBed(Request $request)
     {
-        
+        $order = BedOrder::find($request->post('order-id'));
+        $order->technician_id1 = $request->post('staff_1');
+        $order->technician_id2 = $request->post('staff_3');
+        $order->technician_id3 = $request->post('staff_4');
+        $order->bed_id = $request->post('bed-id');
+        $order->status = 1;
+        $order->start_time = Carbon::now();
+        $order->save();
+        return json_encode($order);
     }
 
     public function updateStatus(Request $request)
