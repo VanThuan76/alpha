@@ -95,6 +95,22 @@ class BedController extends AdminController
             });
             return false;
         });
+        $('#bedSelect').on('change', '#customer-id', function() {
+        //$('#customer-id').on('click', function() {
+            var userId = $(this).find('option:selected').val();
+            $.ajax({
+                type: "POST",
+                url: "$url/bed/getOrder",
+                data: {'userId': userId},
+                success: function(response) {
+                    $('#bedSelect').find('.modal-body').html(response);
+                    $('#bedSelect').modal('show');
+                },
+                error: function() {
+                    alert('Error');
+                }
+            });
+        });
         $('.select-form-submit').on('click', function(e) {
             e.preventDefault();
             var formData = $('#select-form').serializeArray();

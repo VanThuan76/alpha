@@ -12,7 +12,7 @@ use App\Models\AdminUser;
     <input type="hidden" class="form-control bed-id" name="bed-id" id="bed-id" value="{{$bed->id}}"/>
     <div class="form-group">
       <label>Chọn khách hàng</label>
-      <select class="form-control" name="customer-id">
+      <select class="form-control" name="customer-id" id="customer-id">
         @foreach ($customers as $id=>$customer)
           <option value={{$customer->id}}>{{$customer->name}}</option>
         @endforeach
