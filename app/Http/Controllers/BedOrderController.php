@@ -31,6 +31,12 @@ class BedOrderController extends Controller
         return View::make('admin.bed_select_modal', compact('bed', 'customers', 'services', 'staffs'));
     }
 
+    public function getServices(Request $request)
+    {
+        $bedOrders = BedOrder::where('status', 0)->where('user_id', $request->post('userId'))->get();
+        return View::make('admin.service_select', compact('bedOrders'));
+    }
+
     public function selectBed(Request $request)
     {
         

@@ -96,15 +96,14 @@ class BedController extends AdminController
             return false;
         });
         $('#bedSelect').on('change', '#customer-id', function() {
-        //$('#customer-id').on('click', function() {
             var userId = $(this).find('option:selected').val();
             $.ajax({
                 type: "POST",
-                url: "$url/bed/getOrder",
+                url: "$url/bed/getServices",
                 data: {'userId': userId},
                 success: function(response) {
-                    $('#bedSelect').find('.modal-body').html(response);
-                    $('#bedSelect').modal('show');
+                    $('#service-id').html(response);
+                    //$('#bedSelect').modal('show');
                 },
                 error: function() {
                     alert('Error');
