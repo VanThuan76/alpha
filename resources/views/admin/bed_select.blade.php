@@ -4,6 +4,7 @@ use App\Models\Room;
 use App\Models\Branch;
 use App\Models\Zone;
 use App\Models\AdminUser;
+use Carbon\Carbon;
 ?>
 @foreach ($rooms as $room)
     <div class="box">
@@ -76,22 +77,48 @@ use App\Models\AdminUser;
                     @if($order->status == 1)
                     <div class="col-md-3 col-sm-4 col-xs-12">
                         <div class="info-box bg-yellow">
-                            <span class="info-box-icon"><i class="fa fa-calendar-minus-o"></i></span>
+                            <span class="info-box-icon"><i class="fa fa-calendar-check-o"></i></span>
                             <div class="info-box-content">
                             <span class="info-box-text">Phòng: {{$room->name}}</span>
                             <span class="info-box-number">Giường: {{$bed->name}}</span>
                                 <div class="progress">
-                                    <div class="progress-bar" style="width: 0%">
+                                  <?php 
+                                  $date = Carbon::parse($order->start_time);
+                                  $now = Carbon::now();
+
+                                  $diff = $now->diffInMinutes($date);
+                                  $diff = $diff > $order->duration ? $order->duration : $diff;
+                                  $percentge = $diff * 100 / $order->duration; 
+                                  ?>
+                                    <div class="progress-bar" style="width: {{$percentge}}%">
                                     </div>
                                 </div>
                                 <span class="progress-description">
                                 Trạng thái: Đang sử dụng
                                 </span>
-                                <button type="button" class="btn btn-danger" 
-                                data-bedid="{{$bed->id}}" data-toggle="modal" data-target="#lockModal" style="margin-top: 15px;">
-                                <i class="fa fa-unlock"></i> Khoá
-                                </button>
+                                <span class="progress-description">
+                                Khách hàng: {{$order->user->name}}
+                                </span>
+                                <span class="progress-description">
+                                Dịch vụ: {{$order->service->name}}
+                                </span>
+                                <span class="progress-description">
+                                Bắt đầu: {{$order->start_time}}
+                                </span>
+                                <span class="progress-description">
+                                Thời gian: {{$order->duration}} phút
+                                </span>
+                                <span class="progress-description">
+                                Thời gian đã dùng: {{$diff}} phút
+                                </span>
+                                <span class="progress-description">
+                                Nhân viên: {{$order->technician1->name}}
+                                </span>
                             </div>
+                          <button type="button" class="btn btn-danger" 
+                              data-bedid="{{$bed->id}}" data-toggle="modal" data-target="#lockModal" style="margin-top: 15px;">
+                              <i class="fa fa-unlock"></i> Khoá
+                              </button>
                         </div>
                     </div>
                     @elseif($order->status == 2)

@@ -22,6 +22,7 @@ Use Encore\Admin\Admin;
 use Encore\Admin\Grid\Column;
 
 Admin::css(env('APP_URL').'/css/timeline.css');
+Admin::css(env('APP_URL').'/css/style.css');
 
 Column::extend('number', function ($value) {
     return number_format($value);

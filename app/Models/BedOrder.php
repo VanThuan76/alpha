@@ -18,9 +18,19 @@ class BedOrder extends Model
         return $this->belongsTo(Service::class, 'service_id');
     }
 
-    public function technician()
+    public function technician1()
     {
-        return $this->belongsTo(AdminUser::class, 'technician_id');
+        return $this->belongsTo(AdminUser::class, 'technician_id1');
+    }
+
+    public function technician2()
+    {
+        return $this->belongsTo(AdminUser::class, 'technician_id2');
+    }
+
+    public function technician3()
+    {
+        return $this->belongsTo(AdminUser::class, 'technician_id3');
     }
 
 	protected $hidden = [
