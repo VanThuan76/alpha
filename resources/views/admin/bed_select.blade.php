@@ -46,7 +46,7 @@ use Carbon\Carbon;
                 </div>
             @else
                 <?php
-                    $order = BedOrder::where('bed_id', $bed->id)->orderBy('id', 'DESC')->first();
+                    $order = BedOrder::where('bed_id', $bed->id)->where('status', '<>', 2)->orderBy('id', 'DESC')->first();
                 ?>
                 @if(is_null($order))
                 <div class="col-md-3 col-sm-4 col-xs-12">
@@ -105,17 +105,19 @@ use Carbon\Carbon;
                                 <span class="progress-description">
                                 Bắt đầu: {{$order->start_time}}
                                 </span>
+                                <input type="hidden" class="start-time" value="{{$order->start_time}}"/>
                                 <span class="progress-description">
                                 Thời gian: {{$order->duration}} phút
                                 </span>
-                                <span class="progress-description">
-                                Thời gian đã dùng: {{$diff}} phút
+                                <input type="hidden" class="duration" value="{{$order->duration}}"/>
+                                <span class="progress-description countdown">
+                                Thời gian còn lại: {{$order->duration - $diff}} phút
                                 </span>
                                 <span class="progress-description">
                                 Nhân viên: {{$order->technician1->name}}
                                 </span>
                             </div>
-                          <button type="button" class="btn btn-danger" 
+                            <button type="button" class="btn btn-danger" 
                               data-bedid="{{$bed->id}}" data-toggle="modal" data-target="#lockModal" style="margin-top: 15px;">
                               <i class="fa fa-unlock"></i> Khoá
                               </button>

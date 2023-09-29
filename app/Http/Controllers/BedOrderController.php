@@ -63,4 +63,21 @@ class BedOrderController extends Controller
         return json_encode($bed);
     }
     
+    public function checkBeds(Request $request)
+    {
+        $updatedBedOrders = array();
+        $bedOrders = BedOrder::where('status', 1)->get();
+        foreach($bedOrders as $i => $bedOrder){
+            $startTime = Carbon::parse($bedOrder->start_time)->timezone(Config::get('app.timezone')); 
+            $duration = Service::find($bedOrder->service_id)->duration;
+            $startTime->addMinutes($duration);
+            if ($startTime < Carbon::now()) {
+                $bedOrder->status = 2;
+                $bedOrder->end_time = Carbon::now();
+                $bedOrder->save();
+                array_push($updatedBedOrders, $bedOrder);
+            }
+        }
+        return json_encode($updatedBedOrders);
+    }
 }

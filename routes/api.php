@@ -24,6 +24,7 @@ Route::post('bed/status', 'BedOrderController@updateStatus');
 Route::post('bed/show', 'BedOrderController@showBed');
 Route::post('bed/select', 'BedOrderController@selectBed');
 Route::post('bed/getServices', 'BedOrderController@getServices');
+Route::get('bed/checkBeds', 'BedOrderController@checkBeds');
 Route::get('customer/services', 'CustomerController@services');
 Route::get('workSchedule/generate', 'WorkScheduleController@generate');
 Route::get('roomOrder/checkRooms', 'RoomOrderController@checkRooms');

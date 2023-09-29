@@ -138,6 +138,15 @@ class BedController extends AdminController
             });
             return false;
         });
+        setInterval(function () {
+            $('.bg-yellow').each(function(){
+                var start_time = $(this).find('.start-time').val();
+                var duration = parseInt($(this).find('.duration').val());
+                var used_time = Math.abs(new Date() - new Date(start_time.replace(/-/g,'/'))) / 60000;
+                $(this).find('.countdown').html('Thời gian còn lại: ' + parseFloat(duration - used_time > 0 ? duration - used_time : 0).toFixed(2) + ' phút');
+            });
+            $('.room-order').parents("td").css('background-color', '#BDECB6');
+        }, 10000);
         EOT;
         Admin::script($script);
         return $content
