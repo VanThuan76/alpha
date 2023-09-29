@@ -121,6 +121,10 @@ use Carbon\Carbon;
                               data-bedid="{{$bed->id}}" data-toggle="modal" data-target="#lockModal" style="margin-top: 15px;">
                               <i class="fa fa-unlock"></i> Khoá
                               </button>
+                            <button type="button" class="btn btn-primary" 
+                              data-orderid="{{$order->id}}" data-toggle="modal" data-target="#finishModal" style="margin-top: 15px;">
+                              <i class="fa fa-unlock"></i> Kết thúc
+                              </button>
                         </div>
                     </div>
                     @elseif($order->status == 2)
@@ -181,6 +185,28 @@ use Carbon\Carbon;
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         <button type="button" id="tag-form-submit" class="tag-form-submit btn btn-primary">Đồng ý</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="finishModal" tabindex="-1" role="dialog" >
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title"> Kết thúc</h4>
+      </div>
+      <div class="modal-body">
+        <form class="tagForm" id="tag-form"  >
+          <div class="form-group">
+            <label for="bed-name" class="control-label">Kết thúc giường</label>
+            <input type="hidden" class="form-control order-id" id="order-id"/>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" id="finish-form-submit" class="finish-form-submit btn btn-primary">Đồng ý</button>
       </div>
     </div>
   </div>

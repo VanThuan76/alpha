@@ -64,6 +64,11 @@ class BedController extends AdminController
             var bedId = button.data('bedid'); // Extract info from data-* attributes
             $('.bed-id').val(bedId);
         });
+        $('#finishModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget) // Button that triggered the modal
+            var orderId = button.data('orderid'); // Extract info from data-* attributes
+            $('.order-id').val(orderId);
+        });
         $('.btn-select-bed').on('click', function(e) {
             var bedId = $(this).data('bedid'); // Extract info from data-* attributes
             $.ajax({
@@ -87,6 +92,22 @@ class BedController extends AdminController
                 data: {'bed_id': $('.bed-id').val()},
                 success: function(response) {
                     $('#unlockModal').modal('hide');
+                    location.reload();
+                },
+                error: function() {
+                    alert('Error');
+                }
+            });
+            return false;
+        });
+        $('#finish-form-submit').on('click', function(e) {
+            e.preventDefault();
+            $.ajax({
+                type: "POST",
+                url: "$url/bed/finish",
+                data: {'order-id': $('.order-id').val()},
+                success: function(response) {
+                    $('#finishModal').modal('hide');
                     location.reload();
                 },
                 error: function() {

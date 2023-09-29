@@ -62,7 +62,15 @@ class BedOrderController extends Controller
         $bed->save();
         return json_encode($bed);
     }
-    
+
+    public function finishOrder(Request $request)
+    {
+        $order = BedOrder::find($request->post('order-id'));
+        $order->status = 2;
+        $order->save();
+        return json_encode($order);
+    }
+
     public function checkBeds(Request $request)
     {
         $updatedBedOrders = array();
