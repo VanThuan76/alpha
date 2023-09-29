@@ -143,7 +143,9 @@ class BedController extends AdminController
                 var start_time = $(this).find('.start-time').val();
                 var duration = parseInt($(this).find('.duration').val());
                 var used_time = Math.abs(new Date() - new Date(start_time.replace(/-/g,'/'))) / 60000;
-                $(this).find('.countdown').html('Thời gian còn lại: ' + parseFloat(duration - used_time > 0 ? duration - used_time : 0).toFixed(2) + ' phút');
+                used_time = used_time > duration ? duration : used_time;
+                $(this).find('.countdown').html('Thời gian còn lại: ' + parseFloat(duration - used_time).toFixed(2) + ' phút');
+                $(this).find('.progress-bar').css('width', used_time*100/duration + '%');
             });
             $('.room-order').parents("td").css('background-color', '#BDECB6');
         }, 10000);
