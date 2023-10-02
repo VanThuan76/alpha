@@ -29,6 +29,7 @@ class ServiceController extends AdminController
         
         $grid->column('name', __('Name'))->filter('like');
         $grid->column('code', __('Code'))->filter('like');
+        $grid->column('image', __('Image'))->image();
         $grid->column('duration', __('Duration'))->filter('like');
         $grid->column('staff_number', __('Số nhân viên'));
         $grid->column('price', __('Price'))->number()->filter('like');
@@ -56,6 +57,7 @@ class ServiceController extends AdminController
 
         $show->field('id', __('Id'));
         $show->field('name', __('Name'));
+        $show->field('image', __('Image'));
         $show->field('code', __('Code'));
         $show->field('duration', __('Duration'));
         $show->field('staff_number', __('Số nhân viên'));
@@ -79,6 +81,7 @@ class ServiceController extends AdminController
 
         $form->text('name', __('Name'));
         $form->text('code', __('Code'));
+        $form->image('image', __('Image'));
         $form->number('duration', __('Duration'));
         $form->number('staff_number', __('Số nhân viên'));
         $form->currency('price', __('Price'));

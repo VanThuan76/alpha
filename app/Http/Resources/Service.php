@@ -22,6 +22,7 @@ class Service extends JsonResource
             'price' => $this->price,
             'status' => $this->status,
             'unit_id' => $this->unit_id,
+            'image' => $this->image,
             'staff_number' => $this->staff_number,
             'company_amount' => $this->company_amount,
             'created_at' => $this->created_at->format('d/m/Y'),
