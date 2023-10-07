@@ -16,11 +16,11 @@ class Technician extends JsonResource
     {
         return [
             'id' => $this->id,
-            'username' => $this->title,
-            'name' => $this->content,
-            'avatar' => $this->thumbnail,
-            'phone_number' => $this->status,
-            'active_unit_id' => $this->image,
+            'username' => $this->username,
+            'name' => $this->name,
+            'avatar' => $this->avatar,
+            'phone_number' => $this->phone_number,
+            'active_unit_id' => $this->active_unit_id,
             'created_at' => $this->created_at->format('d/m/Y'),
             'updated_at' => $this->updated_at->format('d/m/Y'),
         ];
