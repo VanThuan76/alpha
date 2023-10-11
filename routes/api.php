@@ -18,24 +18,29 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('customer', 'CustomerController@find');
-Route::get('customer/update', 'CustomerController@update');
-Route::post('bed/status', 'BedOrderController@updateStatus');
-Route::post('bed/show', 'BedOrderController@showBed');
-Route::post('bed/select', 'BedOrderController@selectBed');
-Route::post('bed/getServices', 'BedOrderController@getServices');
-Route::get('bed/checkBeds', 'BedOrderController@checkBeds');
-Route::post('bed/finish', 'BedOrderController@finishOrder');
-Route::get('customer/services', 'CustomerController@services');
-Route::get('workSchedule/generate', 'WorkScheduleController@generate');
-Route::get('roomOrder/checkRooms', 'RoomOrderController@checkRooms');
-Route::get('roomOrder/getService', 'RoomOrderController@getService');
+Route::post('login', 'Auth\LoginController@login');
+Route::post('logout', 'Auth\LoginController@logout');
+Route::post('register', 'Auth\RegisterController@register');
+Route::post('reset-password', 'Auth\ResetPasswordController@resetPassword');
+
+Route::get('customer', 'Crm_CustomerController@find');
+Route::get('customer/update', 'Crm_CustomerController@update');
+Route::post('bed/status', 'Facility_BedOrderController@updateStatus');
+Route::post('bed/show', 'Facility_BedOrderController@showBed');
+Route::post('bed/select', 'Facility_BedOrderController@selectBed');
+Route::post('bed/getServices', 'Facility_BedOrderController@getServices');
+Route::get('bed/checkBeds', 'Facility_BedOrderController@checkBeds');
+Route::post('bed/finish', 'Facility_BedOrderController@finishOrder');
+Route::get('customer/services', 'Crm_CustomerController@services');
+Route::get('workSchedule/generate', 'Operation_WorkScheduleController@generate');
+Route::get('roomOrder/checkRooms', 'Operation_RoomOrderController@checkRooms');
+Route::get('roomOrder/getService', 'Operation_RoomOrderController@getService');
 
 Route::post('register', 'RegisterController@register');
 Route::post('login', 'RegisterController@login');
 Route::middleware('auth:api')->group( function () {
-    Route::resource('units', 'UnitController');
-    Route::resource('news', 'NewsController');
-    Route::resource('services', 'ServiceController');
+    Route::resource('units', 'Facility_UnitController');
+    Route::resource('news', 'Mkt_NewsController');
+    Route::resource('services', 'Prod_ServiceController');
     Route::resource('technicians', 'TechnicianController');
 });

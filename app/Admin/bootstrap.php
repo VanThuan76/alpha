@@ -20,6 +20,9 @@
 use Carbon\Carbon;
 Use Encore\Admin\Admin;
 use Encore\Admin\Grid\Column;
+use Illuminate\Support\Facades\Config;
+use Encore\Admin\Facades\Admin as AdminFacade;
+
 
 Admin::css(env('APP_URL').'/css/timeline.css');
 Admin::css(env('APP_URL').'/css/style.css');
@@ -36,5 +39,9 @@ Column::extend('vndate', function ($value) {
     $carbonDate = Carbon::parse($value)->timezone(Config::get('app.timezone'));
     return $carbonDate->format('d/m/Y - H:i:s');
 });
-    
+
 Encore\Admin\Form::forget(['map', 'editor']);
+Admin::css(env('APP_URL').'/css/main.css');
+AdminFacade::navbar(function (\Encore\Admin\Widgets\Navbar $navbar) {
+    $navbar->right(new \App\Admin\Extensions\Nav\Links());
+});

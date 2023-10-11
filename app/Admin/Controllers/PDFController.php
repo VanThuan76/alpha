@@ -1,11 +1,10 @@
 <?php
 namespace App\Admin\Controllers;
 
-use App\Models\Bill;
-use App\Models\Service;
+use App\Models\Product\Service;
+use App\Models\Sales\Bill;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Codedge\Fpdf\Fpdf\Fpdf;
  
 class PDFController extends Controller
 {
@@ -15,7 +14,6 @@ class PDFController extends Controller
     {
          
     }
- 
     public function createPDF(Request $request)
     {
         $id = $request->input('id');

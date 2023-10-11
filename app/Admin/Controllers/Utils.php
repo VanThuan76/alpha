@@ -2,14 +2,13 @@
 
 namespace App\Admin\Controllers;
 
+use App\Models\Financial\ReceiverAccount;
 use Crc16\Crc16;
-use App\Models\Room;
-use App\Models\ReceiverAccount;
-use App\Models\Branch;
-use App\Models\Zone;
-use App\Models\Bed;
+use App\Models\Facility\Room;
+use App\Models\Facility\Branch;
+use App\Models\Facility\Zone;
+use App\Models\Facility\Bed;
 use Encore\Admin\Facades\Admin;
-use Illuminate\Support\Facades\DB;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 abstract class Utils
@@ -49,4 +48,5 @@ abstract class Utils
         $result = Crc16::CCITT_FALSE($rawData); 
         return QrCode::generate($rawData.dechex($result));
     }
+
 }

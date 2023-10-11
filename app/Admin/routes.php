@@ -1,10 +1,12 @@
 <?php
 
+use Encore\Admin\Facades\Admin;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\Route;
 
 Admin::routes();
 
-Route::resource('admin/auth/users', \App\Admin\Controllers\CustomUserController::class)->middleware(config('admin.route.middleware'));
+Route::resource('admin/auth/users', \App\Admin\Controllers\System_CustomUserController::class)->middleware(config('admin.route.middleware'));
 
 Route::group([
     'prefix'        => config('admin.route.prefix'),
@@ -15,24 +17,32 @@ Route::group([
 
     $router->get('/', 'HomeController@index')->name('home');
     Route::get('/pdf', 'PDFController@createPDF');
-    Route::get('/select-bed', 'BedController@selectBed');
-    $router->resource('units', UnitController::class);
-    $router->resource('branches', BranchController::class);
-    $router->resource('zones', ZoneController::class);
-    $router->resource('rooms', RoomController::class);
-    $router->resource('sources', SourceController::class);
-    $router->resource('users', UserController::class);
-    $router->resource('customer-types', CustomerTypeController::class);
-    $router->resource('point-topups', PointTopupController::class);
-    $router->resource('services', ServiceController::class); 
-    $router->resource('work-schedules', WorkScheduleController::class);
-    $router->resource('bills', BillController::class);
-    $router->resource('room-orders', RoomOrderController::class);
-    $router->resource('msgs', MsgController::class);
-    $router->resource('roles', RoleController::class);
-    $router->resource('customers', CustomerController::class);
-    $router->resource('receiver-accounts', ReceiverAccountController::class);
-    $router->resource('bank-bins', BankBinController::class);
-    $router->resource('news', NewsController::class);
-    $router->resource('beds', BedController::class);
+    //Core
+    $router->resource('roles', Core_RoleController::class);
+    $router->resource('customer-types', Core_CustomerTypeController::class);
+    $router->resource('sources', Core_SourceController::class);
+    //Financial
+    $router->resource('point-topups', Fin_PointTopupController::class);
+    $router->resource('receiver-accounts', Fin_ReceiverAccountController::class);
+    $router->resource('bank-bins', Fin_BankBinController::class);
+    //Product
+    $router->resource('services', Prod_ServiceController::class); 
+    //Marketing
+    $router->resource('news', Mkt_NewsController::class);
+    //Sales
+    $router->resource('users', Sales_UserController::class);
+    $router->resource('bills', Sales_BillController::class);
+    //Crm
+    $router->resource('msgs', Crm_MsgController::class);
+    $router->resource('customers', Crm_CustomerController::class);
+    //Facility
+    $router->resource('units', Facility_UnitController::class);
+    $router->resource('branches', Facility_BranchController::class);
+    $router->resource('zones', Facility_ZoneController::class);
+    $router->resource('rooms', Facility_RoomController::class);
+    $router->resource('beds', Facility_BedController::class);
+    //Operation
+    Route::get('/select-bed', 'Facility_BedController@selectBed');
+    $router->resource('work-schedules', Operation_WorkScheduleController::class);
+    $router->resource('room-orders', Operation_RoomOrderController::class);
 });
