@@ -1,8 +1,8 @@
 <?php 
-use App\Models\WorkSchedule;
-use App\Models\Room;
-use App\Models\Branch;
-use App\Models\Zone;
+use App\Models\Operation\WorkSchedule;
+use App\Models\Facility\Room;
+use App\Models\Facility\Branch;
+use App\Models\Facility\Zone;
 use App\Models\AdminUser;
 ?>
 @foreach ($rooms as $room)

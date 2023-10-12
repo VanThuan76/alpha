@@ -1,8 +1,8 @@
 <?php 
-use App\Models\BedOrder;
-use App\Models\Room;
-use App\Models\Branch;
-use App\Models\Zone;
+use App\Models\Operation\BedOrder;
+use App\Models\Facility\Room;
+use App\Models\Facility\Branch;
+use App\Models\Facility\Zone;
 use App\Models\AdminUser;
 ?>
 

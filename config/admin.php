@@ -249,7 +249,7 @@ return [
     | Set a default avatar for newly created users.
     |
     */
-    'default_avatar' => 'https://alphasius.com/wp-content/uploads/2022/08/cropped-Logo-final-01-2.png',
+    'default_avatar' => '',
 
     /*
     |--------------------------------------------------------------------------
@@ -275,7 +275,7 @@ return [
     |    "skin-red", "skin-red-light", "skin-black", "skin-black-light".
     |
     */
-    'skin' => env('ADMIN_SKIN', 'skin-blue-light'),
+    'skin' => env('ADMIN_SKIN', 'skin-black'),
 
     /*
     |--------------------------------------------------------------------------
@@ -405,6 +405,37 @@ return [
     |
     */
     'extensions' => [
-
+        'custom-actions-button' => [
+            "enable" => true,
+  
+            "view" => [
+                "label" => "Xem",
+                "icon"  => "fa fa-eye",
+                "class" => "btn btn-sm btn-secondary"
+            ],
+  
+            "edit" => [
+                "label" => "Sửa",
+                "icon"  => "fa fa-edit",
+                "class" => "btn btn-sm btn-secondary"
+            ],
+  
+            "delete" => [
+                "label" => "Xoá",
+                "icon"  => "fa fa-trash",
+                "class" => "btn btn-sm btn-secondary"
+            ]
+  
+        ]
+    ],
+    'model_button_styles' => [
+        'view'    => 'btn btn-outline-primary',
+        'edit'    => 'btn btn-outline-primary',
+        'delete'  => 'btn btn-outline-primary',
+        'export'  => 'btn btn-outline-primary',
+        'create'  => 'btn btn-outline-primary',
+        'cancel'  => 'btn btn-secondary',
+        'filter'  => 'btn btn-secondary',
+        'refresh' => 'btn btn-secondary',
     ],
 ];
