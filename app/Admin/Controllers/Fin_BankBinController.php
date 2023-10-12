@@ -15,7 +15,7 @@ class Fin_BankBinController extends AdminController
      *
      * @var string
      */
-    protected $title = 'BankBin';
+    protected $title = 'Mã ngân hàng';
 
     /**
      * Make a grid builder.
@@ -26,12 +26,11 @@ class Fin_BankBinController extends AdminController
     {
         $grid = new Grid(new BankBin());
 
-        $grid->column('id', __('Id'));
-        $grid->column('name', __('Name'));
+        $grid->column('name', __('Tên'));
         $grid->column('bin', __('Bin'));
-        $grid->column('created_at', __('Created at'));
-        $grid->column('updated_at', __('Updated at'));
-        $grid->column('status', __('Status'));
+        $grid->column('created_at', __('Ngày tạo'))->vndate();
+        $grid->column('updated_at', __('Ngày cập nhật'))->vndate();
+        $grid->column('status', __('Trạng thái'))->using(Constant::STATUS)->label(Constant::STATUS_LABEL);
 
         return $grid;
     }
@@ -46,12 +45,11 @@ class Fin_BankBinController extends AdminController
     {
         $show = new Show(BankBin::findOrFail($id));
 
-        $show->field('id', __('Id'));
-        $show->field('name', __('Name'));
+        $show->field('name', __('Tên'));
         $show->field('bin', __('Bin'));
-        $show->field('created_at', __('Created at'));
-        $show->field('updated_at', __('Updated at'));
-        $show->field('status', __('Status'));
+        $show->field('created_at', __('Ngày tạo'))->vndate();
+        $show->field('updated_at', __('Ngày cập nhật'))->vndate();
+        $show->field('status', __('Trạng thái'))->using(Constant::STATUS)->label(Constant::STATUS_LABEL);
 
         return $show;
     }
@@ -65,9 +63,9 @@ class Fin_BankBinController extends AdminController
     {
         $form = new Form(new BankBin());
 
-        $form->text('name', __('Name'));
+        $form->text('name', __('Tên'));
         $form->text('bin', __('Bin'));
-        $form->number('status', __('Status'))->default(1);
+        $form->number('status', __('Trạng thái'))->default(1);
 
         return $form;
     }

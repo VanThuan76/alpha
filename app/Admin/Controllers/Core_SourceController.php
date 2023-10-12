@@ -26,10 +26,9 @@ class Core_SourceController extends AdminController
     {
         $grid = new Grid(new Source());
 
-        $grid->column('id', __('Id'));
-        $grid->column('name', __('Name'));
-        $grid->column('created_at', __('Created at'))->vndate();
-        $grid->column('updated_at', __('Updated at'))->vndate();
+        $grid->column('name', __('Tên'));
+        $grid->column('created_at', __('Ngày tạo'))->vndate();
+        $grid->column('updated_at', __('Ngày cập nhật'))->vndate();
 
         return $grid;
     }
@@ -44,10 +43,9 @@ class Core_SourceController extends AdminController
     {
         $show = new Show(Source::findOrFail($id));
 
-        $show->field('id', __('Id'));
-        $show->field('name', __('Name'));
-        $show->field('created_at', __('Created at'));
-        $show->field('updated_at', __('Updated at'));
+        $show->field('name', __('Tên'));
+        $show->field('created_at', __('Ngày tạo'));
+        $show->field('updated_at', __('Ngày cập nhật'));
 
         return $show;
     }
@@ -61,7 +59,7 @@ class Core_SourceController extends AdminController
     {
         $form = new Form(new Source());
 
-        $form->text('name', __('Name'));
+        $form->text('name', __('Tên'));
 
         return $form;
     }

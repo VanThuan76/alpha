@@ -33,12 +33,11 @@ class Facility_BedController extends AdminController
     {
         $grid = new Grid(new Bed());
 
-        $grid->column('id', __('Id'));
-        $grid->column('name', __('Name'));
-        $grid->column('room.name', __('Room name'));
-        $grid->column('created_at', __('Created at'));
-        $grid->column('updated_at', __('Updated at'));
-        $grid->column('status', __('Status'));
+        $grid->column('name', __('Tên'));
+        $grid->column('room.name', __('Phòng'));
+        $grid->column('created_at', __('Ngày tạo'));
+        $grid->column('updated_at', __('Ngày cập nhật'));
+        $grid->column('status', __('Trạng thái'))->using(Constant::STATUS)->label(Constant::STATUS_LABEL);
 
         return $grid;
     }

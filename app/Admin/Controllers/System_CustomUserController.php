@@ -5,8 +5,8 @@ namespace App\Admin\Controllers;
 use Encore\Admin\Grid;
 use Encore\Admin\Form;
 use Encore\Admin\Show;
-use App\Models\Unit;
 use App\Models\AdminUser;
+use App\Models\Facility\Unit;
 use Encore\Admin\Facades\Admin;
 use Illuminate\Support\Facades\Hash;
 use Encore\Admin\Controllers\UserController;
@@ -56,6 +56,7 @@ class System_CustomUserController extends UserController
                 $actions->disableDelete();
             });
         });
+        $grid->fixColumns(0, 0);
 
         return $grid;
     }
@@ -93,9 +94,6 @@ class System_CustomUserController extends UserController
      */
     public function form()
     {
-        $permissionModel = config('admin.database.permissions_model');
-        $roleModel = config('admin.database.roles_model');
-
         $form = new Form(new AdminUser());
 
         $userTable = config('admin.database.users_table');
@@ -116,7 +114,7 @@ class System_CustomUserController extends UserController
 
         $form->ignore(['password_confirmation']);
 
-        $form->multipleSelect('roles', trans('admin.roles'))->options($roleModel::all()->pluck('name', 'id'));
+        $form->multipleSelect('roles', trans('admin.roles'))->options(app(config('admin.database.roles_model'))->all()->pluck('name', 'id'));
         $form->mobile("phone_number", "Phone number")->options(['mask' => '999 9999 9999']);
         $form->multipleSelect('units', "Cơ sở")->options(Unit::all()->pluck('name', 'id'))->default(array(Admin::user()->active_unit_id));
         $form->select('active_unit_id', "Cơ sở hoạt động")->options(Unit::all()->pluck('name', 'id'))->default(Admin::user()->active_unit_id);
