@@ -12,7 +12,7 @@ class Links
         return 
             <<<HTML
                 <li>
-                    <p style="font-weight: bold; margin: 15px; color: white;">Xin chào: $name</p>
+                    <p style="font-weight: bold; margin: 15px;">Xin chào: $name</p>
                 </li>
             HTML;
     }

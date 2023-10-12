@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "dbc447ff6bed32db69cb78d435c84d6d",
+    "content-hash": "f7887fdafb71b688e51b1d0f08a31f37",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -3302,6 +3302,65 @@
                 "source": "https://github.com/nikic/PHP-Parser/tree/v4.17.1"
             },
             "time": "2023-08-13T19:53:39+00:00"
+        },
+        {
+            "name": "nim4n/custom-actions-button",
+            "version": "1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nim4n136/custom-actions-button.git",
+                "reference": "555796397a5476ceebc631b88d4625aaa348140c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nim4n136/custom-actions-button/zipball/555796397a5476ceebc631b88d4625aaa348140c",
+                "reference": "555796397a5476ceebc631b88d4625aaa348140c",
+                "shasum": ""
+            },
+            "require": {
+                "encore/laravel-admin": ">=1.7.3",
+                "php": ">=7.0.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~6.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Encore\\CustomActionsButton\\CustomActionsButtonServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Encore\\CustomActionsButton\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "NIM4N",
+                    "email": "nim4n136@gmail.com"
+                }
+            ],
+            "description": "Custom actions button for laravel-admin extenstion",
+            "homepage": "https://github.com/nim4n136/custom-actions-button",
+            "keywords": [
+                "custom-actions-button",
+                "extension",
+                "laravel-admin",
+                "laravel-admin-ext"
+            ],
+            "support": {
+                "issues": "https://github.com/nim4n136/custom-actions-button/issues",
+                "source": "https://github.com/nim4n136/custom-actions-button/tree/master"
+            },
+            "abandoned": true,
+            "time": "2019-08-28T17:37:33+00:00"
         },
         {
             "name": "nyholm/psr7",

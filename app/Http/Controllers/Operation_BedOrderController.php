@@ -2,19 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use DB;
-use Config;
-use Carbon\Carbon;
-use App\Models\User;
-use App\Models\Service;
-use App\Models\Bed;
 use App\Models\AdminUser;
-use App\Models\BedOrder;
+use App\Models\Facility\Bed;
+use App\Models\Operation\BedOrder;
+use App\Models\Product\Service;
+use Illuminate\Http\Request;
+use Carbon\Carbon;
 use App\Admin\Controllers\Utils;
+use App\Models\Sales\User;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Config;
 
-class BedOrderController extends Controller
+class Operation_BedOrderController extends Controller
 {
 
     public function showBed(Request $request)

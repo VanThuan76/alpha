@@ -2,14 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product\Service;
 use Illuminate\Http\Request;
-use DB;
-use Config;
 use Carbon\Carbon;
-use App\Models\User;
-use App\Models\WorkSchedule;
-use App\Models\RoomOrder;
-use App\Models\Service;
+use Illuminate\Support\Facades\Config;
 
 class RoomOrderController extends Controller
 {

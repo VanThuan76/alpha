@@ -21,6 +21,7 @@
         "laravel/framework": "^7.29",
         "laravel/passport": "^9.4",
         "laravel/tinker": "^2.5",
+        "nim4n/custom-actions-button": "^1.1",
         "setasign/tfpdf": "1.33",
         "simplesoftwareio/simple-qrcode": "~4",
         "zgldh/crc16-php": "^1.1"
