@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Config;
 
-class RoomOrderController extends Controller
+class Operation_RoomOrderController extends Controller
 {
 
     public function checkRooms(Request $request)

@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Core\CustomerType;
+use App\Models\Financial\PointTopup;
+use App\Models\Operation\BedOrder;
+use App\Models\Product\Service;
+use App\Models\Sales\User;
 use Illuminate\Http\Request;
-use DB;
 use Carbon\Carbon;
-use App\Models\User;
-use App\Models\PointTopup;
-use App\Models\BedOrder;
-use App\Models\CustomerType;
-use App\Models\Service;
+use Illuminate\Support\Facades\DB;
 
-class CustomerController extends Controller
+class Crm_CustomerController extends Controller
 {
 
     public function find(Request $request)

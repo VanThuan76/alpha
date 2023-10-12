@@ -4,27 +4,22 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\BaseController as BaseController;
-use App\Models\Service;
 use Validator;
-use App\Http\Resources\Service as ServiceResource;
+use App\Http\Resources\Unit as UnitResource;
+use App\Models\Facility\Unit;
 
-class ServiceController extends BaseController
+class Facility_UnitController extends BaseController
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-        $unitId = $request->get("unit_id");
-        if (is_null($unitId)){
-            $service = Service::all();
-        } else {
-            $service = Service::where("unit_id", $unitId)->get();
-        }
+        $units = Unit::all();
 
-        return $this->sendResponse(ServiceResource::collection($service), 'Service retrieved successfully.');
+        return $this->sendResponse(UnitResource::collection($units), 'Units retrieved successfully.');
     }
 
     /**
@@ -46,9 +41,9 @@ class ServiceController extends BaseController
             return $this->sendError('Validation Error.', $validator->errors());
         }
 
-        $service = Service::create($input);
+        $unit = Unit::create($input);
 
-        return $this->sendResponse(new ServiceResource($service), 'Service created successfully.');
+        return $this->sendResponse(new UnitResource($unit), 'Unit created successfully.');
     }
 
     /**
@@ -60,12 +55,12 @@ class ServiceController extends BaseController
 
     public function show($id)
     {
-        $service = Service::find($id);
-        if (is_null($service)) {
-            return $this->sendError('Service not found.');
+        $unit = Unit::find($id);
+        if (is_null($unit)) {
+            return $this->sendError('Unit not found.');
         }
 
-        return $this->sendResponse(new ServiceResource($service), 'Service retrieved successfully.');
+        return $this->sendResponse(new UnitResource($unit), 'Unit retrieved successfully.');
     }
 
     /**
@@ -76,7 +71,7 @@ class ServiceController extends BaseController
      * @return \Illuminate\Http\Response
      */
 
-    public function update(Request $request, Service $service)
+    public function update(Request $request, Unit $unit)
     {
         $input = $request->all();
 
@@ -89,10 +84,10 @@ class ServiceController extends BaseController
             return $this->sendError('Validation Error.', $validator->errors());
         }
 
-        $service->name = $input['name'];
-        $service->save();
+        $unit->name = $input['name'];
+        $unit->save();
 
-        return $this->sendResponse(new ServiceResource($service), 'Service updated successfully.');
+        return $this->sendResponse(new UnitResource($unit), 'Unit updated successfully.');
     }
 
     /**
@@ -101,9 +96,9 @@ class ServiceController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Service $service)
+    public function destroy(Unit $unit)
     {
-        $service->delete();
-        return $this->sendResponse([], 'Service deleted successfully.');
+        $unit->delete();
+        return $this->sendResponse([], 'Unit deleted successfully.');
     }
 }

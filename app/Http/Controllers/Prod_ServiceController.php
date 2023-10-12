@@ -4,11 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\BaseController as BaseController;
-use App\Models\News;
 use Validator;
-use App\Http\Resources\News as NewsResource;
+use App\Http\Resources\Service as ServiceResource;
+use App\Models\Product\Service;
 
-class NewsController extends BaseController
+class Prod_ServiceController extends BaseController
 {
     /**
      * Display a listing of the resource.
@@ -19,12 +19,12 @@ class NewsController extends BaseController
     {
         $unitId = $request->get("unit_id");
         if (is_null($unitId)){
-            $news = News::all();
+            $service = Service::all();
         } else {
-            $news = News::where("unit_id", $unitId)->orderBy('view', 'DESC')->get();
+            $service = Service::where("unit_id", $unitId)->get();
         }
 
-        return $this->sendResponse(NewsResource::collection($news), 'News retrieved successfully.');
+        return $this->sendResponse(ServiceResource::collection($service), 'Service retrieved successfully.');
     }
 
     /**
@@ -46,9 +46,9 @@ class NewsController extends BaseController
             return $this->sendError('Validation Error.', $validator->errors());
         }
 
-        $news = News::create($input);
+        $service = Service::create($input);
 
-        return $this->sendResponse(new NewsResource($news), 'News created successfully.');
+        return $this->sendResponse(new ServiceResource($service), 'Service created successfully.');
     }
 
     /**
@@ -60,14 +60,12 @@ class NewsController extends BaseController
 
     public function show($id)
     {
-        $news = News::find($id);
-        $news->view ++;
-        $news->save();
-        if (is_null($news)) {
-            return $this->sendError('News not found.');
+        $service = Service::find($id);
+        if (is_null($service)) {
+            return $this->sendError('Service not found.');
         }
 
-        return $this->sendResponse(new NewsResource($news), 'News retrieved successfully.');
+        return $this->sendResponse(new ServiceResource($service), 'Service retrieved successfully.');
     }
 
     /**
@@ -78,7 +76,7 @@ class NewsController extends BaseController
      * @return \Illuminate\Http\Response
      */
 
-    public function update(Request $request, News $news)
+    public function update(Request $request, Service $service)
     {
         $input = $request->all();
 
@@ -91,10 +89,10 @@ class NewsController extends BaseController
             return $this->sendError('Validation Error.', $validator->errors());
         }
 
-        $news->name = $input['name'];
-        $news->save();
+        $service->name = $input['name'];
+        $service->save();
 
-        return $this->sendResponse(new NewsResource($news), 'News updated successfully.');
+        return $this->sendResponse(new ServiceResource($service), 'Service updated successfully.');
     }
 
     /**
@@ -103,9 +101,9 @@ class NewsController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(News $news)
+    public function destroy(Service $service)
     {
-        $news->delete();
-        return $this->sendResponse([], 'News deleted successfully.');
+        $service->delete();
+        return $this->sendResponse([], 'Service deleted successfully.');
     }
 }

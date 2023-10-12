@@ -4,22 +4,27 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\BaseController as BaseController;
-use App\Models\Unit;
 use Validator;
-use App\Http\Resources\Unit as UnitResource;
+use App\Http\Resources\News as NewsResource;
+use App\Models\Marketing\News;
 
-class UnitController extends BaseController
+class Mkt_NewsController extends BaseController
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $units = Unit::all();
+        $unitId = $request->get("unit_id");
+        if (is_null($unitId)){
+            $news = News::all();
+        } else {
+            $news = News::where("unit_id", $unitId)->orderBy('view', 'DESC')->get();
+        }
 
-        return $this->sendResponse(UnitResource::collection($units), 'Units retrieved successfully.');
+        return $this->sendResponse(NewsResource::collection($news), 'News retrieved successfully.');
     }
 
     /**
@@ -41,9 +46,9 @@ class UnitController extends BaseController
             return $this->sendError('Validation Error.', $validator->errors());
         }
 
-        $unit = Unit::create($input);
+        $news = News::create($input);
 
-        return $this->sendResponse(new UnitResource($unit), 'Unit created successfully.');
+        return $this->sendResponse(new NewsResource($news), 'News created successfully.');
     }
 
     /**
@@ -55,12 +60,14 @@ class UnitController extends BaseController
 
     public function show($id)
     {
-        $unit = Unit::find($id);
-        if (is_null($unit)) {
-            return $this->sendError('Unit not found.');
+        $news = News::find($id);
+        $news->view ++;
+        $news->save();
+        if (is_null($news)) {
+            return $this->sendError('News not found.');
         }
 
-        return $this->sendResponse(new UnitResource($unit), 'Unit retrieved successfully.');
+        return $this->sendResponse(new NewsResource($news), 'News retrieved successfully.');
     }
 
     /**
@@ -71,7 +78,7 @@ class UnitController extends BaseController
      * @return \Illuminate\Http\Response
      */
 
-    public function update(Request $request, Unit $unit)
+    public function update(Request $request, News $news)
     {
         $input = $request->all();
 
@@ -84,10 +91,10 @@ class UnitController extends BaseController
             return $this->sendError('Validation Error.', $validator->errors());
         }
 
-        $unit->name = $input['name'];
-        $unit->save();
+        $news->name = $input['name'];
+        $news->save();
 
-        return $this->sendResponse(new UnitResource($unit), 'Unit updated successfully.');
+        return $this->sendResponse(new NewsResource($news), 'News updated successfully.');
     }
 
     /**
@@ -96,9 +103,9 @@ class UnitController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Unit $unit)
+    public function destroy(News $news)
     {
-        $unit->delete();
-        return $this->sendResponse([], 'Unit deleted successfully.');
+        $news->delete();
+        return $this->sendResponse([], 'News deleted successfully.');
     }
 }
