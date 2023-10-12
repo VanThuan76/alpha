@@ -2,7 +2,7 @@
 
 namespace App\Models\Marketing;
 
-use App\Models\Unit;
+use App\Models\Facility\Unit;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Model;
 

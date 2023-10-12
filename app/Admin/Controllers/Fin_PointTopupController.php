@@ -31,29 +31,29 @@ class Fin_PointTopupController extends AdminController
     {
         $grid = new Grid(new PointTopup());
 
-        $grid->column('id', __('Id'));
-        $grid->column('user.name', __('User id'));
-        $grid->column('amount', __('Amount'))->number();
-        $grid->column('discount', __('Discount'))->percentage();
-        $grid->column('added_amount', __('Added amount'))->number();
-        $grid->column('original_amount', __('Original amount'))->number();
-        $grid->column('next_amount', __('Next amount'))->number();
-        $grid->column('customerType.name', __('Customer type'));
-        $grid->column('customer_accumulated_amount', __('Customer accumulated amount'))->number();
-        $grid->column('unit.name', __('Unit id'));
-        $grid->column('staff.name', __('Staff id'));
-        $grid->column('sale.name', __('Sale id'));
-        $grid->column('status', __('Status'))->using(Constant::STATUS)->label(Constant::STATUS_LABEL);
-        $grid->column('payment_method', __('Payment method'))->using(Constant::PAYMENT_METHOD);
-        $grid->column('bill', __('Bill'))->image();
-        $grid->column('created_at', __('Created at'))->vndate();
-        $grid->column('updated_at', __('Updated at'))->vndate();
+        $grid->column('user.name', __('Người dùng'));
+        $grid->column('amount', __('Số tiền'))->number();
+        $grid->column('discount', __('Chiết khấu'))->percentage();
+        $grid->column('added_amount', __('Số tiền thêm'))->number();
+        $grid->column('original_amount', __('Số tiền gốc'))->number();
+        $grid->column('next_amount', __('Số tiền kế tiếp'))->number();
+        $grid->column('customerType.name', __('Loại khách hàng'));
+        $grid->column('customer_accumulated_amount', __('Tổng số tiền tích lũy của khách hàng'))->number();
+        $grid->column('unit.name', __('Đơn vị'));
+        $grid->column('staff.name', __('Nhân viên'));
+        $grid->column('sale.name', __('Người bán'));
+        $grid->column('status', __('Trạng thái'))->using(Constant::STATUS)->label(Constant::STATUS_LABEL);
+        $grid->column('payment_method', __('Phương thức thanh toán'))->using(Constant::PAYMENT_METHOD);
+        $grid->column('bill', __('Hóa đơn'))->image();
+        $grid->column('created_at', __('Ngày tạo'))->vndate();
+        $grid->column('updated_at', __('Ngày cập nhật'))->vndate();
         $grid->actions(function ($actions) {
             $actions->disableDelete();
             $actions->disableEdit();
         });
         $grid->model()->where('unit_id', Admin::user()->active_unit_id)->orderBy('id', 'DESC');
         $grid->enableHotKeys();
+        $grid->fixColumns(0, 0);
         return $grid;
     }
 
@@ -66,24 +66,22 @@ class Fin_PointTopupController extends AdminController
     protected function detail($id)
     {
         $show = new Show(PointTopup::findOrFail($id));
-
-        $show->field('id', __('Id'));
         $show->field('created_at', __('Created at'));
         $show->field('updated_at', __('Updated at'));
-        $show->field('user_id', __('User id'));
-        $show->field('amount', __('Amount'));
-        $show->field('discount', __('Discount'));
-        $show->field('added_amount', __('Added amount'));
-        $show->field('original_amount', __('Original amount'));
-        $show->field('next_amount', __('Next amount'));
-        $show->field('customer_type', __('Customer type'));
-        $show->field('customer_accumulated_amount', __('Customer accumulated amount'));
-        $show->field('unit_id', __('Unit id'));
-        $show->field('staff_id', __('Staff id'));
-        $show->field('sale_id', __('Sale id'));
-        $show->field('status', __('Status'));
-        $show->field('payment_method', __('Payment method'));
-        $show->field('bill', __('Bill'));
+        $show->field('user_id', __('Người dùng'));
+        $show->field('amount', __('Số tiền'));
+        $show->field('discount', __('Chiết khấu'));
+        $show->field('added_amount', __('Số tiền thêm'));
+        $show->field('original_amount', __('Số tiền gốc'));
+        $show->field('next_amount', __('Số tiền kế tiếp'));
+        $show->field('customer_type', __('Loại khách hàng'));
+        $show->field('customer_accumulated_amount', __('Tổng số tiền tích lũy của khách hàng'));
+        $show->field('unit_id', __('Đơn vị'));
+        $show->field('staff_id', __('Nhân viên'));
+        $show->field('sale_id', __('Người bán'));
+        $show->field('status', __('Trạng thái'));
+        $show->field('payment_method', __('Phương thức thanh toán'));
+        $show->field('bill', __('Hóa đơn'));
         $show->panel()->tools(function ($tools) {
             $tools->disableEdit();
             $tools->disableDelete();
@@ -99,23 +97,23 @@ class Fin_PointTopupController extends AdminController
     protected function form()
     {
         $form = new Form(new PointTopup());
-
-        $form->select('user_id', __('User id'))->options(User::select(DB::raw('CONCAT(name, " - ", IFNULL(phone_number,"")) AS name, id'))
-        ->where('unit_id', '=', Admin::user()->active_unit_id)->pluck('name', 'id'))->required()->setWidth(2,2);
-        $form->currency('amount', __('Amount'))->symbol('VND');
-        $form->currency('discount', __('Discount'))->readonly()->setWidth(2,2);
-        $form->currency('added_amount', __('Added amount'))->readonly()->setWidth(2,2);
-        $form->currency('original_amount', __('Original amount'))->readonly()->setWidth(2,2);
-        $form->currency('next_amount', __('Next amount'))->readonly()->setWidth(2,2);
-        $form->select('customer_type', __('Customer type'))->options(CustomerType::pluck('name', 'id'))->readonly()->setWidth(2,2);
-        $form->currency('customer_accumulated_amount', __('Customer accumulated amount'))->readonly()->setWidth(2,2);
-        $form->hidden('unit_id', __('Unit id'))->default(Admin::user()->active_unit_id);
-        $form->hidden('staff_id', __('Staff id'))->default(Admin::user()->id);
-        $form->select('sale_id', __('Sale id'))->options(AdminUser::select(DB::raw('CONCAT(name, " - ", IFNULL(phone_number,"")) AS name, id'))
-        ->where('active_unit_id', '=', Admin::user()->active_unit_id)->pluck('name', 'id'))->required()->setWidth(2,2);
-        $form->hidden('status', __('Status'))->default(1);
-        $form->select('payment_method', __('Payment method'))->options(Constant::PAYMENT_METHOD)->required()->setWidth(2,2);
-        $form->file('bill', __('Bill'));
+        //Todo: Customize DatabaseHelper
+        $form->select('user_id', __('Người dùng'))->options(User::select(DB::raw('CONCAT(name, " - ", IFNULL(phone_number,"")) AS name, id'))
+        ->where('unit_id', '=', Admin::user()->active_unit_id)->pluck('name', 'id'))->required()->setWidth(2, 2);
+        $form->currency('amount', __('Số tiền'))->symbol('VND');
+        $form->currency('discount', __('Chiết khấu'))->readonly()->setWidth(2, 2);
+        $form->currency('added_amount', __('Số tiền thêm'))->readonly()->setWidth(2, 2);
+        $form->currency('original_amount', __('Số tiền gốc'))->readonly()->setWidth(2, 2);
+        $form->currency('next_amount', __('Số tiền kế tiếp'))->readonly()->setWidth(2, 2);
+        $form->select('customer_type', __('Loại khách hàng'))->options(CustomerType::pluck('name', 'id'))->readonly()->setWidth(2, 2);
+        $form->currency('customer_accumulated_amount', __('Tổng số tiền tích lũy của khách hàng'))->readonly()->setWidth(2, 2);
+        $form->hidden('unit_id', __('Đơn vị'))->default(Admin::user()->active_unit_id);
+        $form->hidden('staff_id', __('Nhân viên'))->default(Admin::user()->id);
+        $form->select('sale_id', __('Người bán'))->options(AdminUser::select(DB::raw('CONCAT(name, " - ", IFNULL(phone_number,"")) AS name, id'))
+            ->where('active_unit_id', '=', Admin::user()->active_unit_id)->pluck('name', 'id'))->required()->setWidth(2, 2);
+        $form->hidden('status', __('Trạng thái'))->default(1);
+        $form->select('payment_method', __('Phương thức thanh toán'))->options(Constant::PAYMENT_METHOD)->required()->setWidth(2, 2);
+        $form->file('bill', __('Hóa đơn'));
         $form->tools(function (Form\Tools $tools) {
             $tools->disableDelete();
         });

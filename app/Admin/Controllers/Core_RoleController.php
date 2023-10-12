@@ -17,12 +17,13 @@ class Core_RoleController extends AdminController
      *
      * @var string
      */
-    protected $title = 'Role';
+    protected $title = 'Vai trò';
 
     public function index(Content $content)
     {
         return Admin::content(function (Content $content) {
             $content->header('Quyền');
+            $content->description('Phân cấp vai trò');
             $content->body(Role::tree());
         });
     }
@@ -35,11 +36,10 @@ class Core_RoleController extends AdminController
     {
         $grid = new Grid(new Role());
 
-        $grid->column('id', __('Id'));
-        $grid->column('name', __('Name'));
+        $grid->column('name', __('Tên'));
         $grid->column('slug', __('Slug'));
-        $grid->column('created_at', __('Created at'));
-        $grid->column('updated_at', __('Updated at'));
+        $grid->column('created_at', __('Ngày tạo'));
+        $grid->column('updated_at', __('Ngày cập nhật'));
         $grid->column('parent_id', __('Parent id'));
         $grid->column('order', __('Order'));
 
@@ -56,11 +56,10 @@ class Core_RoleController extends AdminController
     {
         $show = new Show(Role::findOrFail($id));
 
-        $show->field('id', __('Id'));
-        $show->field('name', __('Name'));
+        $show->field('name', __('Tên'));
         $show->field('slug', __('Slug'));
-        $show->field('created_at', __('Created at'));
-        $show->field('updated_at', __('Updated at'));
+        $show->field('created_at', __('Ngày tạo'));
+        $show->field('updated_at', __('Ngày cập nhật'));
         $show->field('parent_id', __('Parent id'));
         $show->field('order', __('Order'));
 
@@ -76,7 +75,7 @@ class Core_RoleController extends AdminController
     {
         $form = new Form(new Role());
 
-        $form->text('name', __('Name'));
+        $form->text('name', __('Tên'));
         $form->text('slug', __('Slug'));
         $form->number('parent_id', __('Parent id'));
         $form->number('order', __('Order'));

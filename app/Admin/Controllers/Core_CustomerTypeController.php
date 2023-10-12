@@ -26,14 +26,12 @@ class Core_CustomerTypeController extends AdminController
     {
         $grid = new Grid(new CustomerType());
 
-        $grid->column('id', __('Id'));
-        $grid->column('name', __('Name'));
-        $grid->column('accumulated_money', __('Accumulated money'));
-        $grid->column('discount', __('Discount'));
-        $grid->column('order', __('Order'));
-
-        $grid->column('created_at', __('Created at'))->vndate();
-        $grid->column('updated_at', __('Updated at'))->vndate();
+        $grid->column('name', __('Tên'));
+        $grid->column('accumulated_money', __('Tiền tích lũy'));
+        $grid->column('discount', __('Giảm giá'));
+        $grid->column('order', __('Đơn đặt hàng'));
+        $grid->column('created_at', __('Ngày tạo'))->vndate();
+        $grid->column('updated_at', __('Ngày cập nhật'))->vndate();
 
         return $grid;
     }
@@ -48,13 +46,12 @@ class Core_CustomerTypeController extends AdminController
     {
         $show = new Show(CustomerType::findOrFail($id));
 
-        $show->field('id', __('Id'));
-        $show->field('name', __('Name'));
-        $show->field('accumulated_money', __('Accumulated money'));
-        $show->field('created_at', __('Created at'));
-        $show->field('updated_at', __('Updated at'));
-        $show->field('discount', __('Discount'));
-        $show->field('order', __('Order'));
+        $show->field('name', __('Tên'));
+        $show->field('accumulated_money', __('Tiền tích lũy'));
+        $show->field('discount', __('Giảm giá'));
+        $show->field('order', __('Đơn đặt hàng'));
+        $show->field('created_at', __('Ngày tạo'));
+        $show->field('updated_at', __('Ngày cập nhật'));
 
         return $show;
     }
@@ -68,10 +65,10 @@ class Core_CustomerTypeController extends AdminController
     {
         $form = new Form(new CustomerType());
 
-        $form->text('name', __('Name'));
-        $form->number('accumulated_money', __('Accumulated money'));
-        $form->number('discount', __('Discount'));
-        $form->number('order', __('Order'));
+        $form->text('name', __('Tên'));
+        $form->number('accumulated_money', __('Tiền tích lũy'));
+        $form->number('discount', __('Giảm giá'));
+        $form->number('order', __('Đơn đặt hàng'));
 
         return $form;
     }

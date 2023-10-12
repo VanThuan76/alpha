@@ -17,7 +17,7 @@ class Fin_ReceiverAccountController extends AdminController
      *
      * @var string
      */
-    protected $title = 'ReceiverAccount';
+    protected $title = 'Tài khoản';
 
     /**
      * Make a grid builder.
@@ -28,14 +28,13 @@ class Fin_ReceiverAccountController extends AdminController
     {
         $grid = new Grid(new ReceiverAccount());
 
-        $grid->column('id', __('Id'));
-        $grid->column('unit.name', __('Unit id'));
-        $grid->column('name', __('Name'));
-        $grid->column('bank_name', __('Bank name'));
-        $grid->column('account_number', __('Account number'));
-        $grid->column('status', __('Status'))->using(Constant::STATUS)->label(Constant::STATUS_LABEL);
-        $grid->column('created_at', __('Created at'))->vndate();
-        $grid->column('updated_at', __('Updated at'))->vndate();
+        $grid->column('unit.name', __('Đơn vị'))->sortable();
+        $grid->column('name', __('Tên'));
+        $grid->column('bank_name', __('Tên ngân hàng'));
+        $grid->column('account_number', __('Số tài khoản'));
+        $grid->column('status', __('Trạng thái'))->using(Constant::STATUS)->label(Constant::STATUS_LABEL);
+        $grid->column('created_at', __('Ngày tạo'))->vndate();
+        $grid->column('updated_at', __('Ngày cập nhật'))->vndate();
         return $grid;
     }
 
@@ -49,14 +48,13 @@ class Fin_ReceiverAccountController extends AdminController
     {
         $show = new Show(ReceiverAccount::findOrFail($id));
 
-        $show->field('id', __('Id'));
-        $show->field('unit_id', __('Unit id'));
-        $show->field('name', __('Name'));
-        $show->field('bank_name', __('Bank name'));
-        $show->field('created_at', __('Created at'));
-        $show->field('updated_at', __('Updated at'));
-        $show->field('status', __('Status'));
-        $show->field('account_number', __('Account number'));
+        $show->field('unit_id', __('Đơn vị'));
+        $show->field('name', __('Tên'));
+        $show->field('bank_name', __('Tên ngân hàng'));
+        $show->field('created_at', __('Ngày tạo'));
+        $show->field('updated_at', __('Ngày cập nhật'));
+        $show->field('status', __('Trạng thái'));
+        $show->field('account_number', __('Số tài khoản'));
 
         return $show;
     }
@@ -69,12 +67,13 @@ class Fin_ReceiverAccountController extends AdminController
     protected function form()
     {
         $form = new Form(new ReceiverAccount());
-        $form->select('unit_id', __('Unit id'))->options(Unit::pluck('name', 'id'))->required();
-        $form->text('name', __('Name'))->required();
-        $form->select('bank_name', __('Bank name'))->options(BankBin::pluck('name', 'bin'))->required();
-        $form->text('account_number', __('Account number'))->required();
-        $form->select('status', __('Status'))->options(Constant::STATUS)->default(1)->setWidth(2, 2);
-
+        
+        $form->select('unit_id', __('Đơn vị'))->options(Unit::pluck('name', 'id'))->required();
+        $form->text('name', __('Tên'))->required();
+        $form->select('bank_name', __('Tên ngân hàng'))->options(BankBin::pluck('name', 'bin'))->required();
+        $form->text('account_number', __('Số tài khoản'))->required();
+        $form->select('status', __('Trạng thái'))->options(Constant::STATUS)->default(1)->setWidth(2, 2);
+        
         return $form;
     }
 }

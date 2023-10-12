@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\Unit;
+use App\Models\Facility\Unit;
 use Encore\Admin\Traits\DefaultDatetimeFormat;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;

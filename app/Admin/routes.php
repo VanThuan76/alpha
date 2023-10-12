@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 Admin::routes();
 
 Route::resource('admin/auth/users', \App\Admin\Controllers\System_CustomUserController::class)->middleware(config('admin.route.middleware'));
+Route::get('admin/auth/setting', [\App\Admin\Controllers\System_CustomSettingController::class, 'display'])->middleware(config('admin.route.middleware'));
 
 Route::group([
     'prefix'        => config('admin.route.prefix'),
