@@ -17,11 +17,11 @@ class TechnicianController extends BaseController
      */
     public function index(Request $request)
     {
-        $unitId = $request->get("unit_id");
-        if (is_null($unitId)){
+        $branchId = $request->get("branch_id");
+        if (is_null($branchId)){
             $technician = AdminUser::all();
         } else {
-            $technician = AdminUser::where("active_unit_id", $unitId)->get();
+            $technician = AdminUser::where("active_branch_id", $branchId)->get();
         }
 
         return $this->sendResponse(TechnicianResource::collection($technician), 'Technician retrieved successfully.');

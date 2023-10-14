@@ -28,7 +28,7 @@ class Facility_ZoneController extends AdminController
         $grid = new Grid(new Zone());
 
         $grid->column('name', __('Tên'));
-        $grid->column('branch.name', __('Đơn vị'))->sortable();
+        $grid->column('branch.name', __('Chi nhánh'))->sortable();
         $grid->column('status', __('Trạng thái'))->using(Constant::STATUS)->label(Constant::STATUS_LABEL);
         $grid->column('created_at', __('Ngày tạo'))->vndate();
         $grid->column('updated_at', __('Ngày cập nhật'))->vndate();
@@ -49,7 +49,7 @@ class Facility_ZoneController extends AdminController
         $show = new Show(Zone::findOrFail($id));
 
         $show->field('name', __('Tên'));
-        $show->field('branch_id', __('Mã chi nhánh'));
+        $show->field('branch_id', __('ID Chi nhánh'));
         $show->field('status', __('Trạng thái'));
         $show->field('created_at', __('Ngày tạo'));
         $show->field('updated_at', __('Ngày cập nhật'));
@@ -70,7 +70,7 @@ class Facility_ZoneController extends AdminController
         $form = new Form(new Zone());
 
         $form->text('name', __('Tên'))->required();
-        $form->select('branch_id', __('Mã chi nhánh'))->options(Branch::pluck('name', 'id'))->required();
+        $form->select('branch_id', __('Chi nhánh'))->options(Branch::pluck('name', 'id'))->required();
         $form->select('status', __('Trạng thái'))->options(Constant::STATUS)->default(1)->setWidth(2, 2);
         $form->tools(function (Form\Tools $tools) {
             $tools->disableDelete();

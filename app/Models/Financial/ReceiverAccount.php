@@ -2,16 +2,16 @@
 
 namespace App\Models\Financial;
 
-use App\Models\Facility\Unit;
+use App\Models\Facility\Branch;
 use Illuminate\Database\Eloquent\Model;
 
 class ReceiverAccount extends Model
 {
     protected $table = 'receiver_accounts';
 
-    public function unit()
+    public function branch()
     {
-        return $this->belongsTo(Unit::class, 'unit_id');
+        return $this->belongsTo(Branch::class, 'branch_id');
     }
 
 	protected $hidden = [

@@ -17,11 +17,11 @@ class Prod_ServiceController extends BaseController
      */
     public function index(Request $request)
     {
-        $unitId = $request->get("unit_id");
-        if (is_null($unitId)){
+        $branchId = $request->get("branch_id");
+        if (is_null($branchId)){
             $service = Service::all();
         } else {
-            $service = Service::where("unit_id", $unitId)->get();
+            $service = Service::where("branch_id", $branchId)->get();
         }
 
         return $this->sendResponse(ServiceResource::collection($service), 'Service retrieved successfully.');

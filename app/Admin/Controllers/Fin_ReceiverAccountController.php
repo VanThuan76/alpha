@@ -2,7 +2,7 @@
 
 namespace App\Admin\Controllers;
 
-use App\Models\Facility\Unit;
+use App\Models\Facility\Branch;
 use App\Models\Financial\BankBin;
 use App\Models\Financial\ReceiverAccount;
 use Encore\Admin\Controllers\AdminController;
@@ -28,7 +28,7 @@ class Fin_ReceiverAccountController extends AdminController
     {
         $grid = new Grid(new ReceiverAccount());
 
-        $grid->column('unit.name', __('Đơn vị'))->sortable();
+        $grid->column('branch.name', __('Chi nhánh'))->sortable();
         $grid->column('name', __('Tên'));
         $grid->column('bank_name', __('Tên ngân hàng'));
         $grid->column('account_number', __('Số tài khoản'));
@@ -48,7 +48,7 @@ class Fin_ReceiverAccountController extends AdminController
     {
         $show = new Show(ReceiverAccount::findOrFail($id));
 
-        $show->field('unit_id', __('Đơn vị'));
+        $show->field('branch_id', __('ID Chi nhánh'));
         $show->field('name', __('Tên'));
         $show->field('bank_name', __('Tên ngân hàng'));
         $show->field('created_at', __('Ngày tạo'));
@@ -68,7 +68,7 @@ class Fin_ReceiverAccountController extends AdminController
     {
         $form = new Form(new ReceiverAccount());
         
-        $form->select('unit_id', __('Đơn vị'))->options(Unit::pluck('name', 'id'))->required();
+        $form->select('branch_id', __('Chi nhánh'))->options(Branch::pluck('name', 'id'))->required();
         $form->text('name', __('Tên'))->required();
         $form->select('bank_name', __('Tên ngân hàng'))->options(BankBin::pluck('name', 'bin'))->required();
         $form->text('account_number', __('Số tài khoản'))->required();

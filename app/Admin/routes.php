@@ -37,13 +37,12 @@ Route::group([
     $router->resource('msgs', Crm_MsgController::class);
     $router->resource('customers', Crm_CustomerController::class);
     //Facility
-    $router->resource('units', Facility_UnitController::class);
     $router->resource('branches', Facility_BranchController::class);
     $router->resource('zones', Facility_ZoneController::class);
     $router->resource('rooms', Facility_RoomController::class);
     $router->resource('beds', Facility_BedController::class);
     //Operation
-    Route::get('/select-bed', 'Facility_BedController@selectBed');
+    Route::get('/select-bed', 'Operation_BedOrderController@selectBed');
     $router->resource('work-schedules', Operation_WorkScheduleController::class);
     $router->resource('room-orders', Operation_RoomOrderController::class);
 });

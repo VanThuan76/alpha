@@ -56,7 +56,7 @@ class SelectRoom extends RowAction
         } else {
             $shift = $workSchedule->shift4;
         }
-        $workingTechnicians = RoomOrder::where('unit_id', Admin::user()->active_unit_id)->where('status', 1)->pluck('id', 'technician_id');
+        $workingTechnicians = RoomOrder::where('branch_id', Admin::user()->active_branch_id)->where('status', 1)->pluck('id', 'technician_id');
         $avaiTechnicians = array();
         foreach($shift as $i => $technicianId){
             if (!isset($workingTechnicians[$technicianId]) ){
@@ -77,7 +77,7 @@ class SelectRoom extends RowAction
             $url = env('APP_URL') . '/api/customer/services';    
             $this->name = "Chọn phòng";
             $services = array();
-            $roomOrders = RoomOrder::where('unit_id', Admin::user()->active_unit_id)->where('status', 0)->get();
+            $roomOrders = RoomOrder::where('branch_id', Admin::user()->active_branch_id)->where('status', 0)->get();
             foreach( $roomOrders as $i => $roomOrder) {
                 $services[$roomOrder->id] = $roomOrder->user->name . " : " . $roomOrder->service->name . " Vé thứ: " . $roomOrder->order;
             }
@@ -93,7 +93,7 @@ class SelectRoom extends RowAction
             $url = env('APP_URL') . '/api/customer/services';
             $this->name = "Kết thúc";
             $services = array();
-            $roomOrders = RoomOrder::where('unit_id', Admin::user()->active_unit_id)->where('status', 0)->get();
+            $roomOrders = RoomOrder::where('branch_id', Admin::user()->active_branch_id)->where('status', 0)->get();
             foreach( $roomOrders as $i => $roomOrder) {
                 $services[$roomOrder->id] = $roomOrder->user->name . " : " . $roomOrder->service->name . " Vé thứ: " . $roomOrder->order;
             }

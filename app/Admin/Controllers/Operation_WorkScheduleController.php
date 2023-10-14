@@ -32,8 +32,7 @@ class Operation_WorkScheduleController extends AdminController
      */
     public function index(Content $content)
     {
-        $branches = Branch::where('unit_id', Admin::user()->active_unit_id)->pluck("id");
-        $zones = Zone::whereIn('branch_id',Branch::where('unit_id', Admin::user()->active_unit_id)->pluck("id"))->where('status', 1)->orderBy('id', 'DESC')->get();
+        $zones = Zone::whereIn('branch_id',Branch::where('id', Admin::user()->active_branch_id)->pluck("id"))->where('status', 1)->orderBy('id', 'DESC')->get();
         $tab = new Tab();
         foreach($zones as $zone){
             $rooms = Room::where('zone_id', $zone->id)->get();
@@ -84,13 +83,13 @@ class Operation_WorkScheduleController extends AdminController
 
         $form->number('bed_id', __('Giường'))->readonly();
         $form->date('date', __('Ngày'))->default(date('Y-m-d'))->readonly();
-        $form->select('shift1', __('Nhân viên ca 1'))->options(AdminUser::where('status', 1)->where('active_unit_id', Admin::user()->active_unit_id)->pluck('name', 'id'));
+        $form->select('shift1', __('Nhân viên ca 1'))->options(AdminUser::where('status', 1)->where('active_branch_id', Admin::user()->active_branch_id)->pluck('name', 'id'));
         $form->time('start_1', 'Đầu ca')->format('HH:mm:ss')->default('08:00:00');
         $form->time('end_1', 'Cuối ca')->format('HH:mm:ss')->default('12:00:00');
-        $form->select('shift2', __('Nhân viên ca 2'))->options(AdminUser::where('status', 1)->where('active_unit_id', Admin::user()->active_unit_id)->pluck('name', 'id'));
+        $form->select('shift2', __('Nhân viên ca 2'))->options(AdminUser::where('status', 1)->where('active_branch_id', Admin::user()->active_branch_id)->pluck('name', 'id'));
         $form->time('start_2', 'Đầu ca')->format('HH:mm:ss')->default('12:00:00');
         $form->time('end_2', 'Cuối ca')->format('HH:mm:ss')->default('16:00:00');
-        $form->select('shift3', __('Nhân viên ca 3'))->options(AdminUser::where('status', 1)->where('active_unit_id', Admin::user()->active_unit_id)->pluck('name', 'id'));
+        $form->select('shift3', __('Nhân viên ca 3'))->options(AdminUser::where('status', 1)->where('active_branch_id', Admin::user()->active_branch_id)->pluck('name', 'id'));
         $form->time('start_3', 'Đầu ca')->format('HH:mm:ss')->default('16:00:00');
         $form->time('end_3', 'Cuối ca')->format('HH:mm:ss')->default('20:00:00');
         return $form;

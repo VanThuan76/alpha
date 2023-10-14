@@ -39,7 +39,6 @@ Route::get('roomOrder/getService', 'Operation_RoomOrderController@getService');
 Route::post('register', 'RegisterController@register');
 Route::post('login', 'RegisterController@login');
 Route::middleware('auth:api')->group( function () {
-    Route::resource('units', 'Facility_UnitController');
     Route::resource('news', 'Mkt_NewsController');
     Route::resource('services', 'Prod_ServiceController');
     Route::resource('technicians', 'TechnicianController');

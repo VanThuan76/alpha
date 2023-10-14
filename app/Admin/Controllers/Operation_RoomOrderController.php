@@ -49,7 +49,7 @@ class Operation_RoomOrderController extends AdminController
         $grid->disableCreateButton();
         $grid->disableRowSelector();
         $grid->model()->whereIn('zone_id', Zone::select("id")->whereIn('branch_id', 
-            Branch::select('id')->where('unit_id', Admin::user()->active_unit_id)->get()))->where('status', 1)->orderBy('zone_id', 'DESC');
+            Branch::select('id')->where('branch_id', Admin::user()->active_branch_id)->get()))->where('status', 1)->orderBy('zone_id', 'DESC');
         
         return $grid;
     }

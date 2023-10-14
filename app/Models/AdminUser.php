@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\Facility\Unit;
+use App\Models\Facility\Branch;
 use Encore\Admin\Traits\DefaultDatetimeFormat;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
@@ -92,19 +92,19 @@ class AdminUser extends Model implements AuthenticatableContract
         return $this->belongsToMany($relatedModel, $pivotTable, 'user_id', 'permission_id');
     }
 
-    public function getUnitsAttribute($value)
+    public function getBranchsAttribute($value)
     {
         return explode(',', $value);
     }
 
-    public function setUnitsAttribute($value)
+    public function setBranchsAttribute($value)
     {
-        $this->attributes['units'] = implode(',', $value);
+        $this->attributes['branchs'] = implode(',', $value);
     }
 
-    public function activeUnit()
+    public function activeBranch()
     {
-        return $this->belongsTo(Unit::class, 'active_unit_id');
+        return $this->belongsTo(Branch::class, 'active_branch_id');
     }
 
 }

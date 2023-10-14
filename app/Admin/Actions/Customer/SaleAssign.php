@@ -25,7 +25,7 @@ class SaleAssign extends BatchAction
 
     public function form()
     {
-        $this->select('sale_id', __('Nhân viên chăm sóc'))->options(AdminUser::where('active_unit_id', '=', Admin::user()->active_unit_id)->pluck('name','id'));
+        $this->select('sale_id', __('Nhân viên chăm sóc'))->options(AdminUser::where('active_branch_id', '=', Admin::user()->active_branch_id)->pluck('name','id'));
     }
 
 }

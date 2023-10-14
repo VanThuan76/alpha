@@ -2,7 +2,7 @@
 
 namespace App\Models\Product;
 
-use App\Models\Facility\Unit;
+use App\Models\Facility\Branch;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Model;
 
@@ -10,9 +10,9 @@ class Service extends Model
 {
     protected $table = 'services';
 
-    public function unit()
+    public function branch()
     {
-        return $this->belongsTo(Unit::class, 'unit_id');
+        return $this->belongsTo(Branch::class, 'branch_id');
     }
 
     public function getImageAttribute($value)

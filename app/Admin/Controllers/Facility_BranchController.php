@@ -3,7 +3,6 @@
 namespace App\Admin\Controllers;
 
 use App\Models\Facility\Branch;
-use App\Models\Facility\Unit;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
@@ -29,7 +28,6 @@ class Facility_BranchController extends AdminController
 
         $grid->column('name', __('Tên'));
         $grid->column('address', __('Địa chỉ'));
-        $grid->column('unit.name', __('Đơn vị'))->sortable();
         $grid->column('status', __('Trạng thái'))->using(Constant::STATUS)->label(Constant::STATUS_LABEL)->sortable();
         $grid->column('created_at', __('Ngày tạo'))->vndate();
         $grid->column('updated_at', __('Ngày cập nhật'))->vndate();
@@ -51,7 +49,6 @@ class Facility_BranchController extends AdminController
 
         $show->field('name', __('Tên'));
         $show->field('address', __('Địa chỉ'));
-        $show->field('unit.name', __('Đơn vị'));
         $show->field('created_at', __('Ngày tạo'));
         $show->field('updated_at', __('Ngày cập nhật'));
         $show->field('status', __('Trạng thái'));
@@ -73,7 +70,6 @@ class Facility_BranchController extends AdminController
 
         $form->text('name', __('Tên'))->required();
         $form->text('address', __('Địa chỉ'))->required();
-        $form->select('unit_id', __('Unit id'))->options(Unit::pluck('name', 'id'))->required();
         $form->select('status', __('Trạng thái'))->options(Constant::STATUS)->default(1)->setWidth(2, 2);
         $form->tools(function (Form\Tools $tools) {
             $tools->disableDelete();

@@ -49,6 +49,7 @@ class Mkt_NewsController extends AdminController
     {
         $show = new Show(News::findOrFail($id));
 
+        $show->field('branch_id', __('ID Chi nhánh'));
         $show->field('title', __('Tiêu đề'));
         $show->field('content', __('Nội dung'));
         $show->field('thumbnail', __('Hình ảnh đại diện'));
@@ -56,7 +57,6 @@ class Mkt_NewsController extends AdminController
         $show->field('updated_at', __('Ngày cập nhật'));
         $show->field('status', __('Trạng thái'));
         $show->field('image', __('Hình ảnh'));
-        $show->field('unit_id', __('ID Đơn vị'));
 
         return $show;
     }
@@ -75,7 +75,7 @@ class Mkt_NewsController extends AdminController
         $form->image('thumbnail', __('Hình ảnh đại diện'));
         $form->image('image', __('Hình ảnh'));
         $form->select('status', __('Trạng thái'))->options(Constant::STATUS)->default(1)->setWidth(2, 2);
-        $form->hidden('unit_id', __('ID Đơn vị'))->default(Admin::user()->active_unit_id);
+        $form->hidden('branch_id', __('ID Chi nhánh'))->default(Admin::user()->active_branch_id);
 
         return $form;
     }

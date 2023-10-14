@@ -20,7 +20,7 @@ class Technician extends JsonResource
             'name' => $this->name,
             'avatar' => $this->avatar,
             'phone_number' => $this->phone_number,
-            'active_unit_id' => $this->active_unit_id,
+            'active_branch_id' => $this->active_branch_id,
             'created_at' => $this->created_at->format('d/m/Y'),
             'updated_at' => $this->updated_at->format('d/m/Y'),
         ];

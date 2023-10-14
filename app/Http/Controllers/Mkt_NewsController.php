@@ -17,11 +17,11 @@ class Mkt_NewsController extends BaseController
      */
     public function index(Request $request)
     {
-        $unitId = $request->get("unit_id");
-        if (is_null($unitId)){
+        $branchId = $request->get("branch_id");
+        if (is_null($branchId)){
             $news = News::all();
         } else {
-            $news = News::where("unit_id", $unitId)->orderBy('view', 'DESC')->get();
+            $news = News::where("branch_id", $branchId)->orderBy('view', 'DESC')->get();
         }
 
         return $this->sendResponse(NewsResource::collection($news), 'News retrieved successfully.');
