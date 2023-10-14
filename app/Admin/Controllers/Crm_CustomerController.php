@@ -113,7 +113,7 @@ class Crm_CustomerController extends AdminController
     protected function form()
     {
         $form = new Form(new Customer());
-        $optionSales = DatabaseHelper::getOptionsForSelect(AdminUser::class, 'name', 'id', [['active_unit_id', '=', Admin::user()->active_unit_id]]);
+        $optionSales = DatabaseHelper::getOptionsForSelect(AdminUser::class, 'name', 'id', [['active_branch_id', '=', Admin::user()->active_branch_id]]);
         $optionSources = DatabaseHelper::getOptionsForSelect(Source::class, 'name', 'id', []);
 
         $form->text('name', __('Tên'))->required();

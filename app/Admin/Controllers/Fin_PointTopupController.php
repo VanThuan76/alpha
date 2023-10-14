@@ -39,7 +39,7 @@ class Fin_PointTopupController extends AdminController
         $grid->column('next_amount', __('Số tiền kế tiếp'))->number();
         $grid->column('customerType.name', __('Loại khách hàng'));
         $grid->column('customer_accumulated_amount', __('Tổng số tiền tích lũy của khách hàng'))->number();
-        $grid->column('unit.name', __('Đơn vị'));
+        $grid->column('branch.name', __('Chi nhánh'));
         $grid->column('staff.name', __('Nhân viên'));
         $grid->column('sale.name', __('Người bán'));
         $grid->column('status', __('Trạng thái'))->using(Constant::STATUS)->label(Constant::STATUS_LABEL);
@@ -51,7 +51,7 @@ class Fin_PointTopupController extends AdminController
             $actions->disableDelete();
             $actions->disableEdit();
         });
-        $grid->model()->where('unit_id', Admin::user()->active_unit_id)->orderBy('id', 'DESC');
+        $grid->model()->where('branch_id', Admin::user()->active_branch_id)->orderBy('id', 'DESC');
         $grid->enableHotKeys();
         $grid->fixColumns(0, 0);
         return $grid;
@@ -76,7 +76,7 @@ class Fin_PointTopupController extends AdminController
         $show->field('next_amount', __('Số tiền kế tiếp'));
         $show->field('customer_type', __('Loại khách hàng'));
         $show->field('customer_accumulated_amount', __('Tổng số tiền tích lũy của khách hàng'));
-        $show->field('unit_id', __('Đơn vị'));
+        $show->field('branch_id', __('ID Chi nhánh'));
         $show->field('staff_id', __('Nhân viên'));
         $show->field('sale_id', __('Người bán'));
         $show->field('status', __('Trạng thái'));
@@ -99,7 +99,7 @@ class Fin_PointTopupController extends AdminController
         $form = new Form(new PointTopup());
         //Todo: Customize DatabaseHelper
         $form->select('user_id', __('Người dùng'))->options(User::select(DB::raw('CONCAT(name, " - ", IFNULL(phone_number,"")) AS name, id'))
-        ->where('unit_id', '=', Admin::user()->active_unit_id)->pluck('name', 'id'))->required()->setWidth(2, 2);
+        ->where('branch_id', '=', Admin::user()->active_branch_id)->pluck('name', 'id'))->required()->setWidth(2, 2);
         $form->currency('amount', __('Số tiền'))->symbol('VND');
         $form->currency('discount', __('Chiết khấu'))->readonly()->setWidth(2, 2);
         $form->currency('added_amount', __('Số tiền thêm'))->readonly()->setWidth(2, 2);
@@ -107,10 +107,10 @@ class Fin_PointTopupController extends AdminController
         $form->currency('next_amount', __('Số tiền kế tiếp'))->readonly()->setWidth(2, 2);
         $form->select('customer_type', __('Loại khách hàng'))->options(CustomerType::pluck('name', 'id'))->readonly()->setWidth(2, 2);
         $form->currency('customer_accumulated_amount', __('Tổng số tiền tích lũy của khách hàng'))->readonly()->setWidth(2, 2);
-        $form->hidden('unit_id', __('Đơn vị'))->default(Admin::user()->active_unit_id);
+        $form->hidden('branch_id', __('Đơn vị'))->default(Admin::user()->active_branch_id);
         $form->hidden('staff_id', __('Nhân viên'))->default(Admin::user()->id);
         $form->select('sale_id', __('Người bán'))->options(AdminUser::select(DB::raw('CONCAT(name, " - ", IFNULL(phone_number,"")) AS name, id'))
-            ->where('active_unit_id', '=', Admin::user()->active_unit_id)->pluck('name', 'id'))->required()->setWidth(2, 2);
+            ->where('active_branch_id', '=', Admin::user()->active_branch_id)->pluck('name', 'id'))->required()->setWidth(2, 2);
         $form->hidden('status', __('Trạng thái'))->default(1);
         $form->select('payment_method', __('Phương thức thanh toán'))->options(Constant::PAYMENT_METHOD)->required()->setWidth(2, 2);
         $form->file('bill', __('Hóa đơn'));

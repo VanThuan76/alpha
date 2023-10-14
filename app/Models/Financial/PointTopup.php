@@ -4,7 +4,7 @@ namespace App\Models\Financial;
 
 use App\Models\AdminUser;
 use App\Models\Core\CustomerType;
-use App\Models\Facility\Unit;
+use App\Models\Facility\Branch;
 use App\Models\Sales\User;
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,9 +17,9 @@ class PointTopup extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function unit()
+    public function branch()
     {
-        return $this->belongsTo(Unit::class, 'unit_id');
+        return $this->belongsTo(Branch::class, 'branch_id');
     }
 
     public function customerType()

@@ -2,20 +2,16 @@
 
 namespace App\Admin\Actions;
 
-use App\Models\Room;
-use App\Models\Branch;
-use App\Models\Zone;
-use App\Models\Service;
+use App\Models\Facility\Room;
+use App\Models\Facility\Zone;
+use App\Models\Operation\WorkSchedule;
+use App\Models\Product\Service;
+use App\Models\Sales\User;
 use Carbon\Carbon;
 use App\Models\AdminUser;
-use App\Models\User;
-use App\Models\Bill;
-use App\Models\WorkSchedule;
-use App\Models\RoomOrder;
 use Encore\Admin\Facades\Admin;
 use Illuminate\Http\Request;
 use Encore\Admin\Actions\RowAction;
-use App\Admin\Controllers\Constant;
 
 class SelectUsingRoom extends RowAction
 {
@@ -54,7 +50,7 @@ class SelectUsingRoom extends RowAction
         } else {
             $shift = $workSchedule->shift4;
         }
-        $workingTechnicians = RoomOrder::where('unit_id', Admin::user()->active_unit_id)->where('status', 1)->pluck('id', 'technician_id');
+        $workingTechnicians = RoomOrder::where('branch_id', Admin::user()->active_branch_id)->where('status', 1)->pluck('id', 'technician_id');
         $avaiTechnicians = array();
         foreach($shift as $i => $technicianId){
             if (!isset($workingTechnicians[$technicianId]) ){
@@ -76,7 +72,7 @@ class SelectUsingRoom extends RowAction
             $url = env('APP_URL') . '/api/customer/services';    
             $this->name = "Chọn phòng";
             $services = array();
-            $roomOrders = RoomOrder::where('unit_id', Admin::user()->active_unit_id)->where('status', 0)->get();
+            $roomOrders = RoomOrder::where('branch_id', Admin::user()->active_branch_id)->where('status', 0)->get();
             foreach( $roomOrders as $i => $roomOrder) {
                 $services[$roomOrder->id] = $roomOrder->user->name . " : " . $roomOrder->service->name. " Vé thứ: " . $roomOrder->order;
             }

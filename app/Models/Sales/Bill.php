@@ -3,7 +3,7 @@
 namespace App\Models\Sales;
 
 use App\Models\AdminUser;
-use App\Models\Facility\Unit;
+use App\Models\Facility\Branch;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
@@ -21,9 +21,9 @@ class Bill extends Model
         $this->attributes['service_id'] = json_encode($value);
     }
 
-    public function unit()
+    public function branch()
     {
-        return $this->belongsTo(Unit::class, 'unit_id');
+        return $this->belongsTo(Branch::class, 'branch_id');
     }
 
     public function user()

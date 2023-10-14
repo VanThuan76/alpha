@@ -13,22 +13,22 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 abstract class Utils
 {
-    public static function getUnitIdFromBed($bedId){
+    public static function getBranchIdFromBed($bedId){
         $room = Room::find(Bed::find($bedId)->room_id);
         $branch = Branch::find(Zone::find($room->zone_id)->branch_id);
-        return $branch->unit_id;
+        return $branch->id;
     }
 
     public static function getBranchs(){
-        return Branch::where('unit_id', Admin::user()->active_unit_id);
+        return Branch::where('id', Admin::user()->active_branch_id);
     }
 
     public static function getZones(){
-        return Zone::whereIn('branch_id', Branch::where('unit_id', Admin::user()->active_unit_id)->get('id'));
+        return Zone::whereIn('branch_id', Branch::where('id', Admin::user()->active_branch_id)->get('id'));
     }
 
     public static function getRooms(){
-        return Room::whereIn('zone_id', Zone::whereIn('branch_id', Branch::where('unit_id', Admin::user()->active_unit_id)->get('id'))->get('id'));
+        return Room::whereIn('zone_id', Zone::whereIn('branch_id', Branch::where('id', Admin::user()->active_branch_id)->get('id'))->get('id'));
     }
 
     public static function getFullDescription($value){
@@ -39,7 +39,7 @@ abstract class Utils
     }
 
     public static function generateQr($amount, $comment){
-        $account = ReceiverAccount::where('unit_id', Admin::user()->active_unit_id)->first();
+        $account = ReceiverAccount::where('branch_id', Admin::user()->active_branch_id)->first();
         $accountInfor = '0006'.$account->bank_name.'01'.Utils::getFullDescription($account->account_number);
         $accountInfor = '0010A00000072701'.Utils::getFullDescription($accountInfor).'0208QRIBFTTA';
         $fullCommment = '08'.Utils::getFullDescription($comment);

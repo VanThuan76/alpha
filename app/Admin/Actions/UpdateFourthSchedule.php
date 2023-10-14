@@ -2,11 +2,10 @@
 
 namespace App\Admin\Actions;
 
-use App\Models\WorkSchedule;
-use App\Models\Branch;
+use App\Models\Facility\Branch;
+use App\Models\Operation\WorkSchedule;
 use Carbon\Carbon;
 use App\Models\AdminUser;
-use Encore\Admin\Admin;
 use Illuminate\Http\Request;
 use Encore\Admin\Actions\RowAction;
 use App\Admin\Controllers\Constant;
@@ -28,20 +27,20 @@ class UpdateFourthSchedule extends RowAction
     {
         $branch = Branch::find($this->row->branch_id);
         
-        $this->select('unit', 'Cơ sở')->options(Branch::where('status', 1)->where('unit_id', $branch->unit_id)->pluck('name', 'id'))->default($this->row->branch_id)->readOnly();
+        $this->select('branch', 'Chi nhánh')->options(Branch::where('status', 1)->where('id', $branch->id)->pluck('name', 'id'))->default($this->row->id)->readOnly();
         $this->text('date', 'Ngày')->default($this->row->date)->readOnly();
         if (!is_null($this->column)) {
             $this->select('shift', 'Ca')->options(Constant::SHIFT)->default($this->column->getName())->readOnly();
             $date = Carbon::parse($this->row->date);
             if($date >= Carbon::now()->startOfDay()){
-                $this->multipleSelect('technician', 'Kỹ thuật viên')->options(AdminUser::where('status', 1)->where('active_unit_id', $branch->unit_id)->pluck('name', 'id'))
+                $this->multipleSelect('technician', 'Kỹ thuật viên')->options(AdminUser::where('status', 1)->where('active_branch_id', $branch->id)->pluck('name', 'id'))
                 ->default($this->row[$this->column->getName()]);
             } else {
-                $this->multipleSelect('technician', 'Kỹ thuật viên')->options(AdminUser::where('status', 1)->where('active_unit_id', $branch->unit_id)->pluck('name', 'id'))
+                $this->multipleSelect('technician', 'Kỹ thuật viên')->options(AdminUser::where('status', 1)->where('active_branch_id', $branch->id)->pluck('name', 'id'))
                 ->default($this->row[$this->column->getName()])->readOnly();
             }
         } else {
-            $this->multipleSelect('technician', 'Kỹ thuật viên')->options(AdminUser::where('status', 1)->where('active_unit_id', $branch->unit_id)->pluck('name', 'id'));
+            $this->multipleSelect('technician', 'Kỹ thuật viên')->options(AdminUser::where('status', 1)->where('active_branch_id', $branch->id)->pluck('name', 'id'));
         }
 
     }

@@ -21,7 +21,7 @@ class News extends JsonResource
             'thumbnail' => $this->thumbnail,
             'status' => $this->status,
             'image' => $this->image,
-            'unit_id' => $this->unit_id,
+            'branch_id' => $this->branch_id,
             'view' => $this->view,
             'created_at' => $this->created_at->format('d/m/Y'),
             'updated_at' => $this->updated_at->format('d/m/Y'),

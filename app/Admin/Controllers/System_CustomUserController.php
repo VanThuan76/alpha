@@ -6,7 +6,7 @@ use Encore\Admin\Grid;
 use Encore\Admin\Form;
 use Encore\Admin\Show;
 use App\Models\AdminUser;
-use App\Models\Facility\Unit;
+use App\Models\Facility\Branch;
 use Encore\Admin\Facades\Admin;
 use Illuminate\Support\Facades\Hash;
 use Encore\Admin\Controllers\UserController;
@@ -34,14 +34,19 @@ class System_CustomUserController extends UserController
         $grid->column('username', trans('admin.username'));
         $grid->column('name', trans('admin.name'));
         $grid->column('roles', trans('admin.roles'))->pluck('name')->label();
-        $grid->column('units', "Cơ sờ")->display(function ($units) {
-            $unitNames = "";
-            foreach($units as $i => $unit){
-                $unitNames .= is_null(Unit::find($unit)) ? "" : Unit::find($unit)->name . " , ";
+        $grid->column('branchs', "Chi nhánh")->display(function ($branchs) {
+            if (is_array($branchs) && count($branchs) > 0) {
+                $branchName = "";
+                foreach ($branchs as $i => $branch) {
+                    $branchModel = Branch::find($branch);
+                    $branchName .= $branchModel ? $branchModel->name . " , " : "";
+                }
+                return "<span style='color:blue'>$branchName</span>";
+            } else {
+                return "";
             }
-            return "<span style='color:blue'>$unitNames</span>";
         });
-        $grid->column('activeUnit.name', 'Cở sở hoạt động');
+        $grid->column('activeBranch.name', 'Cở sở hoạt động');
         $grid->column('created_at', trans('admin.created_at'))->vndate();
         $grid->column('updated_at', trans('admin.updated_at'))->vndate();
         $grid->model()->orderBy('id', 'desc');
@@ -116,8 +121,8 @@ class System_CustomUserController extends UserController
 
         $form->multipleSelect('roles', trans('admin.roles'))->options(app(config('admin.database.roles_model'))->all()->pluck('name', 'id'));
         $form->mobile("phone_number", "Phone number")->options(['mask' => '999 9999 9999']);
-        $form->multipleSelect('units', "Cơ sở")->options(Unit::all()->pluck('name', 'id'))->default(array(Admin::user()->active_unit_id));
-        $form->select('active_unit_id', "Cơ sở hoạt động")->options(Unit::all()->pluck('name', 'id'))->default(Admin::user()->active_unit_id);
+        $form->multipleSelect('branchs', "Chi nhánh")->options(Branch::all()->pluck('name', 'id'))->default(array(Admin::user()->active_branch_id));
+        $form->select('active_branch_id', "Chi nhánh hoạt động")->options(Branch::all()->pluck('name', 'id'))->default(Admin::user()->active_branch_id);
 
         $form->display('created_at', trans('admin.created_at'));
         $form->display('updated_at', trans('admin.updated_at'));

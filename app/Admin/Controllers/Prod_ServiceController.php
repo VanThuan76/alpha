@@ -2,7 +2,7 @@
 
 namespace App\Admin\Controllers;
 
-use App\Models\Facility\Unit;
+use App\Models\Facility\Branch;
 use App\Models\Product\Service;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
@@ -37,7 +37,7 @@ class Prod_ServiceController extends AdminController
         $grid->column('id', __('Số tiền tính vào chi phí hộ kinh doanh'))->display(function(){
             return number_format($this->price - $this->company_amount);
         });
-        $grid->column('unit.name', __('Unit id'))->filter('like');
+        $grid->column('branch.name', __('Tên chi nhánh'))->filter('like');
         $grid->column('status', __('Trạng thái'))->using(Constant::STATUS)->label(Constant::STATUS_LABEL);
         $grid->column('created_at', __('Ngày tạo'))->vndate();
         $grid->column('updated_at', __('Ngày cập nhật'))->vndate();
@@ -56,6 +56,7 @@ class Prod_ServiceController extends AdminController
     {
         $show = new Show(Service::findOrFail($id));
 
+        $show->field('branch_id', __('ID chi nhánh'));
         $show->field('name', __('Tên'));
         $show->field('code', __('Mã'));
         $show->field('image', __('Hình ảnh'));
@@ -65,7 +66,6 @@ class Prod_ServiceController extends AdminController
         $show->field('status', __('Trạng thái'));
         $show->field('created_at', __('Ngày tạo'));
         $show->field('updated_at', __('Ngày cập nhật'));
-        $show->field('unit_id', __('Unit id'));
 
         return $show;
     }
@@ -87,7 +87,7 @@ class Prod_ServiceController extends AdminController
         $form->currency('price', __('Giá'));
         $form->currency('company_amount', __('Số tiền tính vào chi phí công ty'));
         $form->select('status', __('Trạng thái'))->options(Constant::STATUS)->default(1);
-        $form->select('unit_id', __('Unit id'))->options(Unit::pluck('name', 'id'))->required();
+        $form->select('branch_id', __('Chi nhánh'))->options(Branch::pluck('name', 'id'))->required();
         // callback before save
         $form->saving(function (Form $form) {
             $form->name = ucfirst($form->name);

@@ -49,7 +49,7 @@ class Sales_BillController extends AdminController
             return Utils::generateQr($this->total_amount, "senbachdiep:$this->id");
         });
         $grid->column('total_amount', __('Tổng cộng'))->number();
-        $grid->column('unit.name', __('Đơn vị'));
+        $grid->column('branch.name', __('Chi nhánh'));
         $grid->column('creator.name', __('Người tạo'));
         $grid->column('status', __('Trạng thái'))->using(Constant::STATUS)->label(Constant::STATUS_LABEL);
         $grid->column('id', __('In hoá đơn'))->display(function ($id) {
@@ -63,7 +63,8 @@ class Sales_BillController extends AdminController
             $actions->disableEdit();
         });
         $grid->disableRowSelector();
-        $grid->model()->where('unit_id', Admin::user()->active_unit_id)->orderBy('id', 'DESC');
+        //ToDo: Customize DatabaseHelper
+        $grid->model()->where('branch_id', '=', Admin::user()->active_branch_id)->orderBy('id', 'desc');
         $grid->fixColumns(0, 0);
 
         return $grid;
@@ -79,6 +80,7 @@ class Sales_BillController extends AdminController
     {
         $show = new Show(Bill::findOrFail($id));
 
+        $show->field('branch_id', __('ID Chi nhánh'));
         $show->field('user_id', __('ID Người dùng'));
         $show->field('service_id', __('ID Dịch vụ'));
         $show->field('number', __('Số lượng'));
@@ -88,7 +90,6 @@ class Sales_BillController extends AdminController
         $show->field('payment_method', __('Phương thức thanh toán'))->using(Constant::PAYMENT_METHOD);
         $show->field('bill', __('Hóa đơn'));
         $show->field('total_amount', __('Tổng cộng'));
-        $show->field('unit_id', __('ID Đơn vị'));
 
         $show->panel()->tools(function ($tools) {
             $tools->disableEdit();
@@ -105,13 +106,13 @@ class Sales_BillController extends AdminController
     protected function form()
     {
         $form = new Form(new Bill());
-        $optionUsers = DatabaseHelper::getOptionsForSelect(User::class, 'name', 'id', [['unit_id', '=', Admin::user()->active_unit_id]]);
-        $optionSellers = DatabaseHelper::getOptionsForSelect(AdminUser::class, 'name', 'id', [['active_unit_id', '=', Admin::user()->active_unit_id]]);
+        $optionUsers = DatabaseHelper::getOptionsForSelect(User::class, 'name', 'id', [['branch_id', '=', Admin::user()->active_branch_id]]);
+        $optionSellers = DatabaseHelper::getOptionsForSelect(AdminUser::class, 'name', 'id', [['active_branch_id', '=', Admin::user()->active_branch_id]]);
 
         $form->select('user_id', __('Khách hàng'))->options($optionUsers)->required()->setWidth(2, 2);
         $form->embeds('service_id', "Chọn dịch vụ", function ($form) {
             //Todo: Customize DatabaseHelper
-            $services = Service::where('unit_id', '=', Admin::user()->active_unit_id)->get();
+            $services = Service::where('branch_id', '=', Admin::user()->active_branch_id)->get();
             foreach ($services as $id => $service) {
                 $form->number($service->id, $service->name . " (Giá tiền: " . number_format($service->price) . ")")->default(0)->width(15, 2);
             }
@@ -121,7 +122,7 @@ class Sales_BillController extends AdminController
         $form->select('payment_method', __('Phương thức thanh toán'))->options(Constant::PAYMENT_METHOD)->required()->setWidth(2, 2);
         $form->file('bill', __('Hóa đơn'));
         $form->select('seller_id', __('Người bán'))->options($optionSellers)->required()->setWidth(2, 2);
-        $form->hidden('unit_id', __('ID Đơn vị'))->default(Admin::user()->active_unit_id);
+        $form->hidden('branch_id', __('ID Chi nhánh'))->default(Admin::user()->active_branch_id);
         $form->hidden('creator_id', __('ID Người tạo'))->default(Admin::user()->id);
         // callback after save
         $form->saved(function (Form $form) {
@@ -133,7 +134,7 @@ class Sales_BillController extends AdminController
                     $bedOrder->bill_id = $form->model()->id;
                     $bedOrder->user_id = $form->model()->user_id;
                     $bedOrder->service_id = $id;
-                    $bedOrder->unit_id = Admin::user()->active_unit_id;
+                    $bedOrder->branch_id = Admin::user()->active_branch_id;
                     $bedOrder->duration = Service::find($id)->duration;
                     $order++;
                     $bedOrder->order = $order;
@@ -144,7 +145,7 @@ class Sales_BillController extends AdminController
 
         $url = env('APP_URL') . '/api/customer';
         //Todo: Customize DatabaseHelper
-        $services = json_encode(Service::where('unit_id', '=', Admin::user()->active_unit_id)->get());
+        $services = json_encode(Service::where('branch_id', '=', Admin::user()->active_branch_id)->get());
         $script = <<<EOT
         var services = $services;
         console.log(services);

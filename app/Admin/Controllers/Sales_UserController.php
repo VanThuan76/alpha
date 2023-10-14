@@ -40,7 +40,7 @@ class Sales_UserController extends AdminController
         $grid->column('phone_number', __('Số điện thoại'))->filter('like');
         $grid->column('source.name', __('Tên nguồn'))->filter('like');
         $grid->column('photo', __('Hình ảnh'))->image();
-        $grid->column('unit.name', __('Tên cơ sở'));
+        $grid->column('branch.name', __('Tên chi nhánh'));
         $grid->column('customerType.name', __('Loại khách'));
         $grid->column('point', __('Điểm'))->modal('Lịch sử nạp điểm', function ($model) {
             $topups = $model->pointTopups()->take(10)->orderBy('id', 'DESC')->get()->map(function ($topup) {
@@ -62,7 +62,7 @@ class Sales_UserController extends AdminController
         $grid->column('created_at', __('Ngày tạo'))->vndate();
         $grid->column('updated_at', __('Ngày cập nhật'))->vndate();
         //ToDo: Customize DatabaseHelper
-        $grid->model()->where('unit_id', '=', Admin::user()->active_unit_id)->orderBy('id', 'desc');
+        $grid->model()->where('branch_id', '=', Admin::user()->active_branch_id)->orderBy('id', 'desc');
         $grid->fixColumns(0, 0);
 
         return $grid;
@@ -93,7 +93,7 @@ class Sales_UserController extends AdminController
         $show->field('point', __('Điểm'));
         $show->field('source_id', __('Nguồn'));
         $show->field('photo', __('Ảnh'));
-        $show->field('unit_id', __('Đơn vị'))->label(['class' => 'label-success']);
+        $show->field('branch_id', __('Chi nhánh'))->label(['class' => 'label-success']);
         $show->field('customer_type', __('Loại khách hàng'));
 
         return $show;
@@ -122,7 +122,7 @@ class Sales_UserController extends AdminController
         $form->hidden('status', __('Trạng thái'))->default(1);
         $form->hidden('point', __('Điểm'))->default(0);
         $form->select('source_id', __('Nguồn'))->options($optionSources)->required();
-        $form->hidden('unit_id', __('Đơn vị'))->default(Admin::user()->active_unit_id);
+        $form->hidden('branch_id', __('Chi nhánh'))->default(Admin::user()->active_branch_id);
         $form->hidden('customer_type', __('Loại khách hàng'))->default(0);
         // callback after save
         $form->saved(function (Form $form) {

@@ -4,7 +4,7 @@ namespace App\Admin\Controllers;
 
 use Encore\Admin\Form;
 use App\Models\AdminUser;
-use App\Models\Facility\Unit;
+use App\Models\Facility\Branch;
 use Encore\Admin\Facades\Admin;
 use Encore\Admin\Layout\Content;
 use Illuminate\Support\Facades\Hash;
@@ -48,10 +48,9 @@ class System_CustomSettingController extends AdminController
                 return $form->model()->password;
             });
         $form->ignore(['password_confirmation']);
-        $form->multipleSelect('roles', trans('admin.roles'))->options(app(config('admin.database.roles_model'))->all()->pluck('name', 'id'));
         $form->mobile("phone_number", "Phone number")->options(['mask' => '999 9999 9999']);
-        $form->multipleSelect('units', "Cơ sở")->options(Unit::all()->pluck('name', 'id'))->default(array(Admin::user()->active_unit_id));
-        $form->select('active_unit_id', "Cơ sở hoạt động")->options(Unit::all()->pluck('name', 'id'))->default(Admin::user()->active_unit_id);
+        $form->multipleSelect('branchs', "Chi nhánh")->options(Branch::all()->pluck('name', 'id'))->default(array(Admin::user()->active_branch_id));
+        $form->select('active_branch_id', "Chi nhánh hoạt động")->options(Branch::all()->pluck('name', 'id'))->default(Admin::user()->active_branch_id);
         $form->display('created_at', trans('admin.created_at'));
         $form->display('updated_at', trans('admin.updated_at'));
 
