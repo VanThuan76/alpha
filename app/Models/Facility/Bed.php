@@ -12,6 +12,14 @@ class Bed extends Model
     {
         return $this->belongsTo(Room::class, 'room_id');
     }
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class, 'branch_id');
+    }
+    public function zone()
+    {
+        return $this->belongsTo(Zone::class, 'zone_id');
+    }
 
     public function orders()
     {

@@ -32,7 +32,7 @@ abstract class DatabaseHelper
                 $query->where($field, $operator, $value);
             }
 
-            $options = $query->pluck($labelColumn, $valueColumn)->toArray();
+            $options = $query->pluck($labelColumn, $valueColumn);
 
             return $options;
         }
