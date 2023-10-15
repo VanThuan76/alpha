@@ -36,6 +36,8 @@ Route::get('workSchedule/generate', 'Operation_WorkScheduleController@generate')
 Route::get('roomOrder/checkRooms', 'Operation_RoomOrderController@checkRooms');
 Route::get('roomOrder/getService', 'Operation_RoomOrderController@getService');
 
+Route::get('zone', 'Facility_ZoneController@find');
+
 Route::post('register', 'RegisterController@register');
 Route::post('login', 'RegisterController@login');
 Route::middleware('auth:api')->group( function () {
