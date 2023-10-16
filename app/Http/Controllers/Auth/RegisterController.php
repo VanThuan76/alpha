@@ -2,56 +2,42 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
+use App\Http\Response\CommonResponse;
 use App\Models\Sales\User;
-use App\Traits\CommonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
+use App\Http\Controllers\BaseController as BaseController;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 
-class RegisterController extends Controller
+
+class RegisterController extends BaseController
 {
     use CommonResponse;
-
-    protected $redirectTo = '/';
-
-    public function __construct()
-    {
-        $this->middleware('guest');
-    }
-
-    protected function validator(array $data)
-    {
-        return Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:6', 'confirmed'],
-        ]);
-    }
-
-    protected function create(array $data)
-    {
-        return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-            'remember_token' => Str::random(60),
-        ]);
-    }
-
     public function register(Request $request)
     {
-        $validator = $this->validator($request->all());
+        $validator = Validator::make($request->all(), [
+            'name' => ['required', 'string', 'max:255'],
+            'phone_number' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password' => ['required', 'string', 'min:6'],
+        ]);
 
         if ($validator->fails()) {
-            $response = $this->_formatBaseResponse(400, null, 'Validation failed', $validator->errors());
+            $errors = $validator->errors()->toArray();
+            $response = $this->_formatBaseResponse(400, null, 'Tạo tài khoản không thành công', ['errors' => $errors]);
             return response()->json($response, 400);
         }
 
-        $user = $this->create($request->all());
-
-        $response = $this->_formatBaseResponse(200, $user, 'Tạo tài khoản thành công');
+        $input = $request->all();
+        $input['password'] = bcrypt($input['password']);
+        $user = User::create([
+            'name' => $input['name'],
+            'phone_number' => $input['phone_number'],
+            'email' => $input['email'],
+            'password' => $input['password'],
+        ]);
+        $accessToken = $user->createToken('MyApp')->accessToken;
+        $user->update(['access_token' => $accessToken]);
+        $response = $this->_formatBaseResponse(200, $user, 'Tạo tài khoản thành công', ['accessToken' => $accessToken]);
         return response()->json($response);
     }
 }

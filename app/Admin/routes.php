@@ -35,7 +35,7 @@ Route::group([
     $router->resource('bills', Sales_BillController::class);
     //Crm
     $router->resource('msgs', Crm_MsgController::class);
-    $router->resource('customers', Crm_CustomerController::class);
+    $router->resource('prospect-customers', Crm_ProspectCustomerController::class);
     //Facility
     $router->resource('branches', Facility_BranchController::class);
     $router->resource('zones', Facility_ZoneController::class);
@@ -45,4 +45,6 @@ Route::group([
     Route::get('/select-bed', 'Operation_BedOrderController@selectBed');
     $router->resource('work-schedules', Operation_WorkScheduleController::class);
     $router->resource('room-orders', Operation_RoomOrderController::class);
+    //Hrm
+    $router->resource('hrm', Hrm_EmployeeController::class);
 });

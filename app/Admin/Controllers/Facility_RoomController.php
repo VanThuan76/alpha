@@ -28,7 +28,7 @@ class Facility_RoomController extends AdminController
         $grid = new Grid(new Room());
 
         $grid->column('name', __('Tên'));
-        $grid->column('zone.name', __('Phòng'));
+        $grid->column('zone.name', __('Khu vực'));
         $grid->column('status', __('Trạng thái'))->using(Constant::STATUS)->label(Constant::STATUS_LABEL);
         $grid->column('created_at', __('Ngày tạo'))->vndate();
         $grid->column('updated_at', __('Ngày cập nhật'))->vndate();
@@ -50,7 +50,7 @@ class Facility_RoomController extends AdminController
         $show = new Show(Room::findOrFail($id));
 
         $show->field('name', __('Tên'));
-        $show->field('zone_id', __('Id Phòng'));
+        $show->field('zone_id', __('Id Khu vực'));
         $show->field('status', __('Trạng thái'));
         $show->field('created_at', __('Ngày tạo'));
         $show->field('updated_at', __('Ngày cập nhật'));
@@ -70,8 +70,8 @@ class Facility_RoomController extends AdminController
     {
         $form = new Form(new Room());
 
+        $form->select('zone_id', __('Khu vực'))->options(Zone::pluck('name', 'id'))->required();
         $form->text('name', __('Tên'));
-        $form->select('zone_id', __('Id Phòng'))->options(Zone::pluck('name', 'id'))->required();
         $form->select('status', __('Trạng thái'))->options(Constant::STATUS)->default(1)->setWidth(2, 2);
         $form->tools(function (Form\Tools $tools) {
             $tools->disableDelete();

@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
-class Crm_CustomerController extends Controller
+class Crm_ProspectCustomerController extends Controller
 {
 
     public function find(Request $request)

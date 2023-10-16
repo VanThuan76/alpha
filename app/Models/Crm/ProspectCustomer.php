@@ -6,9 +6,9 @@ use App\Models\AdminUser;
 use App\Models\Core\Source;
 use Illuminate\Database\Eloquent\Model;
 
-class Customer extends Model
+class ProspectCustomer extends Model
 {
-    protected $table = 'customers';
+    protected $table = 'prospect_customer';
 
     public function sale()
     {
