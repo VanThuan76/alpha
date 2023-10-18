@@ -11,7 +11,7 @@ return [
     | login page.
     |
     */
-    'name' => 'Sen bách diệp',
+    'name' => 'Sen Bách Diệp',
 
     /*
     |--------------------------------------------------------------------------
@@ -22,7 +22,7 @@ return [
     | `img` tag, eg '<img src="http://logo-url" alt="Admin logo">'.
     |
     */
-    'logo' => '<b>Sen bách diệp</b> admin',
+    'logo' => '<b>Sen Bách Diệp</b> admin',
 
     /*
     |--------------------------------------------------------------------------
@@ -85,7 +85,7 @@ return [
     | Html title for all pages.
     |
     */
-    'title' => 'Sen bách diệp',
+    'title' => 'Sen Bách Diệp',
 
     /*
     |--------------------------------------------------------------------------

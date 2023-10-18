@@ -20,6 +20,7 @@ Route::group([
     Route::get('/pdf', 'PDFController@createPDF');
     //Core
     $router->resource('roles', Core_RoleController::class);
+    $router->resource('position', Core_PositionController::class);
     $router->resource('customer-types', Core_CustomerTypeController::class);
     $router->resource('sources', Core_SourceController::class);
     //Financial
@@ -38,6 +39,7 @@ Route::group([
     $router->resource('prospect-customers', Crm_ProspectCustomerController::class);
     //Facility
     $router->resource('branches', Facility_BranchController::class);
+    $router->resource('department', Facility_DepartmentController::class);
     $router->resource('zones', Facility_ZoneController::class);
     $router->resource('rooms', Facility_RoomController::class);
     $router->resource('beds', Facility_BedController::class);
