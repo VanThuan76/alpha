@@ -2,21 +2,21 @@
 
 namespace App\Admin\Controllers;
 
-use App\Models\Facility\Room;
-use App\Models\Facility\Zone;
+use App\Models\Core\Position;
+use App\Models\Facility\Department;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
 
-class Facility_RoomController extends AdminController
+class Facility_DepartmentController extends AdminController
 {
     /**
      * Title for current resource.
      *
      * @var string
      */
-    protected $title = 'Phòng';
+    protected $title = 'Phòng ban';
 
     /**
      * Make a grid builder.
@@ -25,17 +25,26 @@ class Facility_RoomController extends AdminController
      */
     protected function grid()
     {
-        $grid = new Grid(new Room());
+        $grid = new Grid(new Department());
 
         $grid->column('name', __('Tên'));
-        $grid->column('zone.name', __('Khu vực'));
-        $grid->column('status', __('Trạng thái'))->using(Constant::STATUS)->label(Constant::STATUS_LABEL);
+        $grid->column('positions', "Chức vụ")->display(function ($positions) {
+            if (is_array($positions) && count($positions) > 0) {
+                $positionName = "";
+                foreach ($positions as $i => $position) {
+                    $positionModel = Position::find($position);
+                    $positionName .= $positionModel ? $positionModel->name . " , " : "";
+                }
+                return "<span style='color:blue'>$positionName</span>";
+            } else {
+                return "";
+            }
+        });
         $grid->column('created_at', __('Ngày tạo'))->vndate();
         $grid->column('updated_at', __('Ngày cập nhật'))->vndate();
         $grid->actions(function ($actions) {
             $actions->disableDelete();
         });
-
         return $grid;
     }
 
@@ -47,13 +56,13 @@ class Facility_RoomController extends AdminController
      */
     protected function detail($id)
     {
-        $show = new Show(Room::findOrFail($id));
+        $show = new Show(Department::findOrFail($id));
 
         $show->field('name', __('Tên'));
-        $show->field('zone_id', __('Id Khu vực'));
-        $show->field('status', __('Trạng thái'));
+        $show->field('address', __('Địa chỉ'));
         $show->field('created_at', __('Ngày tạo'));
         $show->field('updated_at', __('Ngày cập nhật'));
+        $show->field('status', __('Trạng thái'));
         $show->panel()->tools(function ($tools) {
             $tools->disableEdit();
             $tools->disableDelete();
@@ -68,16 +77,16 @@ class Facility_RoomController extends AdminController
      */
     protected function form()
     {
-        $form = new Form(new Room());
+        $form = new Form(new Department());
 
-        $form->select('zone_id', __('Khu vực'))->options(Zone::pluck('name', 'id'))->required();
-        $form->text('name', __('Tên'));
-        $form->select('status', __('Trạng thái'))->options(Constant::STATUS)->default(1)->setWidth(2, 2);
+        $form->text('name', __('Tên'))->required();
+        $form->multipleSelect('positions', "Chức vụ")->options(Position::all()->pluck('name', 'id'));
         $form->tools(function (Form\Tools $tools) {
             $tools->disableDelete();
         });
         $form->saving(function (Form $form) {
             $form->name = ucfirst($form->name);
+            $form->address = ucfirst($form->address);
         });
         return $form;
     }

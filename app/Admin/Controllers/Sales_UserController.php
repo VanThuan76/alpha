@@ -4,7 +4,7 @@ namespace App\Admin\Controllers;
 
 use App\Admin\Helpers\DatabaseHelper;
 use App\Models\Core\Source;
-use App\Models\Crm\Customer;
+use App\Models\Crm\ProspectCustomer;
 use App\Models\Sales\User;
 use Encore\Admin\Widgets\Table;
 use Encore\Admin\Facades\Admin;
@@ -129,7 +129,7 @@ class Sales_UserController extends AdminController
             if ($form->model()->phone_number) {
                 $customer = DatabaseHelper::getRecordByField(Customer::class, 'phone_number', $form->model()->phone_number);
                 if (is_null($customer)) {
-                    $customer = new Customer();
+                    $customer = new ProspectCustomer();
                     $customer->name = $form->model()->name;
                     $customer->phone_number = $form->model()->phone_number;
                     $customer->sale_id = Admin::user()->id;

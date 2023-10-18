@@ -7,9 +7,13 @@ use App\Models\Core\Source;
 use App\Models\Facility\Branch;
 use App\Models\Financial\PointTopup;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Passport\HasApiTokens;
 
 class User extends Model
 {
+    use HasApiTokens, Notifiable;
+
     protected $table = 'users';
 
     public function source()
@@ -37,8 +41,7 @@ class User extends Model
         return $this->name . ' ' . $this->phone_number;
     }
 
-	protected $hidden = [
-    ];
+	protected $hidden = ['access_token', 'password'];
 
 	protected $guarded = [];
 }

@@ -69,8 +69,8 @@ class Facility_ZoneController extends AdminController
     {
         $form = new Form(new Zone());
 
-        $form->text('name', __('Tên'))->required();
         $form->select('branch_id', __('Chi nhánh'))->options(Branch::pluck('name', 'id'))->required();
+        $form->text('name', __('Tên'))->required();
         $form->select('status', __('Trạng thái'))->options(Constant::STATUS)->default(1)->setWidth(2, 2);
         $form->tools(function (Form\Tools $tools) {
             $tools->disableDelete();

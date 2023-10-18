@@ -5,7 +5,7 @@ namespace App\Admin\Controllers;
 use App\Admin\Helpers\DatabaseHelper;
 use App\Models\AdminUser;
 use App\Models\Core\Source;
-use App\Models\Crm\Customer;
+use App\Models\Crm\ProspectCustomer;
 use App\Models\Crm\Msg;
 use App\Models\Product\Service;
 use App\Models\Sales\Bill;
@@ -17,7 +17,7 @@ use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
 
-class Crm_CustomerController extends AdminController
+class Crm_ProspectCustomerController extends AdminController
 {
     /**
      * Title for current resource.
@@ -33,7 +33,7 @@ class Crm_CustomerController extends AdminController
     protected $phone_number;
     protected function grid()
     {
-        $grid = new Grid(new Customer());
+        $grid = new Grid(new ProspectCustomer());
 
         $grid->column('name', __('Tên'))->filter('like');
         $grid->column('address', __('Địa chỉ'))->filter('like');
@@ -87,7 +87,7 @@ class Crm_CustomerController extends AdminController
      */
     protected function detail($id)
     {
-        $show = new Show(Customer::findOrFail($id));
+        $show = new Show(ProspectCustomer::findOrFail($id));
 
         $show->field('name', __('Tên'));
         $show->field('address', __('Địa chỉ'));
@@ -112,7 +112,7 @@ class Crm_CustomerController extends AdminController
      */
     protected function form()
     {
-        $form = new Form(new Customer());
+        $form = new Form(new ProspectCustomer());
         $optionSales = DatabaseHelper::getOptionsForSelect(AdminUser::class, 'name', 'id', [['active_branch_id', '=', Admin::user()->active_branch_id]]);
         $optionSources = DatabaseHelper::getOptionsForSelect(Source::class, 'name', 'id', []);
 

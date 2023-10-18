@@ -9,6 +9,8 @@ use App\Models\Facility\Branch;
 use App\Models\Facility\Zone;
 use App\Models\Facility\Bed;
 use Encore\Admin\Facades\Admin;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 abstract class Utils
@@ -47,6 +49,15 @@ abstract class Utils
         Utils::getFullDescription($amount).'5802VN62'.Utils::getFullDescription($fullCommment).'6304'; 
         $result = Crc16::CCITT_FALSE($rawData); 
         return QrCode::generate($rawData.dechex($result));
+    }
+    public static function generateEmployeeCode($type)
+    {
+        $today = date("ymd");
+        $currentTime = Carbon::now('Asia/Bangkok');
+        $time = $currentTime->format('His');
+        $userId = Str::padLeft(Admin::user()->id, 6, '0');
+        $code = $type . $today . $userId . $time;
+        return $code;
     }
 
 }

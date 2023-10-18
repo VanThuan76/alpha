@@ -77,29 +77,33 @@ class Facility_BedController extends AdminController
             $branchId = $form->model()->find($id)->getOriginal("branch_id");
             $zones = DatabaseHelper::getOptionsForSelect(Zone::class, "name" , "id", [['branch_id', '=', $branchId]]);
             $zoneId = $form->model()->find($id)->getOriginal("zone_id");
+            $rooms = DatabaseHelper::getOptionsForSelect(Room::class, "name" , "id", [['zone_id', '=', $zoneId]]);
+            $roomId = $form->model()->find($id)->getOriginal("room_id");
             $form->select('branch_id', __('Tên chi nhánh'))->options($branchs)->default($branchId)->required();
             $form->select('zone_id', __('Tên khu vực'))->options($zones)->default($zoneId)->required();
+            $form->select('room_id', __('Tên phòng'))->options($rooms)->default($roomId)->required();
         }else{
             $form->select('branch_id', __('Tên chi nhánh'))->options($branchs)->required();
             $form->select('zone_id', __('Tên khu vực'))->options()->required()->disable();
+            $form->select('room_id', __('Tên phòng'))->options()->required()->disable();
         }
         $form->text('name', __('Tên'));
-        $form->select('room_id', __('Phòng'))->options(Room::pluck('name', 'id'))->required();
         $form->select('status', __('Trạng thái'))->options(Constant::STATUS)->default(1)->setWidth(2, 2);
 
         $urlZone = env('APP_URL') . '/api/zone';
+        $urlRoom = env('APP_URL') . '/api/room';
         $script = <<<EOT
         $(function() {    
             var branchSelect = $(".branch_id");
             var zoneSelect = $(".zone_id");
             var zoneSelectDOM = document.querySelector('.zone_id');
+            var roomSelect = $(".room_id");
+            var roomSelectDOM = document.querySelector('.room_id');
 
             branchSelect.on('change', function() {
-
                 zoneSelect.empty();
                 optionsZone = {};
                 $("#class_name").val("")
-
                 var selectedBranchId = $(this).val();
                 if(!selectedBranchId) return
                 $.get("$urlZone", { branch_id: selectedBranchId }, function (zones) {
@@ -122,6 +126,34 @@ class Facility_BedController extends AdminController
                         }));
                     });
                     zoneSelect.trigger('change');
+                });
+            });
+            zoneSelect.on('change', function() {
+                roomSelect.empty();
+                optionsRoom = {};
+                $("#class_name").val("")
+                var selectedZoneId = $(this).val();
+                if(!selectedZoneId) return
+                $.get("$urlRoom", { zone_id: selectedZoneId }, function (rooms) {
+                    roomSelectDOM.removeAttribute('disabled');
+                    var roomsActive = rooms.filter(function (cls) {
+                        return cls.status === 1;
+                    });                    
+                    $.each(roomsActive, function (index, cls) {
+                        optionsRoom[cls.id] = cls.name;
+                    });
+                    roomSelect.empty();
+                    roomSelect.append($('<option>', {
+                        value: '',
+                        text: ''
+                    }));
+                    $.each(optionsRoom, function (id, roomName) {
+                        roomSelect.append($('<option>', {
+                            value: id,
+                            text: roomName
+                        }));
+                    });
+                    roomSelect.trigger('change');
                 });
             });
         });
