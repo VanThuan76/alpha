@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Response\CommonResponse;
 use Illuminate\Http\Request;
 use App\Http\Controllers\BaseController as BaseController;
-use Validator;
 use App\Http\Resources\Service as ServiceResource;
 use App\Models\Product\Service;
+use Illuminate\Support\Facades\Validator;
 
 class Prod_ServiceController extends BaseController
 {
+    use CommonResponse;
+
     /**
      * Display a listing of the resource.
      *
@@ -105,5 +108,23 @@ class Prod_ServiceController extends BaseController
     {
         $service->delete();
         return $this->sendResponse([], 'Service deleted successfully.');
+    }
+    public function get(Request $request)
+    {
+        $user = auth('api')->user();
+        $limit = $request->input('limit', 20);
+        $previousLastServiceId = $request->input('previous_last_service_id', 0);
+        $services = Service::where('status', 1)
+            ->where('id', '<', $previousLastServiceId)
+            ->orderBy('id', 'desc')
+            ->limit($limit)
+            ->get();
+        if ($user) {
+            $response = $this->_formatBaseResponse(200, $services, 'Lấy thông tin thành công', []);
+            return response()->json($response);
+        } else {
+            $response = $this->_formatBaseResponse(401, null, 'Lấy thông tin không thành công', ['errors' => 'Unauthorised']);
+            return response()->json($response, 401);
+        }
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Models\CommonCode;
 use App\Models\Financial\ReceiverAccount;
 use Crc16\Crc16;
 use App\Models\Facility\Room;
@@ -15,6 +16,13 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 abstract class Utils
 {
+    public static function commonCodeFormat($type, $description, $value)
+    {
+        $commonCode = CommonCode::where('type', $type)
+            ->where('value', $value)
+            ->first();
+        return $commonCode ? $commonCode->$description : '';
+    }
     public static function getBranchIdFromBed($bedId){
         $room = Room::find(Bed::find($bedId)->room_id);
         $branch = Branch::find(Zone::find($room->zone_id)->branch_id);
