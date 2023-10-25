@@ -31,18 +31,23 @@ Route::get('roomOrder/checkRooms', 'Operation_RoomOrderController@checkRooms');
 Route::get('roomOrder/getService', 'Operation_RoomOrderController@getService');
 Route::get('zone', 'Facility_ZoneController@find');
 Route::get('room', 'Facility_RoomController@find');
-Route::middleware('auth:api')->group( function () {
+Route::middleware('auth:api')->group(function () {
     Route::resource('news', 'Mkt_NewsController');
     Route::resource('services', 'Prod_ServiceController');
     Route::resource('technicians', 'TechnicianController');
 });
+//RESTAPI
 //Auth
 Route::post('v1/register', 'Auth\RegisterController@register');
 Route::post('v1/login', 'Auth\LoginController@login');
 Route::post('v1/forgot_password_by_phone_number', 'Auth\ForgotPasswordController@forgotPasswordByPhoneNumber');
-    //Business
-    Route::post('v1/email_by_phone_number', 'Auth\Business\GetEmailByPhoneNumberController@getEmail');
+//Business
+Route::post('v1/email_by_phone_number', 'Auth\Business\GetEmailByPhoneNumberController@getEmail');
+Route::middleware('auth:api')->group(function () {
 //User
-Route::middleware('auth:api')->group( function () {
+    Route::get('v1/profile', 'UserController@get');
     Route::post('v1/update_profile', 'UserController@update');
+    Route::put('v1/change_password', 'UserController@changePassword');
+//Service
+    Route::get('v1/services', 'Prod_ServiceController@get');
 });
