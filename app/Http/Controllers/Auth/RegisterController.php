@@ -17,22 +17,21 @@ class RegisterController extends BaseController
     {
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
-            'phone_number' => ['required', 'string', 'max:255'],
+            'phone_number' => ['required', 'string', 'max:255', 'unique:users'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:6'],
         ]);
 
         if ($validator->fails()) {
             $errors = $validator->errors()->toArray();
+            $message = 'Tạo tài khoản không thành công';
+
             if (isset($errors['email'][0]) && $errors['email'][0] == 'The email has already been taken.') {
                 $message = 'Email đã tồn tại trong hệ thống';
-            }
-            elseif (isset($errors['phone_number'][0]) && $errors['phone_number'][0] == 'The phone number has already been taken.') {
+            } elseif (isset($errors['phone_number'][0]) && $errors['phone_number'][0] == 'The phone number has already been taken.') {
                 $message = 'Số điện thoại đã tồn tại trong hệ thống';
             }
-            else {
-                $message = 'Tạo tài khoản không thành công';
-            }
+
             $response = $this->_formatBaseResponse(400, null, $message, ['errors' => $errors]);
             return response()->json($response, 400);
         } else {
