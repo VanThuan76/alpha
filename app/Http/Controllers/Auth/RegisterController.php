@@ -50,7 +50,10 @@ class RegisterController extends BaseController
 
             $accessToken = $token->accessToken;
             $user->update(['access_token' => $accessToken]);
-            $response = $this->_formatBaseResponse(200, $user, 'Tạo tài khoản thành công', ['accessToken' => $accessToken]);
+            $result = [
+                'access_token' => $accessToken
+            ];
+            $response = $this->_formatBaseResponse(200, $result, 'Tạo tài khoản thành công', []);
             return response()->json($response);
         }
     }

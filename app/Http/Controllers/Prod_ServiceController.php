@@ -21,7 +21,7 @@ class Prod_ServiceController extends BaseController
     public function index(Request $request)
     {
         $branchId = $request->get("branch_id");
-        if (is_null($branchId)){
+        if (is_null($branchId)) {
             $service = Service::all();
         } else {
             $service = Service::where("branch_id", $branchId)->get();
@@ -119,8 +119,23 @@ class Prod_ServiceController extends BaseController
             ->orderBy('id', 'desc')
             ->limit($limit)
             ->get();
+        $result = [
+            'services' => [
+                'id' => $services->id,
+                'image_url' => $services->image,
+                'title' => $services->name,
+                'introduction' => $services->introduction,
+                'used_count' => $services->used_count,
+                'details' => $services->details,
+                'tags' => [
+                    'name' => $services->tags,
+                ],
+                'rate' => $services->rate,
+                'comment_count' => $services->comment_count,
+            ]
+        ];
         if ($user) {
-            $response = $this->_formatBaseResponse(200, $services, 'Lấy thông tin thành công', []);
+            $response = $this->_formatBaseResponse(200, $result, 'Lấy thông tin thành công', []);
             return response()->json($response);
         } else {
             $response = $this->_formatBaseResponse(401, null, 'Lấy thông tin không thành công', ['errors' => 'Unauthorised']);

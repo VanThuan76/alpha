@@ -14,9 +14,10 @@ class LoginController extends Controller
     {
         if (Auth::attempt(['phone_number' => $request->phone_number, 'password' => $request->password])) {
             $user = Auth::user();;
-            $accessToken = $user->access_token;
-            unset($user->access_token);
-            $response = $this->_formatBaseResponse(200, $user, 'Đăng nhập thành công', ['accessToken' => $accessToken]);
+            $accessToken = [
+                'access_token' => $user->access_token
+            ];
+            $response = $this->_formatBaseResponse(200, $accessToken, 'Đăng nhập thành công', []);
             return response()->json($response);
         } else {
             $response = $this->_formatBaseResponse(401, null, 'Đăng nhập không thành công', ['errors' => 'Unauthorised']);
