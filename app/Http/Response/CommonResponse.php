@@ -16,7 +16,7 @@ trait CommonResponse
     private function _formatBaseResponse($statusCode, $data, $message, $other = null)
     {
         $response = [
-            'statusCode' => $statusCode,
+            'status_code' => $statusCode,
             'data' => $data,
             'message' => $message,
         ];

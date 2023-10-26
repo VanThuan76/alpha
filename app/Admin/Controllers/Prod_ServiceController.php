@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Models\Core\CustomerType;
 use App\Models\Facility\Branch;
 use App\Models\Product\Service;
 use Encore\Admin\Controllers\AdminController;
@@ -26,7 +27,21 @@ class Prod_ServiceController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new Service());
-        
+
+        $grid->column('branch.name', __('Tên chi nhánh'))->filter('like');
+        $grid->column('customer_types', "Loại khách hàng")->display(function ($customerTypes) {
+            $customerTypes = explode(',', $customerTypes);
+            if (is_array($customerTypes) && count($customerTypes) > 0) {
+                $customerTypeName = "";
+                foreach ($customerTypes as $i => $customerType) {
+                    $customerTypeModel = CustomerType::find($customerType);
+                    $customerTypeName .= $customerTypeModel ? $customerTypeModel->name . " , " : "";
+                }
+                return "<span style='color:blue'>$customerTypeName</span>";
+            } else {
+                return "";
+            }
+        });
         $grid->column('name', __('Tên'))->filter('like');
         $grid->column('code', __('Mã'))->filter('like');
         $grid->column('image', __('Hình ảnh'))->image();
@@ -37,7 +52,6 @@ class Prod_ServiceController extends AdminController
         $grid->column('id', __('Số tiền tính vào chi phí hộ kinh doanh'))->display(function(){
             return number_format($this->price - $this->company_amount);
         });
-        $grid->column('branch.name', __('Tên chi nhánh'))->filter('like');
         $grid->column('status', __('Trạng thái'))->using(Constant::STATUS)->label(Constant::STATUS_LABEL);
         $grid->column('created_at', __('Ngày tạo'))->vndate();
         $grid->column('updated_at', __('Ngày cập nhật'))->vndate();
