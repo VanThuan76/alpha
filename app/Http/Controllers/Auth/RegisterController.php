@@ -24,16 +24,14 @@ class RegisterController extends BaseController
 
         if ($validator->fails()) {
             $errors = $validator->errors()->toArray();
-            $message = 'Tạo tài khoản không thành công';
-
-            if (isset($errors['email'][0]) && $errors['email'][0] == 'The email has already been taken.') {
-                $message = 'Email đã tồn tại trong hệ thống';
-            } elseif (isset($errors['phone_number'][0]) && $errors['phone_number'][0] == 'The phone number has already been taken.') {
-                $message = 'Số điện thoại đã tồn tại trong hệ thống';
-            }
-
-            $response = $this->_formatBaseResponse(400, null, $message, ['errors' => $errors]);
-            return response()->json($response, 400);
+            $errorsFormat = [
+                'errors' => [
+                    isset($errors['email'][0]) && $errors['email'][0] ? 'Trường email đã có trong cơ sở dữ liệu' : "",
+                    isset($errors['phone_number'][0]) && $errors['phone_number'][0] ? 'Trường phone number đã có trong cơ sở dữ liệu' : "",
+                ]
+            ];
+            $response = $this->_formatBaseResponse(422, null, $errorsFormat, []);
+            return response()->json($response, 422);
         } else {
             $input = $request->all();
             $input['password'] = bcrypt($input['password']);

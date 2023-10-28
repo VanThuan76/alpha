@@ -44,6 +44,19 @@ class Prod_ServiceController extends AdminController
         });
         $grid->column('name', __('Tên'))->filter('like');
         $grid->column('code', __('Mã'))->filter('like');
+        $grid->column('tags', "Thẻ")->display(function ($tags) {
+            $tags = explode(',', $tags);
+            if (is_array($tags) && count($tags) > 0) {
+                $tagName = "";
+                foreach ($tags as $i => $tag) {
+                    $tagName .= $tag . " , ";
+                }
+                return "<span style='color:blue'>$tagName</span>";
+            } else {
+                return "";
+            }
+        });
+        $grid->column('introduction', __('Giới thiệu'));
         $grid->column('image', __('Hình ảnh'))->image();
         $grid->column('duration', __('Khoảng thời gian'))->filter('like');
         $grid->column('staff_number', __('Số nhân viên'));
@@ -73,6 +86,7 @@ class Prod_ServiceController extends AdminController
         $show->field('branch_id', __('ID chi nhánh'));
         $show->field('name', __('Tên'));
         $show->field('code', __('Mã'));
+        $show->field('introduction', __('Giới thiệu'));
         $show->field('image', __('Hình ảnh'));
         $show->field('duration', __('Khoảng thời gian'));
         $show->field('staff_number', __('Số nhân viên'));

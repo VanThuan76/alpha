@@ -120,19 +120,22 @@ class Prod_ServiceController extends BaseController
             ->limit($limit)
             ->get();
         $result = [
-            'services' => [
-                'id' => $services->id,
-                'image_url' => $services->image,
-                'title' => $services->name,
-                'introduction' => $services->introduction,
-                'used_count' => $services->used_count,
-                'details' => $services->details,
-                'tags' => [
-                    'name' => $services->tags,
-                ],
-                'rate' => $services->rate,
-                'comment_count' => $services->comment_count,
-            ]
+            'services' => $services->map(function ($service) {
+                $tagsArray = array_map('trim', explode(',', $service->tags));
+                return [
+                    'id' => $service->id,
+                    'image_url' => $service->image,
+                    'title' => $service->name,
+                    'introduction' => $service->introduction,
+                    'used_count' => $service->used_count,
+                    'details' => $service->details,
+                    'tags' => [
+                        'name' => $tagsArray,
+                    ],
+                    'rate' => $service->rate,
+                    'comment_count' => $service->comment_count,
+                ];
+            })
         ];
         if ($user) {
             $response = $this->_formatBaseResponse(200, $result, 'Lấy thông tin thành công', []);

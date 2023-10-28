@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Response\CommonResponse;
+use App\Models\Sales\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -117,4 +118,12 @@ class UserController extends Controller
             return response()->json($response);
         }
     }
+
+    public function search(Request $request)
+    {
+        $query = $request->input('query');
+        $results = User::where('phone_number', 'LIKE', '%' . $query . '%')->get();
+        return view('components.search_result', ['results' => $results]);
+    }
+    
 }

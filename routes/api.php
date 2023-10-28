@@ -36,6 +36,7 @@ Route::middleware('auth:api')->group(function () {
     Route::resource('services', 'Prod_ServiceController');
     Route::resource('technicians', 'TechnicianController');
 });
+Route::get('search', 'UserController@search')->name('search');
 //RESTAPI
 //Auth
 Route::post('v1/register', 'Auth\RegisterController@register');
