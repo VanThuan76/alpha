@@ -24,14 +24,13 @@ class RegisterController extends BaseController
 
         if ($validator->fails()) {
             $errors = $validator->errors()->toArray();
-            $errorsFormat = [
-                'errors' => [
-                    isset($errors['email'][0]) && $errors['email'][0] ? 'Trường email đã có trong cơ sở dữ liệu' : "",
-                    isset($errors['phone_number'][0]) && $errors['phone_number'][0] ? 'Trường phone number đã có trong cơ sở dữ liệu' : "",
-                ]
-            ];
-            $response = $this->_formatBaseResponse(422, null, $errorsFormat, []);
+            $errorsMessage = [];
+            foreach ($errors as $key => $error) {
+                $errorsMessage[$key] = $error[0];
+            }
+            $response = $this->_formatBaseResponse(422, null, ['errors' => $errorsMessage], []);
             return response()->json($response, 422);
+            
         } else {
             $input = $request->all();
             $input['password'] = bcrypt($input['password']);

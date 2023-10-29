@@ -40,6 +40,7 @@ Route::get('search', 'UserController@search')->name('search');
 //RESTAPI
 //Auth
 Route::post('v1/register', 'Auth\RegisterController@register');
+Route::post('v1/verify_register', 'Auth\VerifyRegisterController@verifyRegister');
 Route::post('v1/login', 'Auth\LoginController@login');
 Route::post('v1/forgot_password_by_phone_number', 'Auth\ForgotPasswordController@forgotPasswordByPhoneNumber');
 //Business

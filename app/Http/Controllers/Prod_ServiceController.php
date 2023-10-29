@@ -114,11 +114,17 @@ class Prod_ServiceController extends BaseController
         $user = auth('api')->user();
         $limit = $request->input('limit', 20);
         $previousLastServiceId = $request->input('previous_last_service_id', 0);
-        $services = Service::where('status', 1)
-            ->where('id', '<', $previousLastServiceId)
-            ->orderBy('id', 'desc')
-            ->limit($limit)
-            ->get();
+        if ($limit === null || !is_numeric($limit) || $limit <= 0) {
+            $limit = 20;
+        }
+        
+        $servicesQuery = Service::where('status', 1)->orderBy('id', 'desc')->limit($limit);
+
+        if ($previousLastServiceId !== null) {
+            $servicesQuery->where('id', '<', $previousLastServiceId);
+        }
+        $services = $servicesQuery->get();
+
         $result = [
             'services' => $services->map(function ($service) {
                 $tagsArray = array_map('trim', explode(',', $service->tags));
