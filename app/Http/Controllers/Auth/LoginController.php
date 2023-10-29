@@ -13,7 +13,7 @@ class LoginController extends Controller
     public function login(Request $request)
     {
         if (Auth::attempt(['phone_number' => $request->phone_number, 'password' => $request->password])) {
-            $user = Auth::user();;
+            $user = Auth::user();
             $accessToken = [
                 'access_token' => $user->access_token
             ];
