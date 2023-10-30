@@ -137,9 +137,7 @@ class Prod_ServiceController extends BaseController
                     'introduction' => $service->introduction,
                     'used_count' => $service->used_count,
                     'details' => $service->details,
-                    'tags' => [
-                        'name' => $tagsArray,
-                    ],
+                    'tags' => $tagsArray,
                     'rate' => $service->rate,
                     'comment_count' => $service->comment_count,
                 ];
