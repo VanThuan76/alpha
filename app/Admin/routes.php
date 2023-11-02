@@ -29,6 +29,7 @@ Route::group([
     $router->resource('bank-bins', Fin_BankBinController::class);
     //Product
     $router->resource('services', Prod_ServiceController::class); 
+    $router->resource('promotions', Prod_PromotionController::class); 
     //Marketing
     $router->resource('news', Mkt_NewsController::class);
     //Sales

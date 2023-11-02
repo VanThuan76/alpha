@@ -52,4 +52,5 @@ Route::middleware('auth:api')->group(function () {
     Route::put('v1/change_password', 'UserController@changePassword');
 //Service
     Route::get('v1/services', 'Prod_ServiceController@get');
+    Route::get('v1/promotions', 'Prod_PromotionController@get');
 });
