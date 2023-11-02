@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Response\CommonResponse;
 use App\Models\Sales\User;
-use App\Traits\CommonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
