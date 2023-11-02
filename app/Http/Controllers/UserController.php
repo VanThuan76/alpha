@@ -105,6 +105,7 @@ class UserController extends Controller
     public function changePassword(Request $request)
     {
         $user = auth('api')->user();
+        
         $request->validate([
             'old_password' => ['required', 'string'],
             'password' => ['required', 'string', 'min:6', 'confirmed'],
