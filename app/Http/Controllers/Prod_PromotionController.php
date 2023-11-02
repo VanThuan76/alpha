@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Response\CommonResponse;
 use App\Http\Controllers\BaseController as BaseController;
+use App\Models\CommonCode;
 use App\Models\Core\CustomerType;
 use App\Models\Facility\Branch;
 use App\Models\Product\Promotion;
@@ -35,32 +36,29 @@ class Prod_PromotionController extends BaseController
         $result = [
             'promotions' => $promotions->map(function ($promotion) {
                 $tagsArray = is_array($promotion->tags) ? $promotion->tags : array_map('trim', explode(',', $promotion->tags));
-                $branchesArray = $promotion->branches;
-                if (!is_array($branchesArray)) {
-                    $branchesArray = explode(',', $promotion->branches);
-                    $branches = Branch::whereIn("id", $branchesArray)->get();
-                    $branchesArray = $branches->pluck('name')->toArray();
+                $branchIds = $promotion->applied_branchs;
+                $branchesArray = [];
+                if (is_array($branchIds)) {
+                    $branchesArray = Branch::whereIn("id", $branchIds)->pluck('name')->toArray();
                 }
-                $ranksArray = $promotion->ranks;
-                if (!is_array($ranksArray)) {
-                    $ranksArray = explode(',', $promotion->ranks);
-                    $ranks = CustomerType::whereIn("id", $ranksArray)->get();
-                    $ranksArray = $ranks->pluck('name')->toArray();
+                $ranksIds = $promotion->applied_ranks;
+                $ranksArray = [];
+                if (is_array($ranksIds)) {
+                    $ranksArray = CustomerType::whereIn("id", $ranksIds)->pluck('name')->toArray();
                 }
-                $usersArray = $promotion->users;
-                if (!is_array($usersArray)) {
-                    $usersArray = explode(',', $promotion->users);
-                    $users = User::whereIn("id", $usersArray)->get();
-                    $usersArray = $users->pluck('name')->toArray();
+                $userIds = $promotion->applied_users;
+                $usersArray = [];
+                if (is_array($userIds)) {
+                    $usersArray = User::whereIn("id", $userIds)->pluck('name')->toArray();
                 }
-                $servicesArray = $promotion->services;
-                if (!is_array($servicesArray)) {
-                    $servicesArray = explode(',', $promotion->services);
-                    $services = Service::whereIn("id", $servicesArray)->get();
-                    $servicesArray = $services->pluck('name')->toArray();
+                $serviceIds = $promotion->applied_services;
+                $servicesArray = [];
+                if (is_array($serviceIds)) {
+                    $servicesArray = Service::whereIn("id", $serviceIds)->pluck('name')->toArray();
                 }
                 $productsArray = is_array($promotion->products) ? $promotion->products : array_map('trim', explode(',', $promotion->products));
-                
+                $statusName = CommonCode::where("id", $promotion->status)->pluck('description_vi');
+
                 return [
                     'id' => $promotion->id,
                     'image_url' => $promotion->image_url,
@@ -75,7 +73,7 @@ class Prod_PromotionController extends BaseController
                     'details' => $promotion->details,
                     'tags' => $tagsArray,
                     'used_percent' => $promotion->used_percent,
-                    'status' => $promotion->status,
+                    'status' => $statusName,
                 ];
             })
         ];
