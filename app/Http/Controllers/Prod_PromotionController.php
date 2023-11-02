@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Response\CommonResponse;
 use App\Http\Controllers\BaseController as BaseController;
+use App\Models\Core\CustomerType;
+use App\Models\Facility\Branch;
 use App\Models\Product\Promotion;
+use App\Models\Product\Service;
+use App\Models\Sales\User;
 use Illuminate\Http\Request;
 
 class Prod_PromotionController extends BaseController
@@ -31,10 +35,10 @@ class Prod_PromotionController extends BaseController
         $result = [
             'promotions' => $promotions->map(function ($promotion) {
                 $tagsArray = is_array($promotion->tags) ? $promotion->tags : array_map('trim', explode(',', $promotion->tags));
-                $branchesArray = is_array($promotion->branches) ? $promotion->branches : array_map('trim', explode(',', $promotion->branches));
-                $ranksArray = is_array($promotion->ranks) ? $promotion->ranks : array_map('trim', explode(',', $promotion->ranks));
-                $usersArray = is_array($promotion->users) ? $promotion->users : array_map('trim', explode(',', $promotion->users));
-                $servicesArray = is_array($promotion->services) ? $promotion->services : array_map('trim', explode(',', $promotion->services));
+                $branchesArray = is_array($promotion->branches) ? $promotion->branches : array_map('trim', explode(',', Branch::where("id", $promotion->branches)->first()->name));
+                $ranksArray = is_array($promotion->ranks) ? $promotion->ranks : array_map('trim', explode(',', CustomerType::where("id", $promotion->ranks)->first()->name));
+                $usersArray = is_array($promotion->users) ? $promotion->users : array_map('trim', explode(',', User::where("id", $promotion->users)->first()->name));
+                $servicesArray = is_array($promotion->services) ? $promotion->services : array_map('trim', explode(',', Service::where("id", $promotion->services)->first()->name));
                 $productsArray = is_array($promotion->products) ? $promotion->products : array_map('trim', explode(',', $promotion->products));
 
 

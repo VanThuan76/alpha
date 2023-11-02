@@ -49,7 +49,7 @@ Route::middleware('auth:api')->group(function () {
 //User
     Route::get('v1/profile', 'UserController@get');
     Route::post('v1/update_profile', 'UserController@update');
-    Route::put('v1/change_password', 'UserController@changePassword');
+    Route::post('v1/change_password', 'UserController@changePassword');
 //Service
     Route::get('v1/services', 'Prod_ServiceController@get');
     Route::get('v1/promotions', 'Prod_PromotionController@get');
