@@ -68,4 +68,16 @@ abstract class Utils
         return $code;
     }
 
+    public static function renderStringToGrid($strings, $model){
+        if (is_array($strings) && count($strings) > 0) {
+            $stringName = "";
+            foreach ($strings as $i => $branch) {
+                $stringModel = $model::find($branch);
+                $stringName .= $stringModel ? $stringModel->name . " , " : "";
+            }
+            return "<span style='color:#3C8DBD'>$stringName</span>";
+        } else {
+            return "";
+        }
+    }
 }
