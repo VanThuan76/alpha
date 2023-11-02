@@ -35,15 +35,32 @@ class Prod_PromotionController extends BaseController
         $result = [
             'promotions' => $promotions->map(function ($promotion) {
                 $tagsArray = is_array($promotion->tags) ? $promotion->tags : array_map('trim', explode(',', $promotion->tags));
-                $branches = Branch::whereIn("id", explode(',', $promotion->branches))->get();
-                $branchesArray = $branches->pluck('name')->toArray();
-                $ranks = CustomerType::whereIn("id", explode(',', $promotion->ranks))->get();
-                $ranksArray = $ranks->pluck('name')->toArray();
-                $users = User::whereIn("id", explode(',', $promotion->users))->get();
-                $usersArray = $users->pluck('name')->toArray();
-                $services = Service::whereIn("id", explode(',', $promotion->services))->get();
-                $servicesArray = $services->pluck('name')->toArray();
+                $branchesArray = $promotion->branches;
+                if (!is_array($branchesArray)) {
+                    $branchesArray = explode(',', $promotion->branches);
+                    $branches = Branch::whereIn("id", $branchesArray)->get();
+                    $branchesArray = $branches->pluck('name')->toArray();
+                }
+                $ranksArray = $promotion->ranks;
+                if (!is_array($ranksArray)) {
+                    $ranksArray = explode(',', $promotion->ranks);
+                    $ranks = CustomerType::whereIn("id", $ranksArray)->get();
+                    $ranksArray = $ranks->pluck('name')->toArray();
+                }
+                $usersArray = $promotion->users;
+                if (!is_array($usersArray)) {
+                    $usersArray = explode(',', $promotion->users);
+                    $users = User::whereIn("id", $usersArray)->get();
+                    $usersArray = $users->pluck('name')->toArray();
+                }
+                $servicesArray = $promotion->services;
+                if (!is_array($servicesArray)) {
+                    $servicesArray = explode(',', $promotion->services);
+                    $services = Service::whereIn("id", $servicesArray)->get();
+                    $servicesArray = $services->pluck('name')->toArray();
+                }
                 $productsArray = is_array($promotion->products) ? $promotion->products : array_map('trim', explode(',', $promotion->products));
+                
                 return [
                     'id' => $promotion->id,
                     'image_url' => $promotion->image_url,
