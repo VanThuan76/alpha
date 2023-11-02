@@ -35,13 +35,15 @@ class Prod_PromotionController extends BaseController
         $result = [
             'promotions' => $promotions->map(function ($promotion) {
                 $tagsArray = is_array($promotion->tags) ? $promotion->tags : array_map('trim', explode(',', $promotion->tags));
-                $branchesArray = is_array($promotion->branches) ? Branch::where("id", $promotion->branches)->first()->name : array_map('trim', explode(',', Branch::where("id", $promotion->branches)->first()->name));
-                $ranksArray = is_array($promotion->ranks) ? CustomerType::where("id", $promotion->ranks)->first()->name : array_map('trim', explode(',', CustomerType::where("id", $promotion->ranks)->first()->name));
-                $usersArray = is_array($promotion->users) ? User::where("id", $promotion->users)->first()->name : array_map('trim', explode(',', User::where("id", $promotion->users)->first()->name));
-                $servicesArray = is_array($promotion->services) ? Service::where("id", $promotion->services)->first()->name : array_map('trim', explode(',', Service::where("id", $promotion->services)->first()->name));
+                $branches = Branch::whereIn("id", explode(',', $promotion->branches))->get();
+                $branchesArray = $branches->pluck('name')->toArray();
+                $ranks = CustomerType::whereIn("id", explode(',', $promotion->ranks))->get();
+                $ranksArray = $ranks->pluck('name')->toArray();
+                $users = User::whereIn("id", explode(',', $promotion->users))->get();
+                $usersArray = $users->pluck('name')->toArray();
+                $services = Service::whereIn("id", explode(',', $promotion->services))->get();
+                $servicesArray = $services->pluck('name')->toArray();
                 $productsArray = is_array($promotion->products) ? $promotion->products : array_map('trim', explode(',', $promotion->products));
-
-
                 return [
                     'id' => $promotion->id,
                     'image_url' => $promotion->image_url,
