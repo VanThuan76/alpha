@@ -43,8 +43,9 @@ class Crm_ProspectCustomerController extends Controller
                     }
                 }
             } else {
-                $user->customer_type = 0;
-                $user->accumulated_amount = 0;
+                #Todo Fix
+                // $user->customer_type = 0;
+                // $user->accumulated_amount = 0;
             }
             $user->save();
         }
