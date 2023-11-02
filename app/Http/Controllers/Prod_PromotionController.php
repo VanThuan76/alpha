@@ -36,22 +36,22 @@ class Prod_PromotionController extends BaseController
         $result = [
             'promotions' => $promotions->map(function ($promotion) {
                 $tagsArray = is_array($promotion->tags) ? $promotion->tags : array_map('trim', explode(',', $promotion->tags));
-                $branchIds = $promotion->applied_branchs;
+                $branchIds = $promotion->branches;
                 $branchesArray = [];
                 if (is_array($branchIds)) {
                     $branchesArray = Branch::whereIn("id", $branchIds)->pluck('name')->toArray();
                 }
-                $ranksIds = $promotion->applied_ranks;
+                $ranksIds = $promotion->ranks;
                 $ranksArray = [];
                 if (is_array($ranksIds)) {
                     $ranksArray = CustomerType::whereIn("id", $ranksIds)->pluck('name')->toArray();
                 }
-                $userIds = $promotion->applied_users;
+                $userIds = $promotion->users;
                 $usersArray = [];
                 if (is_array($userIds)) {
                     $usersArray = User::whereIn("id", $userIds)->pluck('name')->toArray();
                 }
-                $serviceIds = $promotion->applied_services;
+                $serviceIds = $promotion->services;
                 $servicesArray = [];
                 if (is_array($serviceIds)) {
                     $servicesArray = Service::whereIn("id", $serviceIds)->pluck('name')->toArray();
