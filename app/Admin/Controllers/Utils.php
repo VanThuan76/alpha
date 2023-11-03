@@ -67,6 +67,15 @@ abstract class Utils
         $code = $type . $today . $userId . $time;
         return $code;
     }
+    public static function generatePromoCode($type)
+    {
+        $today = date("ymd");
+        $currentTime = Carbon::now('Asia/Bangkok');
+        $time = $currentTime->format('His');
+        $userId = Str::padLeft(Admin::user()->id, 6, '0');
+        $code = $type . $today . $userId . $time;
+        return $code;
+    }
 
     public static function renderStringToGrid($strings, $model){
         if (is_array($strings) && count($strings) > 0) {

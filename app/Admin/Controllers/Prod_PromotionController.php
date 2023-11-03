@@ -107,6 +107,7 @@ class Prod_PromotionController extends AdminController
     protected function form()
     {
         $form = new Form(new Promotion());
+        $tranferId = Utils::generatePromoCode("PROMO");
 
         $form->multipleSelect('branches', "Chi nhánh")->options(Branch::all()->pluck('name', 'id'));
         $form->multipleSelect('ranks', "Xếp hạng")->options(CustomerType::all()->pluck('name', 'id'));
