@@ -53,4 +53,6 @@ Route::middleware('auth:api')->group(function () {
 //Service
     Route::get('v1/services', 'Prod_ServiceController@get');
     Route::get('v1/promotions', 'Prod_PromotionController@get');
+    Route::get('v1/save_promotion', 'Prod_PromotionController@getPromotionSave');
+    Route::post('/v1/saved_promotions', 'Prod_PromotionController@save');
 });
