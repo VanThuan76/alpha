@@ -26,9 +26,10 @@ class RegisterController extends BaseController
             $errors = $validator->errors()->toArray();
             $errorsMessage = [];
             foreach ($errors as $key => $error) {
-                $errorsMessage[$key] = $error[0];
+                $errorsMessage[$key] = [$error[0]];
             }
-            $response = $this->_formatBaseResponse(422, null, ['errors' => $errorsMessage], []);
+            
+            $response = $this->_formatBaseResponse(422, null, $errorsMessage, []);
             return response()->json($response, 422);
             
         } else {
@@ -47,10 +48,7 @@ class RegisterController extends BaseController
 
             $accessToken = $token->accessToken;
             $user->update(['access_token' => $accessToken]);
-            $result = [
-                'access_token' => $accessToken
-            ];
-            $response = $this->_formatBaseResponse(200, $result, 'Tạo tài khoản thành công', []);
+            $response = $this->_formatBaseResponse(200, null, 'Tạo tài khoản thành công', []);
             return response()->json($response);
         }
     }
