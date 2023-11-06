@@ -45,7 +45,8 @@ Route::post('v1/login', 'Auth\LoginController@login');
 Route::post('v1/forgot_password_by_phone_number', 'Auth\ForgotPasswordController@forgotPasswordByPhoneNumber');
 //Business
 Route::post('v1/email_by_phone_number', 'Auth\Business\GetEmailByPhoneNumberController@getEmail');
-Route::middleware('auth:api')->group(function () {
+//Authorization by access_token
+Route::middleware('custom_auth')->group(function () {
 //User
     Route::get('v1/profile', 'UserController@get');
     Route::post('v1/update_profile', 'UserController@update');
@@ -54,5 +55,5 @@ Route::middleware('auth:api')->group(function () {
     Route::get('v1/services', 'Prod_ServiceController@get');
     Route::get('v1/promotions', 'Prod_PromotionController@get');
     Route::get('v1/save_promotion', 'Prod_PromotionController@getPromotionSave');
-    Route::post('/v1/saved_promotions', 'Prod_PromotionController@save');
+    Route::post('v1/saved_promotions', 'Prod_PromotionController@save');
 });
