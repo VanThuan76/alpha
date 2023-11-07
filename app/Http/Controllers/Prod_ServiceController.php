@@ -111,7 +111,7 @@ class Prod_ServiceController extends BaseController
     }
     public function get(Request $request)
     {
-        $user = auth('api')->user();
+        $user = auth()->user();
         $limit = $request->input('limit', 20);
         $previousLastServiceId = $request->input('previous_last_service_id', 0);
 

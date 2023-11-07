@@ -18,7 +18,7 @@ class Prod_PromotionController extends BaseController
     use CommonResponse;
     public function get(Request $request)
     {
-        $user = auth('api')->user();
+        $user = auth()->user();
         $limit = $request->input('limit', 20);
         $previousLastPromotionId = $request->input('previous_last_service_id', 0);
 
@@ -62,7 +62,7 @@ class Prod_PromotionController extends BaseController
 
                 return [
                     'id' => $promotion->id,
-                    'image_url' => 'https://erp.senbachdiep.com/storage/' . $promotion->image_url,
+                    'image_url' => $promotion->image_url != null ? 'https://erp.senbachdiep.com/storage/' . $promotion->image_url : null,
                     'title' => $promotion->title,
                     'start_date' => $promotion->start_date,
                     'end_date' => $promotion->end_date,
@@ -88,7 +88,7 @@ class Prod_PromotionController extends BaseController
     }
     public function save(Request $request)
     {
-        $user = auth('api')->user();
+        $user = auth()->user();
         $userId = $user->id;
         $promotionId = $request->input("id");
         $promotionUserModel = PromotionUser::firstOrNew([
@@ -107,7 +107,7 @@ class Prod_PromotionController extends BaseController
     }
     public function getPromotionSave(Request $request)
     {
-        $user = auth('api')->user();
+        $user = auth()->user();
         $limit = $request->input('limit', 20);
         $previousLastPromotionId = $request->input('previous_last_service_id', 0);
 
@@ -151,7 +151,7 @@ class Prod_PromotionController extends BaseController
 
                 return [
                     'id' => $promotion->id,
-                    'image_url' => 'https://erp.senbachdiep.com/storage/' . $promotion->image_url,
+                    'image_url' => $promotion->image_url != null ? 'https://erp.senbachdiep.com/storage/' . $promotion->image_url : null,
                     'title' => $promotion->title,
                     'start_date' => $promotion->start_date,
                     'end_date' => $promotion->end_date,
