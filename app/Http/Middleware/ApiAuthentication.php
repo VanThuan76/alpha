@@ -1,11 +1,13 @@
 <?php
 
 namespace App\Http\Middleware;
+use App\Http\Response\CommonResponse;
 
 use Closure;
 
 class ApiAuthentication
 {
+    use CommonResponse;
     public function handle($request, Closure $next)
     {
         $token = $request->bearerToken();
@@ -14,8 +16,7 @@ class ApiAuthentication
             auth()->login($user);
             return $next($request);
         }
-        return response([
-            'message' => 'Unauthenticated'
-        ], 403);
+        $response = $this->_formatBaseResponse(403, null, "Không được xác thực", []);
+        return response()->json($response, 422);
     }
 }

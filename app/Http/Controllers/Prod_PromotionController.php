@@ -62,7 +62,7 @@ class Prod_PromotionController extends BaseController
 
                 return [
                     'id' => $promotion->id,
-                    'image_url' => $promotion->image_url,
+                    'image_url' => 'https://erp.senbachdiep.com/storage/' . $promotion->image_url,
                     'title' => $promotion->title,
                     'start_date' => $promotion->start_date,
                     'end_date' => $promotion->end_date,
@@ -151,7 +151,7 @@ class Prod_PromotionController extends BaseController
 
                 return [
                     'id' => $promotion->id,
-                    'image_url' => $promotion->image_url,
+                    'image_url' => 'https://erp.senbachdiep.com/storage/' . $promotion->image_url,
                     'title' => $promotion->title,
                     'start_date' => $promotion->start_date,
                     'end_date' => $promotion->end_date,
