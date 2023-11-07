@@ -122,17 +122,24 @@ class UserController extends Controller
         
         $request->validate([
             'old_password' => ['required', 'string'],
-            'password' => ['required', 'string', 'min:6'],
+            'password' => ['required', 'string'],
         ]);
-
         if (!Hash::check($request->input('old_password'), $user->password)) {
-            $response = $this->_formatBaseResponse(400, null, 'Mật khẩu cũ không chính xác', []);
+            $errorsMessage = ["old_password" => "Mật khẩu cũ không chính xác"];
+            $response = $this->_formatBaseResponse(400, null, 'Thay đổi mật khẩu không thành công', ["errors" => $errorsMessage]);
             return response()->json($response, 400);
         } else {
-            $user->password = Hash::make($request->input('password'));
-            $user->save();
-            $response = $this->_formatBaseResponse(200, null, 'Thay đổi mật khẩu thành công', []);
-            return response()->json($response);
+            $errorsMessage = ["password" => "Mật khẩu mới phải có ít nhất 6 ký tự"];
+            $newPassword = $request->input('password');
+            if (strlen($newPassword) < 6) {
+                $response = $this->_formatBaseResponse(400, null, 'Thay đổi mật khẩu không thành công', ["errors" => $errorsMessage]);
+                return response()->json($response, 400);
+            }else{
+                $user->password = Hash::make($request->input('password'));
+                $user->save();
+                $response = $this->_formatBaseResponse(200, null, 'Thay đổi mật khẩu thành công', []);
+                return response()->json($response);
+            }
         }
     }
 

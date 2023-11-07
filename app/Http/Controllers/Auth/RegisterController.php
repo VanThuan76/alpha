@@ -29,7 +29,7 @@ class RegisterController extends BaseController
                 $errorsMessage[$key] = [$error[0]];
             }
             
-            $response = $this->_formatBaseResponse(422, null, $errorsMessage, []);
+            $response = $this->_formatBaseResponse(422, null, "Tạo tài khoản không thành công", ['errors' => $errorsMessage]);
             return response()->json($response, 422);
             
         } else {
