@@ -40,6 +40,7 @@ class RegisterController extends BaseController
                 'phone_number' => $input['phone_number'],
                 'email' => $input['email'],
                 'password' => $input['password'],
+                'status' => 0,
             ]);
 
             if (!$token = $user->tokens->where('revoked', false)->where('expires_at', '>', Carbon::now())->first()) {

@@ -30,6 +30,8 @@ class VerifyRegisterController extends BaseController
             
         } else {
             $user = User::where('phone_number', $request['phone_number'])->first();
+            $user->status = 1;
+            $user->save();
             $accessToken = [
                 'access_token' => $user->access_token
             ];
