@@ -14,13 +14,18 @@ class LoginController extends Controller
     {
         if (Auth::attempt(['phone_number' => $request->phone_number, 'password' => $request->password])) {
             $user = Auth::user();
-            $accessToken = [
-                'access_token' => $user->access_token
-            ];
-            $response = $this->_formatBaseResponse(200, $accessToken, 'Đăng nhập thành công', []);
-            return response()->json($response);
+            if($user->status == 0){
+                $response = $this->_formatBaseResponse(401, null, 'Tài khoản chưa xác thực', []);
+                return response()->json($response);
+            }else{
+                $accessToken = [
+                    'access_token' => $user->access_token
+                ];
+                $response = $this->_formatBaseResponse(200, $accessToken, 'Đăng nhập thành công', []);
+                return response()->json($response);
+            }
         } else {
-            $response = $this->_formatBaseResponse(401, null, 'Đăng nhập không thành công', ['errors' => 'Unauthorised']);
+            $response = $this->_formatBaseResponse(401, null, 'Sai số điện thoại hoặc mật khẩu', []);
             return response()->json($response, 401);
         }
     }

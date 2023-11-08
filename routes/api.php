@@ -56,4 +56,9 @@ Route::middleware('custom_auth')->group(function () {
     Route::get('v1/promotions', 'Prod_PromotionController@get');
     Route::get('v1/save_promotion', 'Prod_PromotionController@getPromotionSave');
     Route::post('v1/saved_promotions', 'Prod_PromotionController@save');
+//Branch
+    Route::get('v1/branches', 'Facility_BranchController@get');
+//Employee
+    //Technician
+        Route::get('v1/technicians', 'Hrm_EmployeeController@getTechnicians');
 });

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Response\CommonResponse;
+use App\Models\Facility\Branch;
+use App\Models\Hrm\Employee;
 use App\Models\Sales\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -20,11 +22,11 @@ class UserController extends Controller
                 'gender' => $user->sex,
                 'personal_technician' => [
                     'id' => $user->personal_technician_id,
-                    'name' => null,
+                    'name' => Employee::where('id', $user->personal_technician_id)->first()->name,
                 ],
                 'personal_branch' => [
                     'id' => $user->personal_branch_id,
-                    'name' => null,
+                    'name' => Branch::where("id", $user->personal_branch_id)->first()->name,
                 ],
                 'full_name' => $user->name,
                 'address' => $user->address,
@@ -57,11 +59,11 @@ class UserController extends Controller
         if($request->input('address')){
             $user->address = $request->input('address');
         }
-        if($request->input('gender')){
+        if ($request->has('gender')) {
             $user->sex = $request->input('gender');
         }
-        if($request->input('birthdate')){
-            $user->dob = date("Y-m-d", strtotime($request->input('birthdate')));
+        if($request->input('birthday')){
+            $user->dob = date("Y-m-d", strtotime($request->input('birthday')));
         }
         if($request->input('personal_branch_id')){
             $user->personal_branch_id = $request->input('personal_branch_id');
@@ -72,18 +74,6 @@ class UserController extends Controller
         if($request->input('avatar')){
             $user->photo = $request->input('avatar');
         }
-        if ($user->isDirty(['full_name', 'email', 'address', 'gender', 'birthdate', 'personal_branch_id', 'personal_technician_id', 'avatar'])) {
-            if ($user->verify === 0) {
-                if ($user->package_type == 1) {
-                    $user->expire_time = now()->addMonths(3);
-                } else {
-                    $user->package_type = 1;
-                    $user->expire_time = now()->addMonths(3);
-                }
-                $user->verify = 1;
-            }
-        }
-
         $user->save();
         $result = [
             'user' => [
@@ -92,11 +82,11 @@ class UserController extends Controller
                 'gender' => $user->sex,
                 'personal_technician' => [
                     'id' => $user->personal_technician_id,
-                    'name' => $user->personal_technician_id,
+                    'name' => Employee::where('id', $user->personal_technician_id)->first()->name,
                 ],
                 'personal_branch' => [
                     'id' => $user->personal_branch_id,
-                    'name' => $user->personal_branch_id,
+                    'name' => Branch::where("id", $user->personal_branch_id)->first()->name,
                 ],
                 'full_name' => $user->name,
                 'address' => $user->address,
@@ -125,11 +115,11 @@ class UserController extends Controller
             'password' => ['required', 'string'],
         ]);
         if (!Hash::check($request->input('old_password'), $user->password)) {
-            $errorsMessage = ["old_password" => "Mật khẩu cũ không chính xác"];
+            $errorsMessage = ["old_password" => ["Mật khẩu cũ không chính xác"]];
             $response = $this->_formatBaseResponse(400, null, 'Thay đổi mật khẩu không thành công', ["errors" => $errorsMessage]);
             return response()->json($response, 400);
         } else {
-            $errorsMessage = ["password" => "Mật khẩu mới phải có ít nhất 6 ký tự"];
+            $errorsMessage = ["password" => ["Mật khẩu mới phải có ít nhất 6 ký tự"]];
             $newPassword = $request->input('password');
             if (strlen($newPassword) < 6) {
                 $response = $this->_formatBaseResponse(400, null, 'Thay đổi mật khẩu không thành công', ["errors" => $errorsMessage]);
