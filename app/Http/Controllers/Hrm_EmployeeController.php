@@ -15,6 +15,7 @@ class Hrm_EmployeeController extends Controller
         $user = auth()->user();
         $limit = $request->input('limit', 20);
         $previousLastTechnicianId = $request->input('previous_last_technician_id', 0);
+        $branchId = $request->input('branch_id');
 
         if ($request->input('limit')) {
             $limit = 20;
@@ -26,6 +27,10 @@ class Hrm_EmployeeController extends Controller
             $employeeQuery->where('id', '<', $previousLastTechnicianId);
         }
         
+        if($request->input('branch_id') !== null) {
+            $employeeQuery->where('branch_id', '=', $branchId);
+        }
+
         $technicians = $employeeQuery->get();
 
         $result = [

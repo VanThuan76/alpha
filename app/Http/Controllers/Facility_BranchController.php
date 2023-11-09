@@ -14,7 +14,7 @@ class Facility_BranchController extends Controller
         $user = auth()->user();
         $limit = $request->input('limit', 20);
         $previousLastBranchId = $request->input('previous_last_branch_id', 0);
-
+        $keyWords = $request->input('search_keyword');
         if ($request->input('limit')) {
             $limit = 20;
         }
@@ -25,6 +25,12 @@ class Facility_BranchController extends Controller
             $branchesQuery->where('id', '<', $previousLastBranchId);
         }
         
+        if($request->input('search_keyword') !== null){
+            $branchesQuery->where(function($query) use ($keyWords) {
+                $query->where('name', 'like', '%' . $keyWords . '%')
+                      ->orWhere('address', 'like', '%' . $keyWords . '%');
+            });
+        }
         $branches = $branchesQuery->get();
 
         $result = [
