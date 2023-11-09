@@ -15,6 +15,8 @@ class UserController extends Controller
     public function get()
     {
         $user = auth()->user();
+        $employee = Employee::where('id', $user->personal_technician_id)->first();
+        $branch = Branch::where("id", $user->personal_branch_id)->first();
         $result = [
             'user' => [
                 'id' => $user->id,
@@ -22,11 +24,12 @@ class UserController extends Controller
                 'gender' => $user->sex,
                 'personal_technician' => [
                     'id' => $user->personal_technician_id,
-                    'name' => Employee::where('id', $user->personal_technician_id)->first()->name,
+                    'name' => $employee ? $employee->name : null,
                 ],
                 'personal_branch' => [
                     'id' => $user->personal_branch_id,
-                    'name' => Branch::where("id", $user->personal_branch_id)->first()->name,
+                    'name' => $branch ? $branch->name : null,
+                    'address' => $branch ? $branch->address : null,
                 ],
                 'full_name' => $user->name,
                 'address' => $user->address,
@@ -49,6 +52,8 @@ class UserController extends Controller
     public function update(Request $request)
     {
         $user = auth()->user();
+        $employee = Employee::where('id', $user->personal_technician_id)->first();
+        $branch = Branch::where("id", $user->personal_branch_id)->first();
 
         if($request->input('full_name') ){
             $user->name = $request->input('full_name');
@@ -82,11 +87,12 @@ class UserController extends Controller
                 'gender' => $user->sex,
                 'personal_technician' => [
                     'id' => $user->personal_technician_id,
-                    'name' => Employee::where('id', $user->personal_technician_id)->first()->name,
+                    'name' => $employee ? $employee->name : null,
                 ],
                 'personal_branch' => [
                     'id' => $user->personal_branch_id,
-                    'name' => Branch::where("id", $user->personal_branch_id)->first()->name,
+                    'name' => $branch ? $branch->name : null,
+                    'address' => $branch ? $branch->address : null,
                 ],
                 'full_name' => $user->name,
                 'address' => $user->address,

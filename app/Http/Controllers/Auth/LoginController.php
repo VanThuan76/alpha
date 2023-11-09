@@ -16,7 +16,7 @@ class LoginController extends Controller
             $user = Auth::user();
             if($user->status == 0){
                 $response = $this->_formatBaseResponse(401, null, 'Tài khoản chưa xác thực', []);
-                return response()->json($response);
+                return response()->json($response, 401);
             }else{
                 $accessToken = [
                     'access_token' => $user->access_token
