@@ -50,6 +50,7 @@ Route::middleware('custom_auth')->group(function () {
 //User
     Route::get('v1/profile', 'UserController@get');
     Route::post('v1/update_profile', 'UserController@update');
+    Route::delete('v1/account', 'UserController@delete');
     Route::post('v1/change_password', 'UserController@changePassword');
 //Service
     Route::get('v1/services', 'Prod_ServiceController@get');

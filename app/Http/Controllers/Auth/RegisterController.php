@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\BaseController as BaseController;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class RegisterController extends BaseController
 {
@@ -17,8 +18,23 @@ class RegisterController extends BaseController
     {
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
-            'phone_number' => ['required', 'string', 'max:255', 'unique:users'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'phone_number' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('users')->where(function ($query) {
+                    $query->where('is_deleted', 0);
+                }),
+            ],
+            'email' => [
+                'required',
+                'string',
+                'email',
+                'max:255',
+                Rule::unique('users')->where(function ($query) {
+                    $query->where('is_deleted', 0);
+                }),
+            ],
             'password' => ['required', 'string', 'min:6'],
         ]);
 
@@ -28,10 +44,10 @@ class RegisterController extends BaseController
             foreach ($errors as $key => $error) {
                 $errorsMessage[$key] = [$error[0]];
             }
-            
+
             $response = $this->_formatBaseResponse(422, null, "Tạo tài khoản không thành công", ['errors' => $errorsMessage]);
             return response()->json($response, 422);
-            
+
         } else {
             $input = $request->all();
             $input['password'] = bcrypt($input['password']);
