@@ -55,28 +55,28 @@ class UserController extends Controller
         $employee = Employee::where('id', $user->personal_technician_id)->first();
         $branch = Branch::where("id", $user->personal_branch_id)->first();
 
-        if($request->input('full_name') ){
+        if ($request->input('full_name')) {
             $user->name = $request->input('full_name');
         }
-        if($request->input('email')){
+        if ($request->input('email')) {
             $user->email = $request->input('email');
         }
-        if($request->input('address')){
+        if ($request->input('address')) {
             $user->address = $request->input('address');
         }
         if ($request->has('gender')) {
             $user->sex = $request->input('gender');
         }
-        if($request->input('birthday')){
+        if ($request->input('birthday')) {
             $user->dob = date("Y-m-d", strtotime($request->input('birthday')));
         }
-        if($request->input('personal_branch_id')){
+        if ($request->input('personal_branch_id')) {
             $user->personal_branch_id = $request->input('personal_branch_id');
         }
-        if($request->input('personal_technician_id')){
+        if ($request->input('personal_technician_id')) {
             $user->personal_technician_id = $request->input('personal_technician_id');
         }
-        if($request->input('avatar')){
+        if ($request->input('avatar')) {
             $user->photo = $request->input('avatar');
         }
         $user->save();
@@ -112,10 +112,20 @@ class UserController extends Controller
             return response()->json($response, 401);
         }
     }
+    public function delete(Request $request)
+    {
+        $user = auth()->user();
+        if ($user) {
+            $user->is_deleted = 1;
+            $user->save();
+            $response = $this->_formatBaseResponse(200, null, 'Xoá tài khoản thành công', []);
+            return response()->json($response);
+        }
+    }
     public function changePassword(Request $request)
     {
         $user = auth()->user();
-        
+
         $request->validate([
             'old_password' => ['required', 'string'],
             'password' => ['required', 'string'],
@@ -130,7 +140,7 @@ class UserController extends Controller
             if (strlen($newPassword) < 6) {
                 $response = $this->_formatBaseResponse(400, null, 'Thay đổi mật khẩu không thành công', ["errors" => $errorsMessage]);
                 return response()->json($response, 400);
-            }else{
+            } else {
                 $user->password = Hash::make($request->input('password'));
                 $user->save();
                 $response = $this->_formatBaseResponse(200, null, 'Thay đổi mật khẩu thành công', []);
@@ -145,5 +155,5 @@ class UserController extends Controller
         $results = User::where('phone_number', 'LIKE', '%' . $query . '%')->get();
         return view('components.search_result', ['results' => $results]);
     }
-    
+
 }
