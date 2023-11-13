@@ -116,12 +116,15 @@ class UserController extends Controller
     {
         $user = auth()->user();
         if ($user) {
+            $user->access_token = null;
             $user->is_deleted = 1;
             $user->save();
+            
             $response = $this->_formatBaseResponse(200, null, 'Xoá tài khoản thành công', []);
             return response()->json($response);
         }
     }
+
     public function changePassword(Request $request)
     {
         $user = auth()->user();

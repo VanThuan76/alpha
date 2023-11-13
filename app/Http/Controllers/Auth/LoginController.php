@@ -15,10 +15,10 @@ class LoginController extends Controller
         if (Auth::attempt(['phone_number' => $request->phone_number, 'password' => $request->password])) {
             $user = Auth::user();
             if($user->is_deleted == 1){
-                $response = $this->_formatBaseResponse(401, null, 'Tài khoản không tồn tại', []);
+                $response = $this->_formatBaseResponse(401, null, 'Sai số điện thoại hoặc mật khẩu', []);
                 return response()->json($response, 401);
             }else if($user->status == 0){
-                $response = $this->_formatBaseResponse(401, null, 'Tài khoản không tồn tại', []);
+                $response = $this->_formatBaseResponse(401, null, 'Tài khoản chưa xác thực', []);
                 return response()->json($response, 401);
             }else{
                 $accessToken = [
