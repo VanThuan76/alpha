@@ -49,6 +49,8 @@ Route::group([
     Route::get('/select-bed', 'Operation_BedOrderController@selectBed');
     $router->resource('work-schedules', Operation_WorkScheduleController::class);
     $router->resource('room-orders', Operation_RoomOrderController::class);
+    $router->resource('work-shift', Operation_WorkShiftController::class);
+    $router->resource('schedule-order', Operation_ScheduleOrderController::class);
     //Hrm
     $router->resource('hrm', Hrm_EmployeeController::class);
 });
