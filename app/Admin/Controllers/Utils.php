@@ -23,6 +23,12 @@ abstract class Utils
             ->first();
         return $commonCode ? $commonCode->$description : '';
     }
+    public static function commonCodeOptionsForSelect($type, $description, $value)
+    {
+        $commonCode = CommonCode::where('type', $type)
+            ->pluck($description, $value);
+        return $commonCode ? $commonCode : [];
+    }
     public static function getBranchIdFromBed($bedId){
         $room = Room::find(Bed::find($bedId)->room_id);
         $branch = Branch::find(Zone::find($room->zone_id)->branch_id);
@@ -88,5 +94,10 @@ abstract class Utils
         } else {
             return "";
         }
+    }
+    public static function formatDate($dateTimeString)
+    {
+        $carbonDate = Carbon::createFromFormat('Y-m-d H:i:s', $dateTimeString);
+        return $carbonDate->format('d/m/Y');
     }
 }
