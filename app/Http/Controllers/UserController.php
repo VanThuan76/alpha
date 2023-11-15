@@ -38,7 +38,7 @@ class UserController extends Controller
                 'customer_type' => $user->customer_type,
                 'points' => $user->point,
                 'bonus_coins' => $user->bonus_coins,
-                'avatar_path' => $user->photo
+                'avatar_path' => $user->photo != null ? 'https://erp.senbachdiep.com/storage/' . $user->photo : null,
             ]
         ];
         if ($user) {
