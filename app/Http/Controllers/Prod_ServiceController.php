@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Response\CommonResponse;
+use App\Models\CommonCode;
 use Illuminate\Http\Request;
 use App\Http\Controllers\BaseController as BaseController;
 use App\Http\Resources\Service as ServiceResource;
@@ -129,7 +130,11 @@ class Prod_ServiceController extends BaseController
 
         $result = [
             'services' => $services->map(function ($service) {
-                $tagsArray = array_map('trim', explode(',', $service->tags));
+                $tagsArray = is_array($service->tags) ? $service->tags : array_map('trim', explode(',', $service->tags));
+                $tagsArrayMap = array_map(function ($tag) {
+                    $commonCode = CommonCode::where("type", "Service")->where("value",  $tag)->first();
+                    return $commonCode ? $commonCode->description_vi : [];
+                }, $tagsArray);
                 return [
                     'id' => $service->id,
                     'image_url' => $service->image,
@@ -137,7 +142,7 @@ class Prod_ServiceController extends BaseController
                     'introduction' => $service->introduction,
                     'used_count' => $service->used_count,
                     'details' => $service->details,
-                    'tags' => $tagsArray,
+                    'tags' => $tagsArrayMap,
                     'rate' => $service->rate,
                     'comment_count' => $service->comment_count,
                 ];
