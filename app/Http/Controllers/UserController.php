@@ -76,8 +76,9 @@ class UserController extends Controller
         if ($request->input('personal_technician_id')) {
             $user->personal_technician_id = $request->input('personal_technician_id');
         }
-        if ($request->input('avatar')) {
-            $user->photo = $request->input('avatar');
+        if ($request->hasFile('avatar')) {
+            $imagePath = $request->file('avatar')->store('avatars', 'public');
+            $user->photo = $imagePath;
         }
         $user->save();
         $result = [
@@ -101,7 +102,7 @@ class UserController extends Controller
                 'customer_type' => $user->customer_type,
                 'points' => $user->point,
                 'bonus_coins' => $user->bonus_coins,
-                'avatar_path' => $user->photo
+                'avatar_path' => $user->photo != null ? 'https://erp.senbachdiep.com/storage/' . $user->photo : null,
             ]
         ];
         if ($user) {
