@@ -42,7 +42,10 @@ Route::get('search', 'UserController@search')->name('search');
 Route::post('v1/register', 'Auth\RegisterController@register');
 Route::post('v1/verify_register', 'Auth\VerifyRegisterController@verifyRegister');
 Route::post('v1/login', 'Auth\LoginController@login');
-Route::post('v1/forgot_password_by_phone_number', 'Auth\ForgotPasswordController@forgotPasswordByPhoneNumber');
+Route::post('v1/forgot_password_by_phone_number', 'Auth\ForgotPasswordController@sendOTPByPhoneNumber');
+Route::post('/v1/change_password_after_forgot', 'Auth\ForgotPasswordController@forgotPasswordByOTP');
+Route::post('/v1/verify_forgot_password', 'Auth\ForgotPasswordController@verifyOTPByPhoneNumber');
+
 //Business
 Route::post('v1/email_by_phone_number', 'Auth\Business\GetEmailByPhoneNumberController@getEmail');
 //Authorization by access_token
