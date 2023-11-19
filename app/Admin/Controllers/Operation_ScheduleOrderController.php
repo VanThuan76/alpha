@@ -55,7 +55,7 @@ class Operation_ScheduleOrderController extends AdminController
                 $zoneRecord = DatabaseHelper::getRecordByField(Zone::class, 'id', $bedRecord->zone_id);
                 $roomRecord = DatabaseHelper::getRecordByField(Room::class, 'id', $bedRecord->room_id);
                 if ($zoneRecord) {
-                    return $employeeRecord->name . " - " . $zoneRecord->name . " - " . $roomRecord->name . " - " . $bedRecord->name . " (Làm từ {$workShiftRecord->book_at} đến {$workShiftRecord->to_at})";
+                    return $employeeRecord->name . " - " . $zoneRecord->name . " - " . $roomRecord->name . " - " . $bedRecord->name . " (Làm từ {$workShiftRecord->from_at} đến {$workShiftRecord->to_at})";
                 } else {
                     return "";
                 }
@@ -93,6 +93,7 @@ class Operation_ScheduleOrderController extends AdminController
                 return "";
             }
         });
+        $grid->column('note', __('Ghi chú'));
         $grid->column('created_at', __('Ngày tạo'))->vndate();
         $grid->column('updated_at', __('Ngày cập nhật'))->vndate();
         $grid->fixColumns(0, 0);
@@ -171,7 +172,7 @@ class Operation_ScheduleOrderController extends AdminController
                 return "";
             }
         });
-        $show->textarea('note', __('Ghi chú'));
+        $show->field('note', __('Ghi chú'));
         $show->field('created_at', __('Ngày tạo'))->vndate();
         $show->field('updated_at', __('Ngày cập nhật'))->vndate();
         return $show;
@@ -205,7 +206,7 @@ class Operation_ScheduleOrderController extends AdminController
                 if ($bed->branch_id == Admin::user()->active_branch_id) {
                     $employeeId = WorkShift::where('bed_id', $bed->id)->first()->employee_id;
                     $employeeName = Employee::where('id', $employeeId)->first()->name;
-                    $fromAt = WorkShift::where('bed_id', $bed->id)->first()->book_at;
+                    $fromAt = WorkShift::where('bed_id', $bed->id)->first()->from_at;
                     $toAt = WorkShift::where('bed_id', $bed->id)->first()->to_at;
                     $zoneName = Zone::where('id', $bed->zone_id)->first()->name;
                     $roomName = Room::where('id', $bed->room_id)->first()->name;
