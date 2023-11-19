@@ -65,4 +65,6 @@ Route::middleware('custom_auth')->group(function () {
 //Employee
     //Technician
         Route::get('v1/technicians', 'Hrm_EmployeeController@getTechnicians');
+//Schedule
+    Route::get('v1/schedules', 'Operation_ScheduleOrderController@getSchedule');
 });

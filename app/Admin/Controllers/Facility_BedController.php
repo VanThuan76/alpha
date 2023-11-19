@@ -35,10 +35,16 @@ class Facility_BedController extends AdminController
         $grid->column('zone.name', __('Khu vực'));
         $grid->column('name', __('Tên'));
         $grid->column('room.name', __('Phòng'));
-        $grid->column('created_at', __('Ngày tạo'));
-        $grid->column('updated_at', __('Ngày cập nhật'));
-        $grid->column('status', __('Trạng thái'))->using(Constant::STATUS)->label(Constant::STATUS_LABEL);
-
+        $grid->column('created_at', __('Ngày tạo'))->vndate();;
+        $grid->column('updated_at', __('Ngày cập nhật'))->vndate();;
+        $grid->column('status', __('Trạng thái'))->display(function ($statusId) {
+            $status = Utils::commonCodeFormat('StatusBed', 'description_vi', $statusId);
+            if ($status) {
+                return $status;
+            } else {
+                return "";
+            }
+        });
         return $grid;
     }
 
@@ -55,10 +61,16 @@ class Facility_BedController extends AdminController
         $show->field('id', __('Id'));
         $show->field('name', __('Tên'));
         $show->field('room_id', __('ID Phòng'));
-        $show->field('created_at', __('Ngày tạo'));
-        $show->field('updated_at', __('Ngày cập nhật'));
-        $show->field('status', __('Trạng thái'));
-
+        $show->field('created_at', __('Ngày tạo'))->vndate();;
+        $show->field('updated_at', __('Ngày cập nhật'))->vndate();;
+        $show->field('status', __('Trạng thái'))->as(function ($statusId) {
+            $status = Utils::commonCodeFormat('StatusBed', 'description_vi', $statusId);
+            if ($status) {
+                return $status;
+            } else {
+                return "";
+            }
+        });
         return $show;
     }
 
@@ -70,6 +82,7 @@ class Facility_BedController extends AdminController
     protected function form()
     {
         $branchs = DatabaseHelper::getOptionsForSelect(Branch::class, "name" , "id", []);
+        $statuses = Utils::commonCodeOptionsForSelect('StatusBed', 'description_vi', 'value');
 
         $form = new Form(new Bed());
         if ($form->isEditing()) {
@@ -88,7 +101,7 @@ class Facility_BedController extends AdminController
             $form->select('room_id', __('Tên phòng'))->options()->required()->disable();
         }
         $form->text('name', __('Tên'));
-        $form->select('status', __('Trạng thái'))->options(Constant::STATUS)->default(1)->setWidth(2, 2);
+        $form->select('status', __('Trạng thái'))->options($statuses)->default(1)->required();
 
         $urlZone = env('APP_URL') . '/api/zone';
         $urlRoom = env('APP_URL') . '/api/room';
