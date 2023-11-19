@@ -3,6 +3,7 @@
 namespace App\Admin\Controllers;
 
 use App\Admin\Helpers\DatabaseHelper;
+use App\Models\Core\Position;
 use App\Models\Facility\Branch;
 use App\Models\Hrm\Employee;
 use Encore\Admin\Controllers\AdminController;
@@ -36,7 +37,10 @@ class Hrm_EmployeeController extends AdminController
         $grid->column('email', __('Email'))->filter('like');
         $grid->column('address', __('Địa chỉ'))->filter('like');
         $grid->column('avatar', __('Ảnh đại diện'))->image();
-        $grid->column('position', __('Vị trí'))->filter('like');
+        $grid->column('position_id', __('Vị trí'))->display(function ($positionId) {
+            $positionRecord = DatabaseHelper::getRecordByField(Position::class, 'id', $positionId);
+            return $positionRecord ? $positionRecord->name : "";
+        });
         $grid->column('level', __('Hạng'))->filter('like');
         $grid->column('status', __('Trạng thái'))->using(Constant::STATUS)->filter(Constant::STATUS);
         $grid->column('created_at', __('Ngày tạo'))->vndate();
@@ -64,7 +68,10 @@ class Hrm_EmployeeController extends AdminController
         $show->field('email', __('Email'));
         $show->field('address', __('Địa chỉ'));
         $show->field('avatar', __('Ảnh đại diện'))->image();
-        $show->field('position', __('Vị trí'));
+        $show->field('position_id', __('Vị trí'))->as(function ($positionId) {
+            $positionRecord = DatabaseHelper::getRecordByField(Position::class, 'id', $positionId);
+            return $positionRecord ? $positionRecord->name : "";
+        });
         $show->field('level', __('Hạng'));
         $show->field('status', __('Trạng thái'))->using(Constant::STATUS)->filter(Constant::STATUS);
         $show->field('created_at', __('Ngày tạo'));
@@ -83,6 +90,7 @@ class Hrm_EmployeeController extends AdminController
         $form = new Form(new Employee());
 
         $branchs = DatabaseHelper::getOptionsForSelect(Branch::class, "name" , "id", []);
+        $positions = DatabaseHelper::getOptionsForSelect(Position::class, "name", "id", []);
         $tranferId = Utils::generateEmployeeCode("HRM");
         $genderOptions = Constant::SEX;
 
@@ -95,7 +103,7 @@ class Hrm_EmployeeController extends AdminController
         $form->text('email', __('Email'));
         $form->text('address', __('Địa chỉ'));
         $form->image('avatar', __('Ảnh đại diện'));
-        $form->text('position', __('Vị trí'));
+        $form->select('position_id', __('Vị trí'))->options($positions);
         $form->number('level', __('Hạng'));
         $form->select('status', __('Trạng thái'))->options(Constant::STATUS)->default(1)->setWidth(2, 2);
 
