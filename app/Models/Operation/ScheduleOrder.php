@@ -5,12 +5,17 @@ namespace App\Models\Operation;
 use App\Models\Facility\Bed;
 use App\Models\Hrm\Employee;
 use App\Models\Product\Service;
+use App\Models\Sales\User;
 use Illuminate\Database\Eloquent\Model;
 
 class ScheduleOrder extends Model
 {
     protected $table = 'schedule_order';
 
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
     public function service()
     {
         return $this->belongsTo(Service::class, 'service_id');

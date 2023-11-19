@@ -22,6 +22,7 @@ class RegisterController extends BaseController
                 'required',
                 'string',
                 'max:255',
+                'size:10',
                 Rule::unique('users')->where(function ($query) {
                     $query->where('is_deleted', 0);
                 }),
