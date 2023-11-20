@@ -18,23 +18,18 @@ class ForgotPasswordController extends Controller
         $validator = Validator::make($request->all(), [
             'phone_number' => 'required|string|max:255',
         ]);
-
+        $user = User::where("phone_number", $request->input('phone_number'))->first();
         if ($validator->fails()) {
             $errors = $validator->errors()->toArray();
             $response = $this->_formatBaseResponse(400, null, 'Số điện thoại không có trong hệ thống', ['errors' => $errors]);
             return response()->json($response, 400);
-        } else {
+        } else if(!$user) {
+            $response = $this->_formatBaseResponse(400, null, 'Số điện thoại không chính xác', []);
+            return response()->json($response, 400);
+        }else{
             $response = $this->_formatBaseResponse(200, null, 'OTP đã được gửi tới số điện thoại của bạn', []);
             return response()->json($response, 200);
         }
-
-        // $response = $this->broker()->sendResetLink(
-        //     $request->only('phone_number')
-        // );
-
-        // return $response == Password::RESET_LINK_SENT
-        //     ? response()->json(['message' => 'Liên kết đặt lại mật khẩu đã được gửi tới số điện thoại của bạn'])
-        //     : response()->json(['error' => trans($response)], 400);
     }
     public function verifyOTPByPhoneNumber(Request $request)
     {
