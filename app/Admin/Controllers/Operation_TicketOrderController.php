@@ -8,6 +8,7 @@ use App\Models\Facility\Room;
 use App\Models\Facility\Zone;
 use App\Models\Hrm\Employee;
 use App\Models\Operation\ScheduleOrder;
+use App\Models\Operation\TicketOrder;
 use App\Models\Operation\WorkShift;
 use App\Models\Product\Service;
 use App\Models\Sales\User;
@@ -17,14 +18,14 @@ use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
 
-class Operation_ScheduleOrderController extends AdminController
+class Operation_TicketOrderController extends AdminController
 {
     /**
      * Title for current resource.
      *
      * @var string
      */
-    protected $title = 'Đặt lịch';
+    protected $title = 'Đặt vé';
 
     /**
      * Make a grid builder.
@@ -33,8 +34,15 @@ class Operation_ScheduleOrderController extends AdminController
      */
     protected function grid()
     {
-        $grid = new Grid(new ScheduleOrder());
+        $grid = new Grid(new TicketOrder());
 
+        $grid->column('scheduleOrder.name', __('Mã đặt lịch'))->display(function($scheduleOrder){
+            if($scheduleOrder){
+                return $scheduleOrder;
+            }else{
+                return "";
+            }
+        });
         $grid->column('user.name', __('Tên khách hàng'));
         $grid->column('user_type', __('Loại khách'))->display(function ($userTypeId) {
             $userType = Utils::commonCodeFormat('User', 'description_vi', $userTypeId);
@@ -63,7 +71,7 @@ class Operation_ScheduleOrderController extends AdminController
                 return "";
             }
         });
-        $grid->column('date', __('Ngày đặt'))->display(function ($date) {
+        $grid->column('date', __('Ngày mua'))->display(function ($date) {
             return Utils::formatDate($date);
         });
         $grid->column('employee.name', __('Tên nhân viên kỹ thuật(thêm)'))->display(function ($employee) {
@@ -73,10 +81,10 @@ class Operation_ScheduleOrderController extends AdminController
                 return 'Không có';
             }
         });
-        $grid->column('book_at', __('Giờ đặt'));
-        $grid->column('verify_at', __('Giờ xác nhận'));
+        $grid->column('start_at', __('Giờ bắt đầu'));
+        $grid->column('to_at', __('Giờ kết thúc'));
         $grid->column('status', __('Trạng thái'))->display(function ($statusId) {
-            $status = Utils::commonCodeFormat('Schedule', 'description_vi', $statusId);
+            $status = Utils::commonCodeFormat('Ticket', 'description_vi', $statusId);
             if ($status) {
                 return $status;
             } else {
@@ -109,8 +117,15 @@ class Operation_ScheduleOrderController extends AdminController
      */
     protected function detail($id)
     {
-        $show = new Show(ScheduleOrder::findOrFail($id));
+        $show = new Show(TicketOrder::findOrFail($id));
 
+        $show->field('scheduleOrder.name', __('Mã đặt lịch'))->as(function($scheduleOrder){
+            if($scheduleOrder){
+                return $scheduleOrder;
+            }else{
+                return "";
+            }
+        });
         $show->field('user.name', __('Tên khách hàng'));
         $show->field('user_type', __('Loại khách'))->as(function ($userTypeId) {
             $userType = Utils::commonCodeFormat('User', 'description_vi', $userTypeId);
@@ -149,10 +164,10 @@ class Operation_ScheduleOrderController extends AdminController
                 return 'Không có';
             }
         });
-        $show->field('book_at', __('Giờ đặt'));
-        $show->field('verify_at', __('Giờ xác nhận'));
-        $show->field('status', __('Trạng thái'))->as(function ($statusId) {
-            $status = Utils::commonCodeFormat('Schedule', 'description_vi', $statusId);
+        $show->field('start_at', __('Giờ bắt đầu'));
+        $show->field('to_at', __('Giờ kết thúc'));
+        $show->field('status', __('Trạng thái'))->display(function ($statusId) {
+            $status = Utils::commonCodeFormat('Ticket', 'description_vi', $statusId);
             if ($status) {
                 return $status;
             } else {
@@ -180,7 +195,7 @@ class Operation_ScheduleOrderController extends AdminController
      */
     protected function form()
     {
-        $form = new Form(new ScheduleOrder());
+        $form = new Form(new TicketOrder());
 
         $users = DatabaseHelper::getOptionsForSelect(User::class, "name", "id", []);
         $services = DatabaseHelper::getOptionsForSelect(Service::class, "name", "id", []);
@@ -215,49 +230,108 @@ class Operation_ScheduleOrderController extends AdminController
         }
         $uniqueBedNames = array_unique($bedNames);
         $employees = DatabaseHelper::getOptionsForSelect(Employee::class, "name", "id", ['branch_id', Admin::user()->active_branch_id]);
-        $statuses = Utils::commonCodeOptionsForSelect('Schedule', 'description_vi', 'value');
+        $statuses = Utils::commonCodeOptionsForSelect('Ticket', 'description_vi', 'value');
         $userTypes = Utils::commonCodeOptionsForSelect('User', 'description_vi', 'value');
-
-        $form->select('user_type', 'Tệp khách hàng')->options($userTypes)->default(0);
+        $scheduleOrder = DatabaseHelper::getOptionsForSelect(ScheduleOrder::class, "id", "id", []);
+        $scheduleOrderWithLabel = $scheduleOrder->mapWithKeys(function ($label, $value) {
+            $user = User::where("id", $label)->first();
+            $userName = $user ? str_replace(' ', '', trim($user->name)) : "";
+            return [$label => "SBD" . $label . $userName];
+        });
+        $form->select('user_type', 'Tệp khách hàng')->options($userTypes)->default(0)->required();
+        $form->select('schedule_id', 'Mã đặt lịch')->options($scheduleOrderWithLabel)->default(0);
         $form->select('user_id', __('Tên khách hàng'))->options($users)->required();
         $form->select('service_id', __('Tên dịch vụ'))->options($filteredServices)->required();
-        $form->date('date', __('Ngày'))->required();
         $form->select('work_shift_id', __('Ca làm việc'))->options($uniqueBedNames)->required();
         $form->select('employee_id', __('Tên nhân viên kỹ thuật(thêm)'))->options($employees);
-        $form->time('book_at', __('Giờ đặt'))->disable()->required();
-        $form->time('verify_at', __('Giờ xác nhận'))->disable()->required();
+        $form->date('date', __('Ngày đặt vé'))->required();
+        $form->time('start_at', __('Giờ bắt đầu'))->required();
+        $form->time('to_at', __('Giờ kết thúc'))->required();
         $form->select('status', __('Trạng thái'))->options($statuses)->default(4)->required();
         $form->textarea('note', __('Ghi chú'));
 
+        $scheduleOrderJson = json_encode(ScheduleOrder::where('status', '=', 0)->get()->keyBy("id"));
+        $scheduleJson = json_encode($scheduleOrderWithLabel);
+        $usersJson = json_encode($users);
+        $servicesJson = json_encode($filteredServices);
+        $workShiftsJson = json_encode($uniqueBedNames);
+        $employeesJson = json_encode($employees);
+
         $script = <<<EOT
+        var scheduleOrders = $scheduleOrderJson;
+        var schedules = $scheduleJson;
+        var users = $usersJson;
+        var services = $servicesJson;
+        var workShifts = $workShiftsJson;
+        var employees = $employeesJson;
+
         $(function() {
+            console.log(employees);
             var userType = $(".user_type");
-            var userId = $(".user_id");
-            var status = $(".status");
-            var bookAt = $(".book_at");
-            var verifyAt = $(".verify_at");
+            var scheduleSelect = $(".schedule_id");
+            var userSelect = $(".user_id");
+            var serviceSelect = $(".service_id");
+            var workShiftSelect = $(".work_shift_id");
+            var employeeSelect = $(".employee_id");
 
             userType.on('change', function() {
                 if ($(this).val() === '0') {
-                    userId.prop('disabled', false);
+                    userSelect.prop('disabled', false);
+                    scheduleSelect.prop('disabled', false);
+                    serviceSelect.empty();
+                    workShiftSelect.empty();
+                    employeeSelect.empty();
+                    setTimeout(function() {
+                        $.each(schedules, function (id, scheduleName) {
+                            scheduleSelect.append($('<option>', {
+                                value: id,
+                                text: scheduleName
+                            }));
+                        });
+                        $.each(users, function (id, userName) {
+                            userSelect.append($('<option>', {
+                                value: id,
+                                text: userName
+                            }));
+                        });
+                        $.each(services, function (id, serviceName) {
+                            serviceSelect.append($('<option>', {
+                                value: id,
+                                text: serviceName
+                            }));
+                        });
+                        $.each(workShifts, function (id, workShiftName) {
+                            workShiftSelect.append($('<option>', {
+                                value: id,
+                                text: workShiftName
+                            }));
+                        });
+                        $.each(employees, function (id, employeeName) {
+                            employeeSelect.append($('<option>', {
+                                value: id,
+                                text: employeeName
+                            }));
+                        });
+                    }, 1000);
                 } else {
-                    userId.prop('disabled', true);
+                    userSelect.prop('disabled', true);
+                    scheduleSelect.prop('disabled', true);
+                    scheduleSelect.empty();
+                    userSelect.empty();
                 }
             });
-            
-            status.on('change', function() {
-                if ($(this).val() === '0') {
-                    bookAt.prop('disabled', false);
-                    verifyAt.prop('disabled', true);
-                } else if($(this).val() === '1'){
-                    bookAt.prop('disabled', true);
-                    verifyAt.prop('disabled', false);
-                } else if($(this).val() === '2'){
-                    bookAt.prop('disabled', true);
-                    verifyAt.prop('disabled', true);
-                } 
-            });
 
+            scheduleSelect.on('change', function () {
+                var scheduleOrder = scheduleOrders[this.value];
+                userSelect.val(scheduleOrder.user_id);
+                userSelect.trigger('change');
+                serviceSelect.val(scheduleOrder.service_id);
+                serviceSelect.trigger('change');
+                workShiftSelect.val(scheduleOrder.work_shift_id);
+                workShiftSelect.trigger('change');
+                employeeSelect.val(scheduleOrder.employee_id);
+                employeeSelect.trigger('change');
+            });
         });
         EOT;
         Admin::script($script);

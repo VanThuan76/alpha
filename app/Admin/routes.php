@@ -51,6 +51,7 @@ Route::group([
     $router->resource('room-orders', Operation_RoomOrderController::class);
     $router->resource('work-shift', Operation_WorkShiftController::class);
     $router->resource('schedule-order', Operation_ScheduleOrderController::class);
+    $router->resource('ticket-order', Operation_TicketOrderController::class);
     //Hrm
     $router->resource('hrm', Hrm_EmployeeController::class);
 });

@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Response\CommonResponse;
-use App\Http\Response\ServiceResponse;
+use App\Http\Response\ScheduleResponse;
 use App\Models\CommonCode;
 use App\Models\Facility\Branch;
+use App\Models\Operation\WorkShift;
 use App\Models\Product\Service;
 use App\Models\Sales\User;
 use Carbon\Carbon;
@@ -14,7 +15,7 @@ use Illuminate\Http\Request;
 
 class Operation_ScheduleOrderController extends Controller
 {
-    use CommonResponse, ServiceResponse;
+    use CommonResponse, ScheduleResponse;
     public function getSchedule(Request $request)
     {
         $user = auth()->user();
@@ -33,13 +34,12 @@ class Operation_ScheduleOrderController extends Controller
         $result = [
             'schedules' => $schedules->map(function ($schedule) {
                 $services = Service::where("id", $schedule->service_id)->get();
-                $servicesArrayMap = $this->_formatServiceResponse($services);
+                $workShifts = WorkShift::where("id", $schedule->work_shift_id)->get();
+                $servicesArrayMap = $this->_formatServiceResponse($services, $workShifts, $schedule->employee_id);
+
                 $service = Service::where("id", $schedule->service_id)->first();
-                $branchesArray = is_array($service->branches) ? $service->branches : array_map('trim', explode(',', $service->branches));
-                $branchesArrayMap = array_map(function ($branch) {
-                    $branch = Branch::where('id', $branch)->first();
-                    return $branch ? ['id' => $branch->id, "name" => $branch->name] : [];
-                }, $branchesArray);
+                $branchesArrayMap = $this->_formatBranchResponse($service);
+                
                 $status = CommonCode::where("type", "Schedule")->where("value", $schedule->status)->first()->description_vi;
                 return [
                     'id' => "SBD" . $schedule->id . User::where("id", $schedule->user_id)->first()->name,
