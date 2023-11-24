@@ -68,3 +68,7 @@ Route::middleware('custom_auth')->group(function () {
 //Schedule
     Route::get('v1/schedules', 'Operation_ScheduleOrderController@getSchedule');
 });
+
+
+//RESTAPI Website None Auth
+Route::get('web/v1/services', 'Prod_ServiceController@getWebsite');

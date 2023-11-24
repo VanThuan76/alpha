@@ -119,20 +119,20 @@ class Prod_ServiceController extends BaseController
         if ($request->input('limit')) {
             $limit = 20;
         }
-        
+
         $servicesQuery = Service::where('status', 1)->orderBy('id', 'desc')->limit($limit);
 
         if ($request->input('previous_last_service_id') !== null) {
             $servicesQuery->where('id', '<', $previousLastServiceId);
         }
-        
+
         $services = $servicesQuery->get();
 
         $result = [
             'services' => $services->map(function ($service) {
                 $tagsArray = is_array($service->tags) ? $service->tags : array_map('trim', explode(',', $service->tags));
                 $tagsArrayMap = array_map(function ($tag) {
-                    $commonCode = CommonCode::where("type", "Service")->where("value",  $tag)->first();
+                    $commonCode = CommonCode::where("type", "Service")->where("value", $tag)->first();
                     return $commonCode ? $commonCode->description_vi : [];
                 }, $tagsArray);
                 return [
@@ -149,6 +149,38 @@ class Prod_ServiceController extends BaseController
             })
         ];
         if ($user) {
+            $response = $this->_formatBaseResponse(200, $result, 'Lấy thông tin thành công', []);
+            return response()->json($response);
+        } else {
+            $response = $this->_formatBaseResponse(401, null, 'Lấy thông tin không thành công', ['errors' => 'Unauthorised']);
+            return response()->json($response, 401);
+        }
+    }
+    public function getWebsite(Request $request)
+    {
+        $servicesQuery = Service::where('status', 1)->orderBy('id', 'desc');
+        $services = $servicesQuery->get();
+        $result = [
+            'services' => $services->map(function ($service) {
+                $tagsArray = is_array($service->tags) ? $service->tags : array_map('trim', explode(',', $service->tags));
+                $tagsArrayMap = array_map(function ($tag) {
+                    $commonCode = CommonCode::where("type", "Service")->where("value", $tag)->first();
+                    return $commonCode ? $commonCode->description_vi : [];
+                }, $tagsArray);
+                return [
+                    'id' => $service->id,
+                    'image_url' => $service->image,
+                    'title' => $service->name,
+                    'introduction' => $service->introduction,
+                    'used_count' => $service->used_count,
+                    'details' => $service->details,
+                    'tags' => $tagsArrayMap,
+                    'rate' => $service->rate,
+                    'comment_count' => $service->comment_count,
+                ];
+            })
+        ];
+        if ($result) {
             $response = $this->_formatBaseResponse(200, $result, 'Lấy thông tin thành công', []);
             return response()->json($response);
         } else {

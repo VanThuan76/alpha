@@ -20,17 +20,26 @@ class Hrm_EmployeeController extends Controller
         if ($request->input('limit')) {
             $limit = 20;
         }
-        
+
         $employeeQuery = Employee::where('position_id', 2)->orderBy('id', 'desc')->limit($limit);
 
         if ($request->input('previous_last_technician_id') !== null) {
             $employeeQuery->where('id', '<', $previousLastTechnicianId);
         }
-        
-        if($request->input('branch_id') !== null) {
+
+        if ($request->input('branch_id') !== null) {
             $employeeQuery->where('branch_id', '=', $branchId);
         }
-
+        if ($request->input('search_keyword') !== null) {
+            $searchKeyword = $request->input('search_keyword');
+            $employeeQuery->where(function ($query) use ($searchKeyword) {
+                $query->where('name', 'LIKE', '%' . $searchKeyword . '%')
+                    ->orWhere('phone_number', 'LIKE', '%' . $searchKeyword . '%')
+                    ->orWhere('email', 'LIKE', '%' . $searchKeyword . '%')
+                    ->orWhere('address', 'LIKE', '%' . $searchKeyword . '%')
+                    ->orWhere('rate', 'LIKE', '%' . $searchKeyword . '%');
+            });
+        }
         $technicians = $employeeQuery->get();
 
         $result = [
