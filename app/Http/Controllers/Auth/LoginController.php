@@ -15,7 +15,7 @@ class LoginController extends Controller
         if (Auth::attempt(['phone_number' => $request->phone_number, 'password' => $request->password])) {
             $user = Auth::user();
             if($user->is_deleted == 1){
-                $response = $this->_formatBaseResponse(401, null, 'Sai số điện thoại hoặc mật khẩu', []);
+                $response = $this->_formatBaseResponse(401, null, 'Tài khoản đã đóng. Vui lòng tới Chi nhánh gần nhất hoặc liên hệ Tổng đài để được hỗ trợ.', []);
                 return response()->json($response, 401);
             }else if($user->status == 0){
                 $response = $this->_formatBaseResponse(401, null, 'Tài khoản chưa xác thực', []);
