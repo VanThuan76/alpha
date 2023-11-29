@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Response\CommonResponse;
 use App\Http\Response\ScheduleResponse;
 use App\Models\CommonCode;
-use App\Models\Facility\Branch;
 use App\Models\Operation\WorkShift;
 use App\Models\Product\Service;
 use App\Models\Sales\User;
@@ -36,15 +35,11 @@ class Operation_ScheduleOrderController extends Controller
                 $services = Service::where("id", $schedule->service_id)->get();
                 $workShifts = WorkShift::where("id", $schedule->work_shift_id)->get();
                 $servicesArrayMap = $this->_formatServiceResponse($services, $workShifts, $schedule->employee_id);
-
-                $service = Service::where("id", $schedule->service_id)->first();
-                $branchesArrayMap = $this->_formatBranchResponse($service);
-                
                 $status = CommonCode::where("type", "Schedule")->where("value", $schedule->status)->first()->description_vi;
                 return [
                     'id' => "SBD" . $schedule->id . User::where("id", $schedule->user_id)->first()->name,
                     'time' => Carbon::parse($schedule->date),
-                    'branch' => $branchesArrayMap,
+                    'branch' => $this->_formatBranchResponse($schedule->branch_id),
                     'services' => $servicesArrayMap,
                     'status' => $status
                 ];

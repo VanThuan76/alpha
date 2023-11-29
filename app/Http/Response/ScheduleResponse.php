@@ -9,13 +9,10 @@ use App\Models\Product\Service;
 
 trait ScheduleResponse
 {
-    private function _formatBranchResponse($service){
-        $branchesArray = is_array($service->branches) ? $service->branches : array_map('trim', explode(',', $service->branches));
-        $result = array_map(function ($branch) {
-            $branch = Branch::where('id', $branch)->first();
-            return $branch ? ['id' => $branch->id, "name" => $branch->name] : [];
-        }, $branchesArray);
-        return $result;
+    private function _formatBranchResponse($branchId)
+    {
+        $branch = Branch::where('id', $branchId)->first();
+        return $branch ? ['id' => $branch->id, "name" => $branch->name] : [];
     }
     private function _formatServiceResponse($services, $workShifts, $employeeAddId)
     {
