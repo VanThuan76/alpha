@@ -57,6 +57,7 @@ Route::middleware('custom_auth')->group(function () {
     Route::post('v1/change_password', 'UserController@changePassword');
 //Service
     Route::get('v1/services', 'Prod_ServiceController@get');
+    Route::get('v1/services/{id}', 'Prod_ServiceController@detail');
     Route::get('v1/promotions', 'Prod_PromotionController@get');
     Route::get('v1/save_promotion', 'Prod_PromotionController@getPromotionSave');
     Route::post('v1/saved_promotions', 'Prod_PromotionController@save');
@@ -72,3 +73,4 @@ Route::middleware('custom_auth')->group(function () {
 
 //RESTAPI Website None Auth
 Route::get('web/v1/services', 'Prod_ServiceController@getWebsite');
+Route::get('web/v1/services/{id}', 'Prod_ServiceController@detailWebsite');

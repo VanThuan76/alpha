@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Response\CommonResponse;
+use App\Models\Facility\Bed;
 use App\Models\Facility\Branch;
 use App\Models\Hrm\Employee;
+use App\Models\Operation\WorkShift;
+use App\Models\Product\Service;
 use Illuminate\Http\Request;
 
 class Hrm_EmployeeController extends Controller
@@ -16,6 +19,7 @@ class Hrm_EmployeeController extends Controller
         $limit = $request->input('limit', 20);
         $previousLastTechnicianId = $request->input('previous_last_technician_id', 0);
         $branchId = $request->input('branch_id');
+        $serviceId = $request->input('service_id');
 
         if ($request->input('limit')) {
             $limit = 20;
@@ -30,6 +34,29 @@ class Hrm_EmployeeController extends Controller
         if ($request->input('branch_id') !== null) {
             $employeeQuery->where('branch_id', '=', $branchId);
         }
+
+        if ($request->input('service_id') !== null) {
+            if ($request->input('service_id') !== null) {
+                $service = Service::where("id", $serviceId)->first();
+                $employeesId = [];
+                if ($service) {
+                    $branches = $service->branches;
+                    if (is_array($branches)) {
+                        $workShifts = WorkShift::where('status', 0)->get(); //Dang ranh
+                        foreach ($workShifts as $workShift) {
+                            $bed = Bed::find($workShift->bed_id);
+                            if ($bed && in_array($bed->branch_id, $branches)) {
+                                $employeesId[] = $workShift->employee_id;
+                            }
+                        }
+                        $employeeQuery->whereIn('id', $employeesId);
+                    } else {
+                    }
+                }
+            }
+
+        }
+
         if ($request->input('search_keyword') !== null) {
             $searchKeyword = $request->input('search_keyword');
             $employeeQuery->where(function ($query) use ($searchKeyword) {

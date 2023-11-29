@@ -55,6 +55,14 @@ class Operation_WorkShiftController extends AdminController
         $grid->column('employee.name', __('Tên nhân viên kỹ thuật'));
         $grid->column('from_at', __('Từ giờ'));
         $grid->column('to_at', __('Đến giờ'));
+        $grid->column('status', __('Trạng thái'))->display(function ($statusId) {
+            $status = Utils::commonCodeFormat('StatusWorkShift', 'description_vi', $statusId);
+            if ($status) {
+                return $status;
+            } else {
+                return "";
+            }
+        });
         $grid->column('created_at', __('Ngày tạo'))->vndate();
         $grid->column('updated_at', __('Ngày cập nhật'))->vndate();
         $grid->model()->whereHas('bed', function ($query) {
@@ -96,6 +104,14 @@ class Operation_WorkShiftController extends AdminController
         $show->field('employee.name', __('Tên nhân viên kỹ thuật'));
         $show->field('from_at', __('Từ giờ'));
         $show->field('to_at', __('Đến giờ'));
+        $show->field('status', __('Trạng thái'))->as(function ($statusId) {
+            $status = Utils::commonCodeFormat('StatusWorkShift', 'description_vi', $statusId);
+            if ($status) {
+                return $status;
+            } else {
+                return "";
+            }
+        });
         $show->field('created_at', __('Ngày tạo'))->vndate();
         $show->field('updated_at', __('Ngày cập nhật'))->vndate();
         return $show;
@@ -109,14 +125,16 @@ class Operation_WorkShiftController extends AdminController
     protected function form()
     {
         $form = new Form(new WorkShift());
-        $beds = DatabaseHelper::getOptionsForSelect(Bed::class, "name" , "id", ['branch_id', Admin::user()->active_branch_id]);
-        $employees = DatabaseHelper::getOptionsForSelect(Employee::class, "name" , "id", ['branch_id', Admin::user()->active_branch_id]);
+        $beds = DatabaseHelper::getOptionsForSelect(Bed::class, "name", "id", ['branch_id', Admin::user()->active_branch_id]);
+        $employees = DatabaseHelper::getOptionsForSelect(Employee::class, "name", "id", ['branch_id', Admin::user()->active_branch_id]);
+        $statuses = Utils::commonCodeOptionsForSelect('StatusWorkShift', 'description_vi', 'value');
 
         $form->date('date', __('Ngày'));
         $form->select('bed_id', __('Tên giường'))->options($beds)->required();
         $form->select('employee_id', __('Tên nhân viên kỹ thuật'))->options($employees)->required();
         $form->time('from_at', __('Từ giờ'));
         $form->time('to_at', __('Đến giờ'));
+        $form->select('status', __('Trạng thái'))->options($statuses)->default(0)->required();
         return $form;
     }
 }

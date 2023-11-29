@@ -156,6 +156,41 @@ class Prod_ServiceController extends BaseController
             return response()->json($response, 401);
         }
     }
+    public function detail(Request $request, $id)
+    {
+        $user = auth()->user();
+        $service = Service::where('status', 1)->where('id', $id)->first();
+        if ($service) {
+            $tagsArray = is_array($service->tags) ? $service->tags : array_map('trim', explode(',', $service->tags));
+            $tagsArrayMap = array_map(function ($tag) {
+                $commonCode = CommonCode::where("type", "Service")->where("value", $tag)->first();
+                return $commonCode ? $commonCode->description_vi : '';
+            }, $tagsArray);
+
+            $result = [
+                'id' => $service->id,
+                'image_url' => $service->image,
+                'title' => $service->name,
+                'introduction' => $service->introduction,
+                'used_count' => $service->used_count,
+                'details' => $service->details,
+                'tags' => $tagsArrayMap,
+                'rate' => $service->rate,
+                'comment_count' => $service->comment_count,
+            ];
+
+            if ($user) {
+                $response = $this->_formatBaseResponse(200, $result, 'Lấy thông tin thành công', []);
+                return response()->json($response);
+            } else {
+                $response = $this->_formatBaseResponse(401, null, 'Lấy thông tin không thành công', ['errors' => 'Unauthorised']);
+                return response()->json($response, 401);
+            }
+        } else {
+            $response = $this->_formatBaseResponse(404, null, 'Không tìm thấy dịch vụ', ['errors' => 'Service not found']);
+            return response()->json($response, 404);
+        }
+    }
     public function getWebsite(Request $request)
     {
         $servicesQuery = Service::where('status', 1)->orderBy('id', 'desc');
@@ -186,6 +221,41 @@ class Prod_ServiceController extends BaseController
         } else {
             $response = $this->_formatBaseResponse(401, null, 'Lấy thông tin không thành công', ['errors' => 'Unauthorised']);
             return response()->json($response, 401);
+        }
+    }
+    public function detailWebsite(Request $request, $id)
+    {
+        $service = Service::where('status', 1)->where('id', $id)->first();
+        if ($service) {
+            $tagsArray = is_array($service->tags) ? $service->tags : array_map('trim', explode(',', $service->tags));
+            $tagsArrayMap = array_map(function ($tag) {
+                $commonCode = CommonCode::where("type", "Service")->where("value", $tag)->first();
+                return $commonCode ? $commonCode->description_vi : '';
+            }, $tagsArray);
+
+            $result = [
+                'id' => $service->id,
+                'image_url' => $service->image,
+                'title' => $service->name,
+                'introduction' => $service->introduction,
+                'used_count' => $service->used_count,
+                'details' => $service->details,
+                'tags' => $tagsArrayMap,
+                'rate' => $service->rate,
+                'comment_count' => $service->comment_count,
+                'staff_number' => $service->staff_number //Them
+            ];
+
+            if ($result) {
+                $response = $this->_formatBaseResponse(200, $result, 'Lấy thông tin thành công', []);
+                return response()->json($response);
+            } else {
+                $response = $this->_formatBaseResponse(401, null, 'Lấy thông tin không thành công', ['errors' => 'Unauthorised']);
+                return response()->json($response, 401);
+            }
+        } else {
+            $response = $this->_formatBaseResponse(404, null, 'Không tìm thấy dịch vụ', ['errors' => 'Service not found']);
+            return response()->json($response, 404);
         }
     }
 }
