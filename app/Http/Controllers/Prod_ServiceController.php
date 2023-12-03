@@ -126,6 +126,11 @@ class Prod_ServiceController extends BaseController
             $servicesQuery->where('id', '<', $previousLastServiceId);
         }
 
+        if ($request->input('branch_id') !== null) {
+            $branchId = $request->input('branch_id');
+            $servicesQuery->whereRaw("FIND_IN_SET('$branchId', branches)");
+        }
+        
         $services = $servicesQuery->get();
 
         $result = [
@@ -168,15 +173,15 @@ class Prod_ServiceController extends BaseController
             }, $tagsArray);
 
             $result = [
-                'id' => $service->id,
-                'image_url' => $service->image,
-                'title' => $service->name,
-                'introduction' => $service->introduction,
-                'used_count' => $service->used_count,
-                'details' => $service->details,
-                'tags' => $tagsArrayMap,
-                'rate' => $service->rate,
-                'comment_count' => $service->comment_count,
+                    'id' => $service->id,
+                    'image_url' => $service->image,
+                    'title' => $service->name,
+                    'introduction' => $service->introduction,
+                    'used_count' => $service->used_count,
+                    'details' => $service->details,
+                    'tags' => $tagsArrayMap,
+                    'rate' => $service->rate,
+                    'comment_count' => $service->comment_count,
             ];
 
             if ($user) {

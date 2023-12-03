@@ -68,6 +68,9 @@ Route::middleware('custom_auth')->group(function () {
         Route::get('v1/technicians', 'Hrm_EmployeeController@getTechnicians');
 //Schedule
     Route::get('v1/schedules', 'Operation_ScheduleOrderController@getSchedule');
+    Route::post('v1/create_schedule', 'Operation_ScheduleOrderController@createSchedule');
+    Route::post('v1/cancel_schedule/{id}', 'Operation_ScheduleOrderController@cancelSchedule');
+    Route::put('v1/update_schedule/{id}', 'Operation_ScheduleOrderController@updateSchedule');
 });
 
 

@@ -11,6 +11,7 @@ use App\Models\Facility\Zone;
 use App\Models\Hrm\Employee;
 use App\Models\Operation\ScheduleOrder;
 use App\Models\Operation\WorkShift;
+use App\Models\Operation\WorkShiftService;
 use App\Models\Product\Service;
 use App\Models\Sales\User;
 use Carbon\Carbon;
@@ -46,10 +47,11 @@ class Operation_ScheduleOrderController extends AdminController
                 return "";
             }
         });
-        $grid->column('user.name', __('Tên khách hàng'));
+        $grid->column('customer_name', __('Tên khách hàng(Vãng lai)'));
         $grid->column('user.id', __('Mã khách hàng'))->display(function ($userId) {
             return 'SBD' . $userId;
         });
+        $grid->column('user.name', __('Tên khách hàng(Đăng ký)'));
         $grid->column('user.phone_number', __('Số điện thoại'));
         $grid->column('user.sex', __('Giới tính'))->display(function ($sex) {
             $sexTitle = CommonCode::where('type', 'Gender')->where('value', $sex)->first();
@@ -60,36 +62,52 @@ class Operation_ScheduleOrderController extends AdminController
             $customerTypeRecord = DatabaseHelper::getRecordByField(CustomerType::class, 'id', $customerType);
             return $customerTypeRecord ? $customerTypeRecord->name : "";
         });
-        $grid->column('service.code', __('Mã dịch vụ'));
-        $grid->column('service.name', __('Tên dịch vụ'));
-        $grid->column('service.duration', __('Khoảng thời gian'));
         $grid->column('date', __('Ngày đặt'))->display(function ($date) {
             return Utils::formatDate($date);
         });
         $grid->column('book_at', __('Giờ đặt'));
-        $grid->column('workShift.bed_id', __('Nhân viên(chính) - khu - phòng - giường'))->display(function ($bedId) {
-            $workShiftRecord = DatabaseHelper::getRecordByField(WorkShift::class, 'bed_id', $bedId);
-            if ($workShiftRecord) {
-                $employeeRecord = DatabaseHelper::getRecordByField(Employee::class, 'id', $workShiftRecord->employee_id);
-            }
-            $bedRecord = DatabaseHelper::getRecordByField(Bed::class, 'id', $bedId);
-            if ($bedRecord) {
-                $zoneRecord = DatabaseHelper::getRecordByField(Zone::class, 'id', $bedRecord->zone_id);
-                $roomRecord = DatabaseHelper::getRecordByField(Room::class, 'id', $bedRecord->room_id);
-                if ($zoneRecord) {
-                    return $employeeRecord->name . " - " . $zoneRecord->name . " - " . $roomRecord->name . " - " . $bedRecord->name . " (Làm từ {$workShiftRecord->from_at} đến {$workShiftRecord->to_at})";
-                } else {
-                    return "";
+        $grid->column('work_shift_services', "Dịch vụ đặt trước")->display(function ($workShiftIds) {
+            $workShiftIdsArray = explode(",", $workShiftIds);
+            if (is_array($workShiftIdsArray) && count($workShiftIdsArray) > 0) {
+                $workShiftServices = WorkShiftService::whereIn('id', $workShiftIdsArray)->get();
+                $serviceTitles = [];
+                $workShiftTitles = [];
+                $result = '';
+                foreach ($workShiftServices as $i => $workShiftService) {
+                    $serviceRecord = Service::where('id', $workShiftService->service_id)->get();
+                    $workShiftRecord = WorkShift::where('id', $workShiftService->work_shift_id)->get();
+                    if ($serviceRecord && $workShiftRecord) {
+                        $serviceInfo = 'Mã dịch vụ: ' . $serviceRecord->first()->code . ' - ' . 'Tên dịch vụ: ' . $serviceRecord->first()->name . ' - ' . 'Khoảng thời gian: ' . $serviceRecord->first()->duration;
+                        $serviceTitles[] = $serviceInfo;
+                        $bedId = $workShiftRecord->first()->bed_id;
+                        if ($bedId) {
+                            $workShiftRecord = DatabaseHelper::getRecordByField(WorkShift::class, 'bed_id', $bedId);
+                            if ($workShiftRecord) {
+                                $employeeRecord = DatabaseHelper::getRecordByField(Employee::class, 'id', $workShiftRecord->employee_id);
+                            }
+                            $bedRecord = DatabaseHelper::getRecordByField(Bed::class, 'id', $bedId);
+                            if ($bedRecord) {
+                                $zoneRecord = DatabaseHelper::getRecordByField(Zone::class, 'id', $bedRecord->zone_id);
+                                $roomRecord = DatabaseHelper::getRecordByField(Room::class, 'id', $bedRecord->room_id);
+                                if ($zoneRecord) {
+                                    $workShiftInfo = 'Nhân viên: ' . $employeeRecord->name . " - " . 'Khu: ' . $zoneRecord->name . " - " . 'Phòng: ' . $roomRecord->name . " - " . 'Giường: ' . $bedRecord->name . " (Làm từ {$workShiftRecord->from_at} đến {$workShiftRecord->to_at})";
+                                    $workShiftTitles[] = $workShiftInfo;
+                                } else {
+                                    return "";
+                                }
+                            } else {
+                                return "";
+                            }
+                        }
+                    }
                 }
+                for ($i = 0; $i < count($serviceTitles); $i++) {
+                    $result .= '<div style="margin-bottom: 20px;">' . $serviceTitles[$i] . '</div>';
+                    $result .= '<div style="margin-bottom: 20px;">' . $workShiftTitles[$i] . '</div>';
+                }
+                return "<div style='display: flex; flex-direction: column; color: blue;'>$result</div>";
             } else {
                 return "";
-            }
-        });
-        $grid->column('employee.name', __('Tên nhân viên kỹ thuật(thêm)'))->display(function ($employee) {
-            if ($employee) {
-                return $employee;
-            } else {
-                return 'Không có';
             }
         });
         $grid->column('verify_at', __('Giờ xác nhận'));
@@ -113,9 +131,7 @@ class Operation_ScheduleOrderController extends AdminController
         $grid->column('created_at', __('Ngày tạo'))->vndate();
         $grid->column('updated_at', __('Ngày cập nhật'))->vndate();
         $grid->fixColumns(0, 0);
-        $grid->model()->whereHas('workShift.bed', function ($query) {
-            $query->where('branch_id', Admin::user()->active_branch_id);
-        });
+        $grid->model()->where('branch_id', Admin::user()->active_branch_id);
         return $grid;
     }
 
@@ -151,36 +167,52 @@ class Operation_ScheduleOrderController extends AdminController
             $customerTypeRecord = DatabaseHelper::getRecordByField(CustomerType::class, 'id', $customerType);
             return $customerTypeRecord ? $customerTypeRecord->name : "";
         });
-        $show->field('service.code', __('Mã dịch vụ'));
-        $show->field('service.name', __('Tên dịch vụ'));
-        $show->field('service.duration', __('Khoảng thời gian'));
         $show->field('date', __('Ngày đặt'))->as(function ($date) {
             return Utils::formatDate($date);
         });
         $show->field('book_at', __('Giờ đặt'));
-        $show->field('workShift.bed_id', __('Tên khu - phòng'))->as(function ($bedId) {
-            $workShiftRecord = DatabaseHelper::getRecordByField(WorkShift::class, 'bed_id', $bedId);
-            if ($workShiftRecord) {
-                $employeeRecord = DatabaseHelper::getRecordByField(Employee::class, 'id', $workShiftRecord->employee_id);
-            }
-            $bedRecord = DatabaseHelper::getRecordByField(Bed::class, 'id', $bedId);
-            if ($bedRecord) {
-                $zoneRecord = DatabaseHelper::getRecordByField(Zone::class, 'id', $bedRecord->zone_id);
-                $roomRecord = DatabaseHelper::getRecordByField(Room::class, 'id', $bedRecord->room_id);
-                if ($zoneRecord) {
-                    return $employeeRecord->name . " - " . $zoneRecord->name . " - " . $roomRecord->name . " - " . $bedRecord->name . " (Làm từ {$workShiftRecord->book_at} đến {$workShiftRecord->to_at})";
-                } else {
-                    return "";
+        $show->field('work_shift_services', "Dịch vụ đặt trước")->as(function ($workShiftIds) {
+            $workShiftIdsArray = explode(",", $workShiftIds);
+            if (is_array($workShiftIdsArray) && count($workShiftIdsArray) > 0) {
+                $workShiftServices = WorkShiftService::whereIn('id', $workShiftIdsArray)->get();
+                $serviceTitles = [];
+                $workShiftTitles = [];
+                $result = '';
+                foreach ($workShiftServices as $i => $workShiftService) {
+                    $serviceRecord = Service::where('id', $workShiftService->service_id)->get();
+                    $workShiftRecord = WorkShift::where('id', $workShiftService->work_shift_id)->get();
+                    if ($serviceRecord && $workShiftRecord) {
+                        $serviceInfo = 'Mã dịch vụ: ' . $serviceRecord->first()->code . ' - ' . 'Tên dịch vụ: ' . $serviceRecord->first()->name . ' - ' . 'Khoảng thời gian: ' . $serviceRecord->first()->duration;
+                        $serviceTitles[] = $serviceInfo;
+                        $bedId = $workShiftRecord->first()->bed_id;
+                        if ($bedId) {
+                            $workShiftRecord = DatabaseHelper::getRecordByField(WorkShift::class, 'bed_id', $bedId);
+                            if ($workShiftRecord) {
+                                $employeeRecord = DatabaseHelper::getRecordByField(Employee::class, 'id', $workShiftRecord->employee_id);
+                            }
+                            $bedRecord = DatabaseHelper::getRecordByField(Bed::class, 'id', $bedId);
+                            if ($bedRecord) {
+                                $zoneRecord = DatabaseHelper::getRecordByField(Zone::class, 'id', $bedRecord->zone_id);
+                                $roomRecord = DatabaseHelper::getRecordByField(Room::class, 'id', $bedRecord->room_id);
+                                if ($zoneRecord) {
+                                    $workShiftInfo = 'Nhân viên: ' . $employeeRecord->name . " - " . 'Khu: ' . $zoneRecord->name . " - " . 'Phòng: ' . $roomRecord->name . " - " . 'Giường: ' . $bedRecord->name . " (Làm từ {$workShiftRecord->from_at} đến {$workShiftRecord->to_at})";
+                                    $workShiftTitles[] = $workShiftInfo;
+                                } else {
+                                    return "";
+                                }
+                            } else {
+                                return "";
+                            }
+                        }
+                    }
                 }
+                for ($i = 0; $i < count($serviceTitles); $i++) {
+                    $result .= '<div style="margin-bottom: 20px;">' . $serviceTitles[$i] . '</div>';
+                    $result .= '<div style="margin-bottom: 20px;">' . $workShiftTitles[$i] . '</div>';
+                }
+                return "<div style='display: flex; flex-direction: column; color: blue;'>$result</div>";
             } else {
                 return "";
-            }
-        });
-        $show->field('employee.name', __('Tên nhân viên kỹ thuật(thêm)'))->as(function ($employee) {
-            if ($employee) {
-                return $employee;
-            } else {
-                return 'Không có';
             }
         });
         $show->field('verify_at', __('Giờ xác nhận'));
@@ -259,11 +291,11 @@ class Operation_ScheduleOrderController extends AdminController
         $form->text("code", __('Mã'))->readonly();
         $form->select('user_type', 'Tệp khách hàng')->options($userTypes)->default(0);
         $form->select('user_id', __('Tên khách hàng'))->options($users)->required();
+        $form->date('date', __('Ngày đặt'))->required();
+        $form->time('book_at', __('Giờ đặt'))->required();
         $form->select('service_id', __('Tên dịch vụ'))->options($filteredServices)->required();
         $form->select('work_shift_id', __('Ca làm việc'))->options($uniqueBedNames)->required();
         $form->select('employee_id', __('Tên nhân viên kỹ thuật(thêm)'))->options($employees)->disable();
-        $form->date('date', __('Ngày đặt'))->required();
-        $form->time('book_at', __('Giờ đặt'))->required();
         $form->time('verify_at', __('Giờ xác nhận'))->disable()->required();
         $form->select('status', __('Trạng thái'))->options($statuses)->default(0)->required();
         $form->textarea('note', __('Ghi chú'));
@@ -273,7 +305,7 @@ class Operation_ScheduleOrderController extends AdminController
                 $form->code = Utils::generateCommonCode("schedule_order", "BK");
             }
         });
-        
+
         $form->saved(function (Form $form) {
             if ($form->isCreating()) {
                 $workShiftId = $form->model()->work_shift_id;
