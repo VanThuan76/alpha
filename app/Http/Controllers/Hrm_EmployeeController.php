@@ -70,10 +70,20 @@ class Hrm_EmployeeController extends Controller
         $technicians = $employeeQuery->get();
 
         $result = [
-            'technicians' => $technicians->map(function ($branch) {
+            'technicians' => $technicians->map(function ($technician) {
                 return [
-                    'id' => $branch->id,
-                    'name' => $branch->name,
+                    'id' => $technician->id,
+                    'name' => $technician->name,
+                    'branch_id' => $technician->branch_id,
+                    'avatar_url' => $technician->avatar ? "https://erp.senbachdiep.com/storage/" . $technician->avatar : null ,
+                    'level' => $technician->level,
+                    'served_user_count' => $technician->served_user_count,
+                    'rate' => $technician->rate,
+                    'status' => $technician->status,
+                    'experience' => $technician->experience,
+                    'specialize' => $technician->specialize,
+                    'service' => $technician->service,
+                    'force' => $technician->force,
                 ];
             })
         ];
