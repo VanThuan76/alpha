@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Response\CommonResponse;
 use App\Models\Facility\Bed;
-use App\Models\Facility\Branch;
 use App\Models\Hrm\Employee;
 use App\Models\Operation\WorkShift;
 use App\Models\Product\Service;
