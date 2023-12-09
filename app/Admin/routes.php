@@ -36,6 +36,9 @@ Route::group([
     $router->resource('users', Sales_UserController::class);
     $router->resource('bills', Sales_BillController::class);
     $router->resource('order', Sales_OrderController::class);
+    $router->resource('sales', Sales_SalesController::class);
+    $router->resource('/sales/sales-detail', Sales_SalesDetailController::class);
+    $router->resource('/sales/report-sales-detail', Sales_ReportSalesDetailController::class);
     //Crm
     $router->resource('msgs', Crm_MsgController::class);
     $router->resource('prospect-customers', Crm_ProspectCustomerController::class);
