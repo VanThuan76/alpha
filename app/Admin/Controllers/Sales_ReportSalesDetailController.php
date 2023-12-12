@@ -4,7 +4,7 @@ namespace App\Admin\Controllers;
 
 class Sales_ReportSalesDetailController extends Sales_SalesDetailController
 {
-    protected $title = 'Danh sách đơn mua vé chi tiết';
+    protected $title = 'Danh sách đơn mua hàng chi tiết';
 
     public function index($id)
     {

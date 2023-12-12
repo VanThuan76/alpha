@@ -77,3 +77,6 @@ Route::middleware('custom_auth')->group(function () {
 //RESTAPI Website None Auth
 Route::get('web/v1/services', 'Prod_ServiceController@getWebsite');
 Route::get('web/v1/services/{id}', 'Prod_ServiceController@detailWebsite');
+
+//RESTAPI IN ERP
+Route::post('/process-payment', 'Sales_PaymentController@processPayment')->name('process.payment');

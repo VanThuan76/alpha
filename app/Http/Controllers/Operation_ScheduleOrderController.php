@@ -9,7 +9,6 @@ use App\Models\CommonCode;
 use App\Models\Operation\WorkShift;
 use App\Models\Operation\WorkShiftService;
 use App\Models\Product\Service;
-use App\Models\Sales\User;
 use Carbon\Carbon;
 use App\Models\Operation\ScheduleOrder;
 use Illuminate\Http\Request;
@@ -34,16 +33,33 @@ class Operation_ScheduleOrderController extends Controller
 
         $result = [
             'schedules' => $schedules->map(function ($schedule) {
-                $services = Service::where("id", $schedule->service_id)->get();
-                $workShifts = WorkShift::where("id", $schedule->work_shift_id)->get();
-                $servicesArrayMap = $this->_formatServiceResponse($services, $workShifts, $schedule->employee_id);
+                $workShiftServiceIds = explode(',', $schedule->work_shift_services);
+                $workShiftServices = WorkShiftService::whereIn('id', $workShiftServiceIds)->get();
+                $services = [];
+                $workShifts = [];
+
+                foreach ($workShiftServices as $workShiftService) {
+                    $services[] = Service::where("id", $workShiftService->service_id)->first();
+                    $workShifts[] = WorkShift::where("id", $workShiftService->work_shift_id)->first();
+                }
+                $servicesCollection = collect($services);
+                $workShiftsCollection = collect($workShifts);
+                $servicesArrayMap = $this->_formatServiceResponse($servicesCollection, $workShiftsCollection, $schedule);
+
                 $status = CommonCode::where("type", "Schedule")->where("value", $schedule->status)->first()->description_vi;
                 return [
-                    'id' => "SBD" . $schedule->id . User::where("id", $schedule->user_id)->first()->name,
-                    'time' => Carbon::parse($schedule->date),
+                    'id' => $schedule->id,
+                    'time' => Carbon::parse($schedule->date)->format('d/m/Y'),
                     'branch' => $this->_formatBranchResponse($schedule->branch_id),
-                    'services' => $servicesArrayMap,
-                    'status' => $status
+                    'schedule_services' => $servicesArrayMap,
+                    'note' => [
+                        'force' => $schedule->note_force,
+                        'pain_attention' => $schedule->pain_attention,
+                        'pathology_attention' => $schedule->pathology_attention,
+                        'another' => $schedule->note
+                    ],
+                    'status' => $status,
+                    'order_id' => null //Chỉ xuất hiện khi lịch hẹn là loại Hoàn thành
                 ];
             })
         ];
@@ -58,33 +74,40 @@ class Operation_ScheduleOrderController extends Controller
     public function createSchedule(Request $request)
     {
         $user = auth()->user();
-        $services = $request->input('services');
-        if ($services) {
+        $scheduleServices = $request->input('schedule_services');
+        if ($scheduleServices) {
             $workShiftServiceIDs = [];
-            foreach ($services as $service) {
+            foreach ($scheduleServices as $scheduleService) {
                 $schedule = new ScheduleOrder;
-                $workShiftService = new WorkShiftService;
+                //Schedule
                 $schedule->branch_id = $request->input('branch_id');
                 $schedule->user_id = $user->id;
                 $schedule->code = Utils::generateCommonCode("schedule_order", "BK");
-                $schedule->date = $request->input('date');
-                $schedule->book_at = $request->input('time');
-                $schedule->note = $request->input('note');
-                $workShiftService->service_id = $service['id'];
+                $schedule->date = Carbon::createFromFormat('d/m/Y', $request->input('date'))->format('Y-m-d H:i:s');
+                $schedule->book_at = $scheduleService['time'];
+                $schedule->note_force = $request->input('note')['force'];
+                $schedule->note_pain_attention = $request->input('note')['pain_attention'];
+                $schedule->note_pathology_attention = $request->input('note')['pathology_attention'];
+                $schedule->note = $request->input('note')['another'];
+                //WorkShiftService 
+                $workShiftService = new WorkShiftService;
+                $workShiftService->service_id = $scheduleService['service']['id'];
 
-                $employees = $service['technicians'];
+                $employees = $scheduleService['selected_technicians'];
                 if ($employees) {
                     foreach ($employees as $employee) {
-                        $workShiftFilter = WorkShift::where("date", "=", $request->input('date'))
+                        $workShiftFilter = WorkShift::where('date', Carbon::createFromFormat('d/m/Y', $request->input('date'))->format('Y-m-d'))
                             ->where('status', 0)
-                            ->where("employee_id", $employee['id'])
+                            ->whereRaw("TIME(from_at) <= ?", [$scheduleService['time']])
+                            ->where('employee_id', $employee['id'])
                             ->first();
                         if ($workShiftFilter) {
                             $workShiftService->work_shift_id = $workShiftFilter->id;
+                            //WorkShift
                             $workShift = WorkShift::find($workShiftFilter->id);
                             $fromAtWorkShift = strtotime($workShift->from_at);
                             $toAtWorkShift = strtotime($workShift->to_at);
-                            $currentTimeExits = date('H:i:s', $fromAtWorkShift + ($service['duration'] * 60));
+                            $currentTimeExits = date('H:i:s', $fromAtWorkShift + ($scheduleService['service']['duration'] * 60));
                             if ($toAtWorkShift < $currentTimeExits) {
                                 $workShift->status = 1;
                             } else {
@@ -109,65 +132,66 @@ class Operation_ScheduleOrderController extends Controller
         }
 
     }
-    public function cancelSchedule($id)
-    {
-        $user = auth()->user();
-        $scheduleOrder = ScheduleOrder::where('user_id', $user->id);
-        if ($scheduleOrder) {
-            $schedule = new ScheduleOrder;
-            $schedule->status = 4; //Huy
-            $schedule->save();
-        }
-        if ($user) {
-            $response = $this->_formatBaseResponse(200, null, 'Huỷ lịch thành công', []);
-            return response()->json($response);
-        } else {
-            $response = $this->_formatBaseResponse(401, null, 'Huỷ lịch không thành công', ['errors' => 'Unauthorised']);
-            return response()->json($response, 401);
-        }
-    }
     public function updateSchedule(Request $request, $id)
     {
         $user = auth()->user();
-        $services = $request->input('services');
-        if ($services) {
-            $workShiftServiceIDs = [];
-            foreach ($services as $service) {
-                $schedule = ScheduleOrder::find($id);
-                if (!$schedule) {
-                    return response()->json(['message' => 'Không tìm thấy lịch trình cần cập nhật'], 404);
-                }
-                $workShiftService = new WorkShiftService;
-                $workShiftService->service_id = $service['id'];
+        $scheduleOrder = ScheduleOrder::findOrFail($id);
 
-                $employees = $service['technicians'];
+        $scheduleServices = $request->input('schedule_services');
+
+        if ($scheduleServices) {
+            $workShiftServiceIDs = [];
+
+            foreach ($scheduleServices as $scheduleService) {
+                //WorkShiftService
+                $workShiftService = new WorkShiftService;
+                $workShiftService->service_id = $scheduleService['service']['id'];
+                //Schedule
+                $scheduleOrder->branch_id = $request->input('branch_id');
+                $scheduleOrder->book_at = $scheduleService['time'];
+                $scheduleOrder->date = Carbon::createFromFormat('d/m/Y', $request->input('date'))->format('Y-m-d H:i:s');
+                $scheduleOrder->note_force = $request->input('note')['force'];
+                $scheduleOrder->note_pain_attention = $request->input('note')['pain_attention'];
+                $scheduleOrder->note_pathology_attention = $request->input('note')['pathology_attention'];
+                $scheduleOrder->note = $request->input('note')['another'];
+
+                $employees = $scheduleService['selected_technicians'];
+
                 if ($employees) {
                     foreach ($employees as $employee) {
-                        $workShiftFilter = WorkShift::where("date", "=", $request->input('date'))
+                        $timeBook = Carbon::createFromFormat('H:i', $scheduleService['time']);
+                        $timeBookUpdate = $timeBook->addMinutes($scheduleService['service']['duration']);
+                        $workShiftFilter = WorkShift::where('date', Carbon::createFromFormat('d/m/Y', $request->input('date'))->format('Y-m-d'))
                             ->where('status', 0)
-                            ->where("employee_id", $employee['id'])
+                            ->whereRaw("TIME(from_at) <= ?", [$timeBookUpdate->format('H:i')])
+                            ->where('employee_id', $employee['id'])
                             ->first();
                         if ($workShiftFilter) {
                             $workShiftService->work_shift_id = $workShiftFilter->id;
-                            $workShift = WorkShift::find($workShiftFilter->id);
-                            $fromAtWorkShift = strtotime($workShift->from_at);
-                            $toAtWorkShift = strtotime($workShift->to_at);
-                            $currentTimeExits = date('H:i:s', $fromAtWorkShift + ($service['duration'] * 60));
-                            if ($toAtWorkShift < $currentTimeExits) {
-                                $workShift->status = 1;
-                            } else {
-                                $workShift->from_at = $currentTimeExits;
-                            }
-                            $workShift->save();
+                            //WorkShift
+                            // $workShift = WorkShift::find($workShiftFilter->id);
+                            // $fromAtWorkShift = strtotime($workShift->from_at);
+                            // $toAtWorkShift = strtotime($workShift->to_at);
+                            // $currentTimeExits = date('H:i:s', $fromAtWorkShift + ($scheduleService['service']['duration'] * 60));
+
+                            // if ($toAtWorkShift < $currentTimeExits) {
+                            //     $workShift->status = 1;
+                            // } else {
+                            //     $workShift->from_at = $currentTimeExits;
+                            // }
+
+                            // $workShift->save();
                             $workShiftService->save();
                             $workShiftServiceIDs[] = $workShiftService->id;
                         }
                     }
                 }
             }
-            $schedule->work_shift_services = implode(',', $workShiftServiceIDs);
-            $schedule->save();
+
+            $scheduleOrder->work_shift_services = implode(',', $workShiftServiceIDs);
+            $scheduleOrder->save();
         }
+
         if ($user) {
             $response = $this->_formatBaseResponse(200, null, 'Cập nhật lịch thành công', []);
             return response()->json($response);
@@ -177,4 +201,45 @@ class Operation_ScheduleOrderController extends Controller
         }
     }
 
+    public function cancelSchedule($id)
+    {
+        $user = auth()->user();
+        $scheduleOrder = ScheduleOrder::findOrFail($id);
+        if ($scheduleOrder) {
+            $scheduleOrder->status = 4;
+            $scheduleOrder->save();
+        }
+        $workShiftServiceIds = explode(',', $scheduleOrder->work_shift_services);
+        $workShiftServices = WorkShiftService::whereIn('id', $workShiftServiceIds)->get();
+        $workShifts = [];
+        $services = [];
+
+        foreach ($workShiftServices as $workShiftService) {
+            $workShift = WorkShift::where("id", $workShiftService->work_shift_id)->first();
+            $service = Service::where("id", $workShiftService->service_id)->first();
+
+            if ($workShift && $service) {
+                $workShifts[] = $workShift;
+                $services[] = $service;
+            }
+        }
+
+        foreach ($workShifts as $workShift) {
+            foreach ($services as $service) {
+                $workShiftFilter = WorkShift::find($workShift->id);
+                $fromAtWorkShift = strtotime($workShiftFilter->from_at);
+                $currentTimeExits = date('H:i:s', $fromAtWorkShift - ($service->duration * 60));
+                $workShiftFilter->from_at = $currentTimeExits;
+                $workShiftFilter->save();
+            }
+        }
+
+        if ($user) {
+            $response = $this->_formatBaseResponse(200, null, 'Huỷ lịch thành công', []);
+            return response()->json($response);
+        } else {
+            $response = $this->_formatBaseResponse(401, null, 'Huỷ lịch không thành công', ['errors' => 'Unauthorised']);
+            return response()->json($response, 401);
+        }
+    }
 }

@@ -12,30 +12,26 @@ class TicketOrder extends Model
 {
     protected $table = 'ticket_order';
 
-    public function scheduleOrder()
-    {
-        return $this->belongsTo(ScheduleOrder::class, 'schedule_id');
-    }
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_code');
+        return $this->belongsTo(User::class, 'customer_code', 'code');
     }
     public function service()
     {
-        return $this->belongsTo(Service::class, 'service_id');
+        return $this->belongsTo(Service::class, 'service_code', 'code');
     }
     public function workShift()
     {
         return $this->belongsTo(WorkShift::class, 'work_shift_id');
     }
-    public function employee()
-    {
-        return $this->belongsTo(Employee::class, 'employee_id');
-    }
-    public function bed()
-    {
-        return $this->belongsTo(Bed::class, 'bed_id');
-    }
+    // public function employee()
+    // {
+    //     return $this->belongsTo(Employee::class, 'employee_id');
+    // }
+    // public function bed()
+    // {
+    //     return $this->belongsTo(Bed::class, 'bed_id');
+    // }
     protected $hidden = [
     ];
 

@@ -14,23 +14,20 @@ trait ScheduleResponse
         $branch = Branch::where('id', $branchId)->first();
         return $branch ? ['id' => $branch->id, "name" => $branch->name] : [];
     }
-    private function _formatServiceResponse($services, $workShifts, $employeeAddId)
+    private function _formatServiceResponse($services, $workShifts, $schedule)
     {
-        $result = $services->map(function ($service) use ($workShifts, $employeeAddId) {
+        $result = $services->map(function ($service) use ($workShifts, $schedule) {
             $branchesExist = Service::where("id", $service->id)->first()->branches;
             $branchesArray = is_array($branchesExist) ? $branchesExist : array_map('trim', explode(',', $branchesExist));
-
             $employeeExist = [];
-
             foreach ($workShifts as $workShift) {
                 $bedBranches = Bed::where("id", $workShift->bed_id)->pluck('branch_id')->toArray();
                 $intersect = array_intersect($bedBranches, $branchesArray);
                 if (!empty($intersect)) {
                     $employee = Employee::where("id", $workShift->employee_id)->first();
-                    $employeeAdd = Employee::where("id", $employeeAddId)->first();
 
-                    if ($employee && $employeeAdd) {
-                        $mergedEmployee = $employee->toArray() + $employeeAdd->toArray();
+                    if ($employee) {
+                        $mergedEmployee = $employee->toArray();
                         $employeeExist[] = [
                             'id' => $mergedEmployee['id'],
                             'name' => $mergedEmployee['name'],
@@ -50,16 +47,18 @@ trait ScheduleResponse
 
                 }
             }
-
             return [
-                'id' => $service->id,
-                'title' => $service->name,
-                'duration' => $service->duration,
-                'technicians' => $employeeExist,
-                'image_url' => $service->image,
+                'service' => [
+                    'id' => $service->id,
+                    'title' => $service->name,
+                    'duration' => $service->duration,
+                    'image_url' => $service->image,
+                ],
+                'time' => $schedule->book_at,
+                'technician_count' => $service->used_count,
+                'selected_technicians' => $employeeExist,
             ];
         });
-
         return $result;
     }
 }
