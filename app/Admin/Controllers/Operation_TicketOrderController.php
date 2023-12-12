@@ -36,15 +36,9 @@ class Operation_TicketOrderController extends AdminController
     {
         $grid = new Grid(new TicketOrder());
 
-        $grid->column('scheduleOrder.name', __('Mã đặt lịch'))->display(function($scheduleOrder){
-            if($scheduleOrder){
-                return $scheduleOrder;
-            }else{
-                return "";
-            }
-        });
-        $grid->column('user.name', __('Tên khách hàng'));
-        $grid->column('user_type', __('Loại khách'))->display(function ($userTypeId) {
+        $grid->column('user.name', __('Tên khách hàng(đăng ký)'));
+        $grid->column('customer_name', __('Tên khách hàng(vãng lai)'));
+        $grid->column('user.customer_type', __('Loại khách'))->display(function ($userTypeId) {
             $userType = Utils::commonCodeFormat('User', 'description_vi', $userTypeId);
             if ($userType) {
                 return $userType;
@@ -71,16 +65,10 @@ class Operation_TicketOrderController extends AdminController
                 return "";
             }
         });
-        $grid->column('date', __('Ngày mua'))->display(function ($date) {
-            return Utils::formatDate($date);
-        });
-        $grid->column('employee.name', __('Tên nhân viên kỹ thuật(thêm)'))->display(function ($employee) {
-            if ($employee) {
-                return $employee;
-            } else {
-                return 'Không có';
-            }
-        });
+        $grid->column('date', __('Ngày mua'));
+        // $grid->column('date', __('Ngày mua'))->display(function ($date) {
+        //     return Utils::formatDate($date);
+        // });
         $grid->column('start_at', __('Giờ bắt đầu'));
         $grid->column('to_at', __('Giờ kết thúc'));
         $grid->column('status', __('Trạng thái'))->display(function ($statusId) {
@@ -103,9 +91,9 @@ class Operation_TicketOrderController extends AdminController
         $grid->column('created_at', __('Ngày tạo'))->vndate();
         $grid->column('updated_at', __('Ngày cập nhật'))->vndate();
         $grid->fixColumns(0, 0);
-        $grid->model()->whereHas('workShift.bed', function ($query) {
-            $query->where('branch_id', Admin::user()->active_branch_id);
-        });
+        // $grid->model()->whereHas('workShift.bed', function ($query) {
+        //     $query->where('branch_id', Admin::user()->active_branch_id);
+        // });
         return $grid;
     }
 
@@ -154,9 +142,9 @@ class Operation_TicketOrderController extends AdminController
                 return "";
             }
         });
-        $show->field('date', __('Ngày'))->as(function ($date) {
-            return Utils::formatDate($date);
-        });
+        // $show->field('date', __('Ngày'))->as(function ($date) {
+        //     return Utils::formatDate($date);
+        // });
         $show->field('employee.name', __('Tên nhân viên kỹ thuật(thêm)'))->as(function ($employee) {
             if ($employee) {
                 return $employee;
@@ -266,7 +254,6 @@ class Operation_TicketOrderController extends AdminController
         var employees = $employeesJson;
 
         $(function() {
-            console.log(employees);
             var userType = $(".user_type");
             var scheduleSelect = $(".schedule_id");
             var userSelect = $(".user_id");

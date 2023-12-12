@@ -28,7 +28,7 @@ class Sales_SalesDetailController extends AdminController
      *
      * @var string
      */
-    protected $title = 'Đơn mua vé chi tiết';
+    protected $title = 'Đơn mua hàng chi tiết';
 
     /**
      * Make a grid builder.
@@ -39,15 +39,31 @@ class Sales_SalesDetailController extends AdminController
     protected function grid($sales_id = [])
     {
         $grid = new Grid(new SalesDetail());
-        $grid->column('sales.user_code', __('Mã khách hàng'));
-        $grid->column('sales.user_type', __('Loại khách hàng'))->display(function ($typeId) {
-            return CustomerType::where('id', $typeId)->first()->name;
+        $grid->column('code', __('Mã đơn mua hàng'));
+        $grid->column('sales.customer_code', __('Mã khách hàng'));
+        $grid->column('sales.customer_type', __('Loại khách hàng'))->display(function ($typeId) {
+            if ($typeId) {
+                $customerType = CustomerType::where('id', $typeId);
+                if ($customerType) {
+                    return $customerType->first()->name;
+                } else {
+                    return "";
+                }
+            } else {
+                return "";
+            }
         });
         $grid->column('sales.customer_name', __('Tên khách hàng'));
         $grid->column('service.code', __('Mã dịch vụ'));
         $grid->column('service.name', __('Tên dịch vụ'));
-        $grid->column('service.price', __('Đơn giá'));
-        $grid->column('service.actual_price', __('Giá thực tính'));
+        $grid->column('service.price', __('Đơn giá'))->display(function ($price) {
+            $formattedPrice = number_format(intval($price), 0) . " VNĐ";
+            return $formattedPrice;
+        });
+        $grid->column('service.actual_price', __('Giá thực tính'))->display(function ($actualPrice) {
+            $formattedPrice = number_format(intval($actualPrice), 0) . " VNĐ";
+            return $formattedPrice;
+        });
         $grid->column('status', __('Trạng thái'))->display(function ($statusId) {
             $status = Utils::commonCodeFormat('Sales', 'description_vi', $statusId);
             if ($status) {
@@ -68,7 +84,7 @@ class Sales_SalesDetailController extends AdminController
             $actions->append(new CustomEditAction($actions->getKey()));
         });
         if (!empty($sales_id)) {
-            $grid->model()->whereIn('sales_id', $sales_id);
+            $grid->model()->whereIn('id', $sales_id);
         }
 
         // $grid->tools(function ($tools) {
@@ -81,7 +97,7 @@ class Sales_SalesDetailController extends AdminController
         // $(document).ready(function() {
         //     var idStudentReport = $id;
         //     if (!idStudentReport) return;
-            
+
         //     document.getElementById("export-word-btn").addEventListener("click", function() {
         //         const params = new URLSearchParams();
         //         params.append('q', idStudentReport);
@@ -96,7 +112,7 @@ class Sales_SalesDetailController extends AdminController
         //         .then(data => {
         //             const params = new URLSearchParams();
         //             params.append('data', JSON.stringify(data));
-        
+
         //             fetch("$urlExportWord", {
         //                 method: "POST",
         //                 headers: {
@@ -134,18 +150,27 @@ class Sales_SalesDetailController extends AdminController
     public function detail($id)
     {
         if (request()->is('admin/sales/report-sales-detail/*')) {
+            $sales = Sales::findOrFail($id);
+            $salesDetails = SalesDetail::where('sales_id', $id)->get();
+
             $code = Sales::where('id', $id)->first()->code;
             $serviceQuantity = Sales::where('id', $id)->first()->service_quantity;
+            $vat = Sales::where('id', $id)->first()->vat;
             $reportDetails = SalesDetail::where("sales_id", $id)->get();
             $reportDetailIds = $reportDetails->pluck('id')->toArray();
+            $reportDetails = SalesDetail::where("sales_id", $id)->get();
+            $totalDiscount = $reportDetails->sum('discount');
+            $totalPrice = $reportDetails->sum('price');
+
             $filteredGrid = $this->grid($reportDetailIds);
-            return View::make('admin.sales_report_detail', compact('code', 'serviceQuantity', 'filteredGrid'));
+            return View::make('admin.sales_report_detail', compact('sales', 'salesDetails', 'code', 'serviceQuantity', 'totalPrice', 'totalDiscount', 'vat', 'filteredGrid'));
         } else {
 
             $show = new Show(SalesDetail::findOrFail($id));
-           
-            $show->field('sales.user_code', __('Mã khách hàng'));
-            $show->field('sales.user_type', __('Loại khách hàng'));
+
+            $show->field('code', __('Mã đơn mua hàng'));
+            $show->field('sales.customer_code', __('Mã khách hàng'));
+            $show->field('sales.customer_type', __('Loại khách hàng'));
             $show->field('sales.customer_name', __('Tên khách hàng'));
             $show->field('service.code', __('Mã dịch vụ'));
             $show->field('service.name', __('Tên dịch vụ'));
@@ -158,7 +183,8 @@ class Sales_SalesDetailController extends AdminController
                 ->tools(function ($tools) {
                     $tools->disableList();
                     $tools->disableDelete();
-                });;
+                });
+            ;
             return $show;
         }
     }
@@ -205,23 +231,54 @@ class Sales_SalesDetailController extends AdminController
 
         $form = new Form(new SalesDetail());
         $form->select('service_id', __('Tên dịch vụ'))->options($filteredServices)->required();
+        $form->text('service_code', __('Mã dịch vụ'))->readonly();
         $form->select('work_shift_id', __('Ca làm việc'))->options($uniqueBedNames)->required();
-        $form->text('total_price', __('Đơn giá'))->disable();
-        $form->text('total_discount', __('Tổng tiền giảm giá'));
-        $form->text('vat', __('Thuế VAT'));
-        $form->text('actual_price', __('Tiền thực tính'));
-        $form->select('status', __('Trạng thái'))->options($statuses)->default(4)->required();
+        $form->text('price', __('Đơn giá'))->readonly();
+        $form->text('discount', __('Tiền giảm giá'))->readonly();
+        $form->text('actual_price', __('Tiền thực tính'))->readonly();
+        $form->select('status', __('Trạng thái'))->options($statuses)->default(1)->required();
 
         $form->tools(function (Form\Tools $tools) {
             $tools->disableDelete();
             $tools->disableList();
         });
+        // $form->saving(function (Form $form) {
+        //     $form->branch_id = Admin::user()->active_branch_id;
+        //     $form->code = Utils::generateCommonCode("sales_detail", "BK");
+        // });
         $form->saved(function (Form $form) {
             admin_toastr('Lưu thành công!');
             $id = request()->route()->parameter('report_sales_detail');
             $salesReportId = $form->model()->find($id)->getOriginal("sales_id");
             return redirect("/admin/sales/report-sales-detail/{$salesReportId}");
         });
+
+        $urlService = 'http://127.0.0.1:8000/api/web/v1/services';
+        $script = <<<EOT
+        $(function() {
+            var serviceCode = $(".service_code");
+            var price = $(".price");
+            var actualPrice = $(".actual_price");
+            var discount = $(".discount");
+            var serviceSelect = $(".service_id");
+
+            serviceSelect.on('change', function () {
+                const value = this.value
+                $.get("$urlService", function (services) {
+                    const currentService = services.data.services.find((service) => service.id === Number(value));
+                    const valuePrice = currentService.price
+                    const valueActualPrice = currentService.actual_price
+                    const valueDiscount = currentService.discount
+                    const valueServiceCode = currentService.code
+                    serviceCode.val(valueServiceCode)
+                    price.val(valuePrice);
+                    actualPrice.val(valueActualPrice);
+                    discount.val(valueDiscount);
+                });
+            });
+        });
+        EOT;
+        Admin::script($script);
         return $form;
     }
 }

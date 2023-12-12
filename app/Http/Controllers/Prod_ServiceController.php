@@ -209,6 +209,7 @@ class Prod_ServiceController extends BaseController
                 }, $tagsArray);
                 return [
                     'id' => $service->id,
+                    'code' => $service->code,
                     'image_url' => $service->image,
                     'title' => $service->name,
                     'introduction' => $service->introduction,
@@ -217,6 +218,9 @@ class Prod_ServiceController extends BaseController
                     'tags' => $tagsArrayMap,
                     'rate' => $service->rate,
                     'comment_count' => $service->comment_count,
+                    'price' => $service->price,
+                    'discount' => $service->discount,
+                    'actual_price' => $service->actual_price
                 ];
             })
         ];
