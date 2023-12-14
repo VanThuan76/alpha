@@ -68,8 +68,9 @@ class Hrm_EmployeeController extends Controller
                 ->whereDate('date', '>=', $today->toDateString())
                 ->get()
                 ->filter(function ($workShift) use ($scheduleTime) {
-                    $fromTo = strtotime($workShift->fromTo);
-                    return $fromTo <= $scheduleTime;
+                    $fromAt = strtotime($workShift->from_at);
+                    $toAt = strtotime($workShift->to_at);
+                    return $fromAt <= $scheduleTime && $scheduleTime <= $toAt;
                 });
                 $employeeIds = $workShifts->pluck('employee_id')->unique()->toArray();
                 foreach ($workShifts as $workShift) {
