@@ -80,7 +80,7 @@ class Operation_ScheduleOrderController extends Controller
             foreach ($scheduleServices as $scheduleService) {
                 $schedule = new ScheduleOrder;
                 //Schedule
-                $schedule->branch_id = $request->input('branch_id')['id'];
+                $schedule->branch_id = $request->input('branch')['id'];
                 $schedule->user_id = $user->id;
                 $schedule->code = Utils::generateCommonCode("schedule_order", "BK");
                 $schedule->date = Carbon::createFromFormat('d/m/Y', $request->input('date'))->format('Y-m-d H:i:s');
