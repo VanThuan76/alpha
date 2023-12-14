@@ -46,7 +46,7 @@ class Operation_ScheduleOrderController extends Controller
                 $workShiftsCollection = collect($workShifts);
                 $servicesArrayMap = $this->_formatServiceResponse($servicesCollection, $workShiftsCollection, $schedule);
 
-                $status = CommonCode::where("type", "Schedule")->where("value", $schedule->status)->first()->description_vi;
+                $status = CommonCode::where("type", "Schedule")->where("value", $schedule->status)->first()->value;
                 return [
                     'id' => $schedule->id,
                     'time' => Carbon::parse($schedule->date)->format('d/m/Y'),
@@ -74,6 +74,16 @@ class Operation_ScheduleOrderController extends Controller
     public function createSchedule(Request $request)
     {
         $user = auth()->user();
+        //Validate
+        $dateFromRequest = $request->input('date');
+        $isValidDate = Carbon::createFromFormat('d/m/Y', $dateFromRequest)->isValid();
+
+        if (!$isValidDate) {
+            $response = $this->_formatBaseResponse(422, null, 'Sai định dạng date', []);
+            return response()->json($response);
+        }
+
+        //Handle Logic
         $scheduleServices = $request->input('schedule_services');
         if ($scheduleServices) {
             $workShiftServiceIDs = [];
@@ -233,8 +243,10 @@ class Operation_ScheduleOrderController extends Controller
                 $workShiftFilter->save();
             }
         }
-
-        if ($user && $scheduleOrder && $scheduleOrder->status != 4) {
+        if ($user && $scheduleOrder && $scheduleOrder->status == 4) {
+            $response = $this->_formatBaseResponse(405, null, 'Lịch đã được huỷ', []);
+            return response()->json($response);
+        } else if ($user) {
             $response = $this->_formatBaseResponse(200, null, 'Huỷ lịch thành công', []);
             return response()->json($response);
         } else {
