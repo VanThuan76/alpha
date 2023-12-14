@@ -8,6 +8,7 @@ use App\Models\Hrm\Employee;
 use App\Models\Operation\WorkShift;
 use App\Models\Product\Service;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class Hrm_EmployeeController extends Controller
 {
@@ -19,6 +20,7 @@ class Hrm_EmployeeController extends Controller
         $previousLastTechnicianId = $request->input('previous_last_technician_id', 0);
         $branchId = $request->input('branch_id');
         $serviceId = $request->input('service_id');
+        $availableTimes = [];
 
         if ($request->input('limit')) {
             $limit = 20;
@@ -56,6 +58,29 @@ class Hrm_EmployeeController extends Controller
 
         }
 
+        if($request->input('schedule_time') !== null){
+            if($request->input('branch_id') !== null){
+                $today = Carbon::now();
+                $branchId = $request->input('branch_id');
+                $scheduleTime = strtotime($request->input('schedule_time'));
+                $bedIds = Bed::where('branch_id', $branchId)->pluck('id')->toArray();
+                $workShifts = WorkShift::whereIn('bed_id', $bedIds)
+                ->whereDate('date', '>=', $today->toDateString())
+                ->get()
+                ->filter(function ($workShift) use ($scheduleTime) {
+                    $fromTo = strtotime($workShift->fromTo);
+                    return $fromTo <= $scheduleTime;
+                });
+                $employeeIds = $workShifts->pluck('employee_id')->unique()->toArray();
+                foreach ($workShifts as $workShift) {
+                    $fromAt = $workShift->from_at;
+                    $toAt = $workShift->to_at;
+                    $availableTimes[] = $fromAt . ' - ' . $toAt;
+                }
+                $employeeQuery->whereIn('id', $employeeIds);
+            }
+        }
+
         if ($request->input('search_keyword') !== null) {
             $searchKeyword = $request->input('search_keyword');
             $employeeQuery->where(function ($query) use ($searchKeyword) {
@@ -69,7 +94,7 @@ class Hrm_EmployeeController extends Controller
         $technicians = $employeeQuery->get();
 
         $result = [
-            'technicians' => $technicians->map(function ($technician) {
+            'technicians' => $technicians->map(function ($technician) use ($availableTimes) {
                 return [
                     'id' => $technician->id,
                     'name' => $technician->name,
@@ -78,6 +103,7 @@ class Hrm_EmployeeController extends Controller
                     'level' => $technician->level,
                     'served_user_count' => $technician->served_user_count,
                     'rate' => $technician->rate,
+                    'available_times' => $availableTimes,
                     'status' => $technician->status,
                     'experience' => $technician->experience,
                     'specialize' => $technician->specialize,
