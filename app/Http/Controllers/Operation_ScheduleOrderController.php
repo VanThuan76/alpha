@@ -58,8 +58,8 @@ class Operation_ScheduleOrderController extends Controller
                     'schedule_services' => $servicesArrayMap,
                     'note' => [
                         'force' => $schedule->note_force,
-                        'pain_attention' => $schedule->pain_attention,
-                        'pathology_attention' => $schedule->pathology_attention,
+                        'pain_attention' => $schedule->note_pain_attention,
+                        'pathology_attention' => $schedule->note_pathology_attention,
                         'another' => $schedule->note
                     ],
                     'status' => $status,
