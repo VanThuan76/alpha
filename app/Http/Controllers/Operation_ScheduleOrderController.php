@@ -53,7 +53,7 @@ class Operation_ScheduleOrderController extends Controller
                 $status = CommonCode::where("type", "Schedule")->where("value", $schedule->status)->first()->value;
                 return [
                     'id' => $schedule->id,
-                    'time' => Carbon::parse($schedule->date)->format('d/m/Y'),
+                    'date' => Carbon::parse($schedule->date)->format('d/m/Y'),
                     'branch' => $this->_formatBranchResponse($schedule->branch_id),
                     'schedule_services' => $servicesArrayMap,
                     'note' => [
@@ -169,7 +169,6 @@ class Operation_ScheduleOrderController extends Controller
 
         if ($scheduleServices) {
             $workShiftServiceIDs = [];
-
             foreach ($scheduleServices as $scheduleService) {
                 //WorkShiftService
                 $workShiftService = new WorkShiftService;
@@ -184,7 +183,6 @@ class Operation_ScheduleOrderController extends Controller
                 $scheduleOrder->note = $request->input('note')['another'];
 
                 $employees = $scheduleService['selected_technicians'];
-
                 if ($employees) {
                     foreach ($employees as $employee) {
                         $timeBook = Carbon::createFromFormat('H:i', $scheduleService['time']);
@@ -211,11 +209,16 @@ class Operation_ScheduleOrderController extends Controller
                             // $workShift->save();
                             $workShiftService->save();
                             $workShiftServiceIDs[] = $workShiftService->id;
+                        } else {
+                            $response = $this->_formatBaseResponse(422, null, 'Nhân viên đang bận hoặc hết ca làm', []);
+                            return response()->json($response);
                         }
                     }
+                }else {
+                    $response = $this->_formatBaseResponse(400, null, 'Không tìm thấy nhân viên', []);
+                    return response()->json($response);
                 }
             }
-
             $scheduleOrder->work_shift_services = implode(',', $workShiftServiceIDs);
             $scheduleOrder->save();
         }
