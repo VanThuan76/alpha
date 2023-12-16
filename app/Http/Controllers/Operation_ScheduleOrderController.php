@@ -116,6 +116,7 @@ class Operation_ScheduleOrderController extends Controller
                             ->first();
                         if ($workShiftFilter) {
                             $workShiftService->work_shift_id = $workShiftFilter->id;
+                            $schedule->technician_count = count($employees);
                             //WorkShift
                             $workShift = WorkShift::find($workShiftFilter->id);
                             $fromAtWorkShift = strtotime($workShift->from_at);
