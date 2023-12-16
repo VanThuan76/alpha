@@ -55,7 +55,7 @@ trait ScheduleResponse
                     'image_url' => $service->image,
                 ],
                 'time' => $schedule->book_at,
-                'technician_count' => $service->staff_number,
+                'technician_count' => $schedule->technician_count,
                 'selected_technicians' => $employeeExist,
             ];
         });
