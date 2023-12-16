@@ -21,6 +21,7 @@ class Operation_ScheduleOrderController extends Controller
         $user = auth()->user();
         $limit = $request->input('limit', 20);
         $previousLastTechnicianId = $request->input('previous_last_schedule_id', 0);
+        $status = $request->input('status');
 
         if ($request->input('limit')) {
             $limit = 20;
@@ -28,6 +29,9 @@ class Operation_ScheduleOrderController extends Controller
         $scheduleOrderQuery = ScheduleOrder::where('user_id', $user->id)->orderBy('id', 'desc')->limit($limit);
         if ($request->input('previous_last_schedule_id') !== null) {
             $scheduleOrderQuery->where('id', '<', $previousLastTechnicianId);
+        }
+        if ($request->input('status') !== null) {
+            $scheduleOrderQuery->where('status', $status);
         }
         $schedules = $scheduleOrderQuery->get();
 
