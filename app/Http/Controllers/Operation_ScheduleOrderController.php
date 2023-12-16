@@ -175,7 +175,7 @@ class Operation_ScheduleOrderController extends Controller
                 $workShiftService = new WorkShiftService;
                 $workShiftService->service_id = $scheduleService['service']['id'];
                 //Schedule
-                $scheduleOrder->branch_id = $request->input('branch_id');
+                $scheduleOrder->branch_id = $request->input('branch')['id'];
                 $scheduleOrder->book_at = $scheduleService['time'];
                 $scheduleOrder->date = Carbon::createFromFormat('d/m/Y', $request->input('date'))->format('Y-m-d H:i:s');
                 $scheduleOrder->note_force = $request->input('note')['force'];
