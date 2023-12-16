@@ -120,7 +120,7 @@ class Operation_ScheduleOrderController extends Controller
                             $workShift = WorkShift::find($workShiftFilter->id);
                             $fromAtWorkShift = strtotime($workShift->from_at);
                             $toAtWorkShift = strtotime($workShift->to_at);
-                            $currentTimeExits = date('H:i:s', $fromAtWorkShift + ($scheduleService['service']['duration'] * 60));
+                            $currentTimeExits = date('H:i:s', $fromAtWorkShift + (Service::where('id', $scheduleService['service']['id'])->first()->duration * 60));
                             if ($toAtWorkShift < $currentTimeExits) {
                                 $workShift->status = 1;
                             } else {
@@ -129,8 +129,14 @@ class Operation_ScheduleOrderController extends Controller
                             $workShift->save();
                             $workShiftService->save();
                             $workShiftServiceIDs[] = $workShiftService->id;
+                        } else {
+                            $response = $this->_formatBaseResponse(422, null, 'Nhân viên đang bận hoặc hết ca làm', []);
+                            return response()->json($response);
                         }
                     }
+                } else {
+                    $response = $this->_formatBaseResponse(400, null, 'Không tìm thấy nhân viên', []);
+                    return response()->json($response);
                 }
             }
             $schedule->work_shift_services = implode(',', $workShiftServiceIDs);
@@ -182,7 +188,7 @@ class Operation_ScheduleOrderController extends Controller
                 if ($employees) {
                     foreach ($employees as $employee) {
                         $timeBook = Carbon::createFromFormat('H:i', $scheduleService['time']);
-                        $timeBookUpdate = $timeBook->addMinutes($scheduleService['service']['duration']);
+                        $timeBookUpdate = $timeBook->addMinutes(Service::where('id', $scheduleService['service']['id'])->first()->duration);
                         $workShiftFilter = WorkShift::where('date', Carbon::createFromFormat('d/m/Y', $request->input('date'))->format('Y-m-d'))
                             ->where('status', 0)
                             ->whereRaw("TIME(from_at) <= ?", [$timeBookUpdate->format('H:i')])
