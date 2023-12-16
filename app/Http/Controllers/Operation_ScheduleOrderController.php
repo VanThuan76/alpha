@@ -77,7 +77,6 @@ class Operation_ScheduleOrderController extends Controller
         //Validate
         $dateFromRequest = $request->input('date');
         $isValidDate = Carbon::createFromFormat('d/m/Y', $dateFromRequest)->isValid();
-
         if (!$isValidDate) {
             $response = $this->_formatBaseResponse(422, null, 'Sai định dạng date', []);
             return response()->json($response);
@@ -145,8 +144,17 @@ class Operation_ScheduleOrderController extends Controller
     public function updateSchedule(Request $request, $id)
     {
         $user = auth()->user();
-        $scheduleOrder = ScheduleOrder::findOrFail($id);
+        //Validate
+        $dateFromRequest = $request->input('date');
+        $isValidDate = Carbon::createFromFormat('d/m/Y', $dateFromRequest)->isValid();
+        if (!$isValidDate) {
+            $response = $this->_formatBaseResponse(422, null, 'Sai định dạng date', []);
+            return response()->json($response);
+        }
 
+
+        //Handle Logic
+        $scheduleOrder = ScheduleOrder::findOrFail($id);
         $scheduleServices = $request->input('schedule_services');
 
         if ($scheduleServices) {
@@ -216,7 +224,7 @@ class Operation_ScheduleOrderController extends Controller
         $user = auth()->user();
         $scheduleOrder = ScheduleOrder::findOrFail($id);
         if ($scheduleOrder) {
-            $scheduleOrder->status = 4;
+            $scheduleOrder->status = 3;
             $scheduleOrder->save();
         }
         $workShiftServiceIds = explode(',', $scheduleOrder->work_shift_services);
@@ -243,7 +251,7 @@ class Operation_ScheduleOrderController extends Controller
                 $workShiftFilter->save();
             }
         }
-        if ($user && $scheduleOrder && $scheduleOrder->status == 4) {
+        if ($user && $scheduleOrder->status == 3) {
             $response = $this->_formatBaseResponse(405, null, 'Lịch đã được huỷ', []);
             return response()->json($response);
         } else if ($user) {
