@@ -110,7 +110,7 @@ class Operation_ScheduleOrderController extends Controller
                 $employees = $scheduleService['selected_technicians'];
                 if ($employees) {
                     foreach ($employees as $employee) {
-                        $workShiftFilter = WorkShift::where('date', Carbon::createFromFormat('d/m/Y', $request->input('date'))->format('Y-m-d'))
+                        $workShiftFilter = WorkShift::where('date', '>=', Carbon::createFromFormat('d/m/Y', $request->input('date'))->format('Y-m-d'))
                             ->where('status', 0)
                             ->whereRaw("TIME(from_at) <= ?", [$scheduleService['time']])
                             ->where('employee_id', $employee['id'])
