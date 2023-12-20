@@ -85,7 +85,6 @@ class Operation_ScheduleOrderController extends Controller
             $response = $this->_formatBaseResponse(422, null, 'Sai định dạng date', []);
             return response()->json($response);
         }
-
         //Handle Logic
         $scheduleServices = $request->input('schedule_services');
         if ($scheduleServices) {
@@ -143,7 +142,7 @@ class Operation_ScheduleOrderController extends Controller
             $schedule->work_shift_services = implode(',', $workShiftServiceIDs);
             $schedule->save();
         }
-        if ($user) {
+        if ($user && $schedule) {
             $response = $this->_formatBaseResponse(200, null, 'Đặt lịch thành công', []);
             return response()->json($response);
         } else {
@@ -162,7 +161,6 @@ class Operation_ScheduleOrderController extends Controller
             $response = $this->_formatBaseResponse(422, null, 'Sai định dạng date', []);
             return response()->json($response);
         }
-
 
         //Handle Logic
         $scheduleOrder = ScheduleOrder::findOrFail($id);
@@ -224,7 +222,7 @@ class Operation_ScheduleOrderController extends Controller
             $scheduleOrder->save();
         }
 
-        if ($user) {
+        if ($user && $scheduleOrder) {
             $response = $this->_formatBaseResponse(200, null, 'Cập nhật lịch thành công', []);
             return response()->json($response);
         } else {
