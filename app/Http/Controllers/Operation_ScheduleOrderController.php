@@ -12,6 +12,8 @@ use App\Models\Product\Service;
 use Carbon\Carbon;
 use App\Models\Operation\ScheduleOrder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+
 
 class Operation_ScheduleOrderController extends Controller
 {
@@ -140,7 +142,14 @@ class Operation_ScheduleOrderController extends Controller
                 }
             }
             $schedule->work_shift_services = implode(',', $workShiftServiceIDs);
-            $schedule->save();
+            try {
+                $schedule->save();
+                // Log thành công
+                Log::info('Dữ liệu đã được lưu thành công.');
+            } catch (\Exception $e) {
+                // Log lỗi nếu có
+                Log::error('Lỗi khi lưu dữ liệu: ' . $e->getMessage());
+            }
         }
         if ($user && $schedule) {
             $response = $this->_formatBaseResponse(200, null, 'Đặt lịch thành công', []);
@@ -149,7 +158,6 @@ class Operation_ScheduleOrderController extends Controller
             $response = $this->_formatBaseResponse(401, null, 'Đặt lịch không thành công', ['errors' => 'Unauthorised']);
             return response()->json($response, 401);
         }
-
     }
     public function updateSchedule(Request $request, $id)
     {
