@@ -62,7 +62,7 @@ class Prod_PromotionController extends BaseController
 
                 return [
                     'id' => $promotion->id,
-                    'image_url' => $promotion->image_url != null ? 'https://erp.senbachdiep.com/storage/' . $promotion->image_url : null,
+                    'image_url' => $promotion->image_url != null ? 'https://dev.erp.senbachdiep.com:8443/storage/' . $promotion->image_url : null,
                     'title' => $promotion->title,
                     'start_date' => $promotion->start_date,
                     'end_date' => $promotion->end_date,
