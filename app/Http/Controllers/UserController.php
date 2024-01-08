@@ -12,13 +12,29 @@ use Illuminate\Support\Facades\Hash;
 class UserController extends Controller
 {
     use CommonResponse;
-    public function getAll()
+    public function getAll(Request $request)
     {
-        $users = User::all();
-        if ($users->isEmpty()) {
-            $response = $this->_formatBaseResponse(404, null, 'Không tìm thấy người dùng', []);
-            return response()->json($response, 404);
+        $query = User::query()->orderBy("created_at", "asc");
+        $filters = $request->input('filters', []);
+        foreach ($filters as $filter) {
+            $field = $filter['field'];
+            $value = $filter['value'];
+
+            if (!empty($value)) {
+                $query->where($field, 'like', '%' . $value . '%');
+            }
         }
+        $sorts = $request->input('sorts', []);
+        foreach ($sorts as $sort) {
+            $field = $sort['field'];
+            $direction = $sort['direction'];
+            if (!empty($field) && !empty($direction)) {
+                $query->orderBy($field, $direction);
+            }
+        }
+        $size = $request->input('size', 10);
+        $users = $query->paginate($size, ['*'], 'page', $request->input('page', 1));
+
         $formattedUsers = $users->map(function ($user) {
             $employee = Employee::where('id', $user->personal_technician_id)->first();
             $branch = Branch::where("id", $user->personal_branch_id)->first();
@@ -45,8 +61,12 @@ class UserController extends Controller
                 'avatar_path' => $user->photo != null ? 'https://erp.senbachdiep.com/storage/' . $user->photo : null,
             ];
         });
-        $response = $this->_formatBaseResponse(200, $formattedUsers, 'Lấy thông tin người dùng thành công', []);
-        return response()->json($response);
+        $totalPages = $users->lastPage();
+        return response()->json($this->_formatCountResponse(
+            $formattedUsers,
+            $users->perPage(),
+            $totalPages
+        ));
     }
     
     public function get()
