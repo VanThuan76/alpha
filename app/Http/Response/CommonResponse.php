@@ -8,8 +8,8 @@ trait CommonResponse
     {
         return [
             'data' => $data,
-            'totalElements' => $perPage,
-            'totalPages' => $total,
+            'total_elements' => $perPage,
+            'total_pages' => $total,
         ];
     }
 
