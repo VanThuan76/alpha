@@ -80,5 +80,5 @@ Route::get('web/v1/services/{id}', 'Prod_ServiceController@detailWebsite');
 
 //RESTAPI IN ERP #Todo Middlerware
 Route::post('/process-payment', 'Sales_PaymentController@processPayment')->name('process.payment');
-Route::get('erp/user', 'UserController@getAll');
+Route::post('erp/user', 'UserController@getAll');
 
