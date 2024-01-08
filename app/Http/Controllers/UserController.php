@@ -12,6 +12,43 @@ use Illuminate\Support\Facades\Hash;
 class UserController extends Controller
 {
     use CommonResponse;
+    public function getAll()
+    {
+        $users = User::all();
+        if ($users->isEmpty()) {
+            $response = $this->_formatBaseResponse(404, null, 'Không tìm thấy người dùng', []);
+            return response()->json($response, 404);
+        }
+        $formattedUsers = $users->map(function ($user) {
+            $employee = Employee::where('id', $user->personal_technician_id)->first();
+            $branch = Branch::where("id", $user->personal_branch_id)->first();
+            return [
+                'id' => $user->id,
+                'birthday' => $user->dob,
+                'gender' => $user->sex,
+                'personal_technician' => [
+                    'id' => $user->personal_technician_id,
+                    'name' => $employee ? $employee->name : null,
+                ],
+                'personal_branch' => [
+                    'id' => $user->personal_branch_id,
+                    'name' => $branch ? $branch->name : null,
+                    'address' => $branch ? $branch->address : null,
+                ],
+                'full_name' => $user->name,
+                'address' => $user->address,
+                'phone_number' => $user->phone_number,
+                'email' => $user->email,
+                'customer_type' => $user->customer_type,
+                'points' => $user->point,
+                'bonus_coins' => $user->bonus_coins,
+                'avatar_path' => $user->photo != null ? 'https://erp.senbachdiep.com/storage/' . $user->photo : null,
+            ];
+        });
+        $response = $this->_formatBaseResponse(200, $formattedUsers, 'Lấy thông tin người dùng thành công', []);
+        return response()->json($response);
+    }
+    
     public function get()
     {
         $user = auth()->user();
