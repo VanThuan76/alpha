@@ -59,6 +59,8 @@ class UserController extends Controller
                 'points' => $user->point,
                 'bonus_coins' => $user->bonus_coins,
                 'avatar_path' => $user->photo != null ? 'https://erp.senbachdiep.com/storage/' . $user->photo : null,
+                'created_at' => $user->created_at,
+                'updated_at' => $user->updated_at,
             ];
         });
         $totalPages = $users->lastPage();
