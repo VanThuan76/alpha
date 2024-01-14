@@ -78,7 +78,12 @@ Route::middleware('custom_auth')->group(function () {
 Route::get('web/v1/services', 'Prod_ServiceController@getWebsite');
 Route::get('web/v1/services/{id}', 'Prod_ServiceController@detailWebsite');
 
-//RESTAPI IN ERP #Todo Middlerware
+//RESTAPI IN ERP 
+Route::post('erp/login', 'Auth\LoginController@loginUserSystem');
+Route::middleware('erp_auth')->group(function () {
+    Route::get('erp/profile', 'UserController@getUserErp');
+});
+#Todo Middlerware
 Route::post('/process-payment', 'Sales_PaymentController@processPayment')->name('process.payment');
 Route::post('erp/user', 'UserController@getAll');
 

@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Storage;
 use Encore\Admin\Auth\Database\HasPermissions;
+use Laravel\Passport\HasApiTokens;
 
 /**
  * Class Administrator.
@@ -21,6 +22,7 @@ class AdminUser extends Model implements AuthenticatableContract
     use Authenticatable;
     use HasPermissions;
     use DefaultDatetimeFormat;
+    use HasApiTokens;
 
     protected $fillable = ['username', 'password', 'name', 'avatar'];
 

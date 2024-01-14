@@ -10,6 +10,7 @@ use App\Models\Facility\Branch;
 use Encore\Admin\Facades\Admin;
 use Illuminate\Support\Facades\Hash;
 use Encore\Admin\Controllers\UserController;
+use Carbon\Carbon;
 
 class System_CustomUserController extends UserController
 {
@@ -132,7 +133,16 @@ class System_CustomUserController extends UserController
                 $form->password = Hash::make($form->password);
             }
         });
-
+        $form->saved(function (Form $form) {
+            $userId = $form->model()->id;
+            $user = AdminUser::find($userId);
+            if ($user) {
+                $token = $user->createToken('Erp');
+                $accessToken = $token->accessToken;
+                $user->access_token = $accessToken;
+                $user->save();
+            }
+        });
         return $form;
     }
 }
