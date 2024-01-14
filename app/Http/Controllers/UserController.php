@@ -68,9 +68,10 @@ class UserController extends Controller
             $formattedUsers,
             $users->perPage(),
             $totalPages
-        ));
+        )
+        );
     }
-    
+
     public function get()
     {
         $user = auth()->user();
@@ -99,6 +100,25 @@ class UserController extends Controller
                 'bonus_coins' => $user->bonus_coins,
                 'avatar_path' => $user->photo != null ? 'https://erp.senbachdiep.com/storage/' . $user->photo : null,
             ]
+        ];
+        if ($user) {
+            $response = $this->_formatBaseResponse(200, $result, 'Lấy thông tin thành công', []);
+            return response()->json($response);
+        } else {
+            $response = $this->_formatBaseResponse(401, null, 'Lấy thông tin không thành công', ['errors' => 'Unauthorised']);
+            return response()->json($response, 401);
+        }
+    }
+    public function getUserErp()
+    {
+        $user = auth()->user();
+        $result = [
+            "username" => $user->username,
+            "name" => $user->name,
+            "phone" => $user->phone_number,
+            "avatar" => $user->avatar,
+            "active_branch_id" => $user->active_branch_id,
+            "status" => $user->status,
         ];
         if ($user) {
             $response = $this->_formatBaseResponse(200, $result, 'Lấy thông tin thành công', []);
@@ -179,7 +199,7 @@ class UserController extends Controller
             $user->access_token = null;
             $user->is_deleted = 1;
             $user->save();
-            
+
             $response = $this->_formatBaseResponse(200, null, 'Xoá tài khoản thành công', []);
             return response()->json($response);
         }
