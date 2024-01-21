@@ -64,11 +64,12 @@ class UserController extends Controller
             ];
         });
         $totalPages = $users->lastPage();
-        return response()->json($this->_formatCountResponse(
-            $formattedUsers,
-            $users->perPage(),
-            $totalPages
-        )
+        return response()->json(
+            $this->_formatCountResponse(
+                $formattedUsers,
+                $users->perPage(),
+                $totalPages
+            )
         );
     }
 
@@ -100,25 +101,6 @@ class UserController extends Controller
                 'bonus_coins' => $user->bonus_coins,
                 'avatar_path' => $user->photo != null ? 'https://erp.senbachdiep.com/storage/' . $user->photo : null,
             ]
-        ];
-        if ($user) {
-            $response = $this->_formatBaseResponse(200, $result, 'Lấy thông tin thành công', []);
-            return response()->json($response);
-        } else {
-            $response = $this->_formatBaseResponse(401, null, 'Lấy thông tin không thành công', ['errors' => 'Unauthorised']);
-            return response()->json($response, 401);
-        }
-    }
-    public function getUserErp()
-    {
-        $user = auth()->user();
-        $result = [
-            "username" => $user->username,
-            "name" => $user->name,
-            "phone" => $user->phone_number,
-            "avatar" => $user->avatar,
-            "active_branch_id" => $user->active_branch_id,
-            "status" => $user->status,
         ];
         if ($user) {
             $response = $this->_formatBaseResponse(200, $result, 'Lấy thông tin thành công', []);
@@ -238,5 +220,89 @@ class UserController extends Controller
         $results = User::where('phone_number', 'LIKE', '%' . $query . '%')->get();
         return view('components.search_result', ['results' => $results]);
     }
+    public function getUserErp()
+    {
+        $user = auth()->user();
+        $result = [
+            "username" => $user->username,
+            "name" => $user->name,
+            "phone" => $user->phone_number,
+            "avatar" => $user->avatar,
+            "active_branch_id" => $user->active_branch_id,
+            "status" => $user->status,
+        ];
+        if ($user) {
+            $response = $this->_formatBaseResponse(200, $result, 'Lấy thông tin thành công', []);
+            return response()->json($response);
+        } else {
+            $response = $this->_formatBaseResponse(401, null, 'Lấy thông tin không thành công', ['errors' => 'Unauthorised']);
+            return response()->json($response, 401);
+        }
+    }
+    public function createCustomerErp(Request $request)
+    {
+        $auth = auth()->user();
+        $user = new User();
+        $user->name = $request->input('full_name');
+        $user->phone_number = $request->input('phone_number');
+        $user->email = $request->input('email');
+        $user->customer_type = $request->input('customer_type');
 
+        if ($request->input('national')) {
+            $user->address = $request->input('national');
+        }
+        if ($request->input('province_city')) {
+            $user->address = $request->input('province_city');
+        }
+        if ($request->input('district')) {
+            $user->address = $request->input('district');
+        }
+        if ($request->input('address')) {
+            $user->address = $request->input('address');
+        }
+        if ($request->input('wards')) {
+            $user->address = $request->input('wards');
+        }
+        if ($request->input('birthday')) {
+            $user->dob = date("Y-m-d", strtotime($request->input('birthday')));
+        }
+        if ($request->has('gender')) {
+            $user->sex = $request->input('gender');
+        }
+        if ($request->has('note')) {
+            $user->sex = $request->input('note');
+        }
+        if ($request->input('branch_id')) {
+            $user->personal_branch_id = $request->input('branch_id');
+        }
+        if ($request->input('person_in_charge')) {
+            $user->personal_technician_id = $request->input('person_in_charge');
+        }
+        //Todo: Chua biet
+        if ($request->input('campaign_id')) {
+            $user->campaign_id = $request->input('campaign_id');
+        }
+        if ($request->input('customer_resources')) {
+            $user->source_id = $request->input('customer_resources');
+        }
+        if ($request->input('presenter_id')) {
+            $user->presenter_id = $request->input('presenter_id');
+        }
+        if ($request->input('caring_service_id')) {
+            $user->caring_service_id = $request->input('caring_service_id');
+        }
+        $user->save();
+        if ($auth) {
+            if ($user) {
+                $response = $this->_formatBaseResponse(200, null, 'Tạo khách hàng thành công', []);
+                return response()->json($response);
+            } else {
+                $response = $this->_formatBaseResponse(401, null, 'Tạo khách hàng không thành công', ['errors' => 'Unauthorised']);
+                return response()->json($response, 401);
+            }
+        } else {
+            $response = $this->_formatBaseResponse(401, null, 'Tạo khách hàng không thành công', ['errors' => 'Unauthorised']);
+            return response()->json($response, 401);
+        }
+    }
 }

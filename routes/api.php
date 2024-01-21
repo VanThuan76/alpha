@@ -82,6 +82,7 @@ Route::get('web/v1/services/{id}', 'Prod_ServiceController@detailWebsite');
 Route::post('erp/login', 'Auth\LoginController@loginUserSystem');
 Route::middleware('erp_auth')->group(function () {
     Route::get('erp/profile', 'UserController@getUserErp');
+    Route::post('erp/create_user', 'UserController@createCustomerErp');
 });
 #Todo Middlerware
 Route::post('/process-payment', 'Sales_PaymentController@processPayment')->name('process.payment');
