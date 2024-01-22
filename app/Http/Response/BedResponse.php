@@ -44,7 +44,6 @@ trait BedResponse
             'id' => $bed->id,
             "name" => $bed->name,
             "status" => $bed->status,
-            "employee_id" => $bed->employee_id,
             "created_at" => $bed->created_at,
             "updated_at" => $bed->updated_at,
             'branch' => $branchData,

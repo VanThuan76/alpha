@@ -4,52 +4,44 @@ namespace App\Http\Controllers;
 
 use App\Http\Response\CommonResponse;
 use App\Models\Facility\Branch;
+use App\Models\Facility\Bed;
+use App\Models\Facility\Room;
 use App\Models\Facility\Zone;
 use Illuminate\Http\Request;
 
-class Facility_ZoneController extends Controller
+class Facility_BedController extends Controller
 {
     use CommonResponse;
-    public function find(Request $request)
-    {
-        $branchId = $request->get('branch_id');
-        $zone = Zone::where('branch_id', $branchId)->get();
-        return $zone;
-    }
-    public function getById(Request $request)
-    {
-        $id = $request->get('q');
-        $zone = Zone::find($id);
-        return $zone;
-    }
     public function getErp(Request $request)
     {
         $limit = $request->input('limit', 20);
-        $previousLastZoneId = $request->input('previous_last_zone_id', 0);
+        $previousLastBedId = $request->input('previous_last_bed_id', 0);
         $keyWords = $request->input('search_keyword');
         if ($request->input('limit')) {
             $limit = 20;
         }
 
-        $zonesQuery = Zone::orderBy('id', 'desc')->limit($limit);
+        $bedsQuery = Bed::orderBy('id', 'desc')->limit($limit);
 
-        if ($request->input('previous_last_zone_id') !== null) {
-            $zonesQuery->where('id', '<', $previousLastZoneId);
+        if ($request->input('previous_last_bed_id') !== null) {
+            $bedsQuery->where('id', '<', $previousLastBedId);
         }
 
         if ($request->input('search_keyword') !== null) {
-            $zonesQuery->where(function ($query) use ($keyWords) {
+            $bedsQuery->where(function ($query) use ($keyWords) {
                 $query->where('name', 'like', '%' . $keyWords . '%');
             });
         }
-        $zones = $zonesQuery->get();
+        $beds = $bedsQuery->get();
 
-        $result = $zones->map(function ($zone) {
+        $result = $beds->map(function ($bed) {
             return [
-                'id' => $zone->id,
-                'branch' => Branch::where('id', $zone->branch_id)->first(),
-                'name' => $zone->name,
-                'status' => $zone->status,
+                'id' => $bed->id,
+                'branch' => Branch::where('id', $bed->branch_id)->first(),
+                'zone' => Zone::where('id', $bed->zone_id)->first(),
+                'room' => Room::where('id', $bed->room_id)->first(),
+                'name' => $bed->name,
+                'status' => $bed->status,
             ];
         });
         if ($result) {
