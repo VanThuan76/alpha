@@ -73,19 +73,23 @@ class Operation_WorkScheduleController extends Controller
         $size = $request->input('size', 10);
         $workShifts = $query->paginate($size, ['*'], 'page', $request->input('page', 1));
 
-        $formattedWorkShifts = $workShifts->map(function ($workShift) {
+        $formattedWorkShifts = $workShifts->groupBy('bed_id')->map(function ($bedWorkShifts) {
             return [
-                'id' => $workShift->id,
-                "date" => $workShift->date,
-                "bed" => $this->_formatBed($workShift->bed_id),
-                "employee_id" => $workShift->employee_id,
-                "from_at" => $workShift->from_at,
-                "to_at" => $workShift->to_at,
-                "status" => $workShift->status,
-                "created_at" => $workShift->created_at,
-                "updated_at" => $workShift->updated_at,
+                'bed' => $this->_formatBed($bedWorkShifts->first()->bed_id),
+                'workShifts' => $bedWorkShifts->map(function ($workShift) {
+                    return [
+                        'id' => $workShift->id,
+                        "date" => $workShift->date,
+                        "employee_id" => $workShift->employee_id,
+                        "from_at" => $workShift->from_at,
+                        "to_at" => $workShift->to_at,
+                        "status" => $workShift->status,
+                        "created_at" => $workShift->created_at,
+                        "updated_at" => $workShift->updated_at,
+                    ];
+                }),
             ];
-        });
+        })->values();
 
         $totalPages = $workShifts->lastPage();
 
