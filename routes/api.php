@@ -83,11 +83,21 @@ Route::post('erp/login', 'Auth\LoginController@loginUserSystem');
 Route::middleware('erp_auth')->group(function () {
     Route::get('erp/profile', 'UserController@getUserErp');
     Route::post('erp/create_user', 'UserController@createCustomerErp');
-
     //WorkShift
     Route::post('erp/work_shift', 'Operation_WorkScheduleController@getWorkShiftErp');
+    Route::post('erp/create_work_shift', 'Operation_WorkScheduleController@newWorkShiftErp');
+    //Branch
+    Route::get('erp/branches', 'Facility_BranchController@getErp');
+    //Zone
+    Route::get('erp/zones', 'Facility_ZoneController@getErp');
+    //Bed
+    Route::get('erp/beds', 'Facility_BedController@getErp');
+    //Technicians
+    Route::get('erp/technicians', 'Hrm_EmployeeController@getTechniciansErp');
 });
 #Todo Middlerware
+    //User
+    Route::get('erp/user/{id}', 'UserController@getUserByIdErp');
 Route::post('/process-payment', 'Sales_PaymentController@processPayment')->name('process.payment');
 Route::post('erp/user', 'UserController@getAll');
 

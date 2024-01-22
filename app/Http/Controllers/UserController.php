@@ -239,6 +239,52 @@ class UserController extends Controller
             return response()->json($response, 401);
         }
     }
+    public function getUserByIdErp($id)
+    {
+        $user = User::find($id);
+        if (!$user) {
+            $response = $this->_formatBaseResponse(401, null, 'Lấy thông tin không thành công', ['errors' => 'Unauthorised']);
+            return response()->json($response, 401);
+        }
+        $employee = Employee::where('id', $user->personal_technician_id)->first();
+        $branch = Branch::where("id", $user->personal_branch_id)->first();
+        $formattedUser = [
+            'id' => $user->id,
+            'birthday' => $user->dob,
+            'gender' => $user->sex,
+            'personal_technician' => [
+                'id' => $user->personal_technician_id,
+                'name' => $employee ? $employee->name : null,
+            ],
+            'personal_branch' => [
+                'id' => $user->personal_branch_id,
+                'name' => $branch ? $branch->name : null,
+                'address' => $branch ? $branch->address : null,
+            ],
+            'campaign_id' => $user->campaign_id,
+            'customer_resources' => $user->customer_resources,
+            'presenter_id' => $user->presenter_id,
+            'caring_service_id' => $user->caring_service_id,
+            'full_name' => $user->name,
+            'national' => $user->national,
+            'province_city' => $user->province_city,
+            'district' => $user->district,
+            'wards' => $user->wards,
+            'address' => $user->address,
+            'phone_number' => $user->phone_number,
+            'email' => $user->email,
+            'customer_type' => $user->customer_type,
+            'points' => $user->point,
+            'bonus_coins' => $user->bonus_coins,
+            'avatar_path' => $user->photo != null ? 'https://erp.senbachdiep.com/storage/' . $user->photo : null,
+            'note' => $user->note,
+            'created_at' => $user->created_at,
+            'updated_at' => $user->updated_at,
+        ];
+
+        $response = $this->_formatBaseResponse(200, $formattedUser, 'Lấy thông tin thành công', []);
+        return response()->json($response);
+    }
     public function createCustomerErp(Request $request)
     {
         $auth = auth()->user();

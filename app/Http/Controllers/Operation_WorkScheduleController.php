@@ -6,8 +6,11 @@ use App\Http\Response\BedResponse;
 use App\Http\Response\CommonResponse;
 use App\Models\Core\CustomerType;
 use App\Models\Facility\Bed;
+use App\Models\Hrm\Employee;
 use App\Models\Operation\WorkSchedule;
 use App\Models\Operation\WorkShift;
+use App\Models\Operation\WorkShiftService;
+use App\Models\Product\Service;
 use App\Models\Sales\User;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -73,19 +76,35 @@ class Operation_WorkScheduleController extends Controller
         $size = $request->input('size', 10);
         $workShifts = $query->paginate($size, ['*'], 'page', $request->input('page', 1));
 
-        $formattedWorkShifts = $workShifts->map(function ($workShift) {
+        $formattedWorkShifts = $workShifts->groupBy('bed_id')->map(function ($bedWorkShifts) {
             return [
-                'id' => $workShift->id,
-                "date" => $workShift->date,
-                "bed" => $this->_formatBed($workShift->bed_id),
-                "employee_id" => $workShift->employee_id,
-                "from_at" => $workShift->from_at,
-                "to_at" => $workShift->to_at,
-                "status" => $workShift->status,
-                "created_at" => $workShift->created_at,
-                "updated_at" => $workShift->updated_at,
+                'bed' => $this->_formatBed($bedWorkShifts->first()->bed_id),
+                'workShifts' => $bedWorkShifts->map(function ($workShift) {
+                    return [
+                        'id' => $workShift->id,
+                        "date" => $workShift->date,
+                        "employee" => Employee::where('id', $workShift->employee_id)->first(),
+                        "work_shift_services" => WorkShiftService::where('work_shift_id', $workShift->id)
+                            ->get()
+                            ->map(function ($workShiftService) {
+                                $service = Service::where('id', $workShiftService->service_id)->first();
+                                return [
+                                    'id' => $workShiftService->id,
+                                    'work_shift_id' => $workShiftService->work_shift_id,
+                                    'service' => $service,
+                                    'created_at' => $workShiftService->created_at,
+                                    'updated_at' => $workShiftService->updated_at,
+                                ];
+                            }),
+                        "from_at" => $workShift->from_at,
+                        "to_at" => $workShift->to_at,
+                        "status" => $workShift->status,
+                        "created_at" => $workShift->created_at,
+                        "updated_at" => $workShift->updated_at,
+                    ];
+                }),
             ];
-        });
+        })->values();
 
         $totalPages = $workShifts->lastPage();
 
@@ -96,5 +115,24 @@ class Operation_WorkScheduleController extends Controller
                 $totalPages
             )
         );
+    }
+
+    public function newWorkShiftErp(Request $request){
+        $workShift = new WorkShift();
+        $workShift->branch_id = $request->branch_id;
+        $workShift->date = $request->date;
+        $workShift->zone_id = $request->zone_id;
+        $workShift->from_at = $request->from_at;
+        $workShift->to_at = $request->to_at;
+        $workShift->bed_id = $request->bed_id;
+        $workShift->employee_id = $request->employee_id;
+        $workShift->save();
+        if($workShift){
+            $response = $this->_formatBaseResponse(200, null, 'Tạo tin thành công', []);
+            return response()->json($response);
+        }else{
+            $response = $this->_formatBaseResponse(401, null, 'Tạo tin không thành công', ['errors' => 'Unauthorised']);
+            return response()->json($response, 401);
+        }
     }
 }
